@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Admin.UI", "Simple.Admin.UI\Simple.Admin.UI.csproj", "{6CBA0A65-209E-4BEC-9D2B-6728E7266A58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Client.Web", "Simple.Client.Web\Simple.Client.Web.csproj", "{91980CAD-8C2F-4999-BB0F-519CED3533E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{6CBA0A65-209E-4BEC-9D2B-6728E7266A58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CBA0A65-209E-4BEC-9D2B-6728E7266A58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CBA0A65-209E-4BEC-9D2B-6728E7266A58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91980CAD-8C2F-4999-BB0F-519CED3533E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91980CAD-8C2F-4999-BB0F-519CED3533E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91980CAD-8C2F-4999-BB0F-519CED3533E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91980CAD-8C2F-4999-BB0F-519CED3533E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
