@@ -25,6 +25,13 @@ namespace Simple.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication("Bearer").AddIdentityServerAuthentication(option =>
+                {
+                    option.Authority = "http://localhost:5000";
+                    option.RequireHttpsMetadata = false;
+                    option.ApiName = "testapi";
+                });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -40,6 +47,7 @@ namespace Simple.Api
                 app.UseHsts();
             }
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

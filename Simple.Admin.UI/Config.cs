@@ -35,7 +35,7 @@ namespace Simple.Admin.UI
 
                     // no interactive user, use the clientid/secret for authentication
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-
+                    AccessTokenLifetime=30,
                     // secret for authentication
                     ClientSecrets =
                     {
