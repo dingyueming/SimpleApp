@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Simple.Web.Models;
@@ -20,7 +21,7 @@ namespace Simple.Web.Controllers
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
-
+            SignOut();
             return View();
         }
 
@@ -36,9 +37,9 @@ namespace Simple.Web.Controllers
             return View();
         }
 
-        public IActionResult Login()
+        public IActionResult SignOut()
         {
-            return View();
+            return SignOut("Cookies", "oidc");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
