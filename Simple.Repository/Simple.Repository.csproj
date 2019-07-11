@@ -1,7 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.Entity\Simple.Entity.csproj" />
+    <ProjectReference Include="..\Simple.Infrastructure\Simple.Infrastructure.csproj" />
+    <ProjectReference Include="..\Simple.IRepository\Simple.IRepository.csproj" />
+  </ItemGroup>
 
 </Project>

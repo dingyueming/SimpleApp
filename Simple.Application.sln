@@ -13,25 +13,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{B679F2E9-8416-
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{6BF9B2E9-81F2-4684-B620-2B4185F4068A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Repository", "Simple.Repository\Simple.Repository.csproj", "{1454D844-22FE-44CF-8250-6047321F6A98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Repository", "Simple.Repository\Simple.Repository.csproj", "{1454D844-22FE-44CF-8250-6047321F6A98}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entity", "Entity", "{DCA41DF5-8648-4FC1-A3EB-44E3F3A3AC91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Entity", "Simple.Entity\Simple.Entity.csproj", "{BBA56EFA-47CB-4C95-A6F8-BC5CCE1CF850}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Entity", "Simple.Entity\Simple.Entity.csproj", "{BBA56EFA-47CB-4C95-A6F8-BC5CCE1CF850}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.ExEntity", "Simple.ExEntity\Simple.ExEntity.csproj", "{7CD9159F-F08D-405D-AC7F-6CEDD99682C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.ExEntity", "Simple.ExEntity\Simple.ExEntity.csproj", "{7CD9159F-F08D-405D-AC7F-6CEDD99682C7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{4753858A-3903-4F3D-92E3-FD48398ACA6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Application", "Simple.Application\Simple.Application.csproj", "{77F9BE56-79A9-41A5-9063-7E373655DA2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Application", "Simple.Application\Simple.Application.csproj", "{77F9BE56-79A9-41A5-9063-7E373655DA2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.IApplication", "Simple.IApplication\Simple.IApplication.csproj", "{437EF6C7-0DD4-43F0-876D-0EA30CC5CD2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.IApplication", "Simple.IApplication\Simple.IApplication.csproj", "{437EF6C7-0DD4-43F0-876D-0EA30CC5CD2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.IRepository", "Simple.IRepository\Simple.IRepository.csproj", "{C3D0983F-6000-4B2A-8FFF-3B011CB36044}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.IRepository", "Simple.IRepository\Simple.IRepository.csproj", "{C3D0983F-6000-4B2A-8FFF-3B011CB36044}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{AC940292-9790-4EC6-9AAF-0ED9084E97B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Infrastructure", "Simple.Infrastructure\Simple.Infrastructure.csproj", "{DDE16926-619B-469E-8F7E-8F7C0FAA8E5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Infrastructure", "Simple.Infrastructure\Simple.Infrastructure.csproj", "{DDE16926-619B-469E-8F7E-8F7C0FAA8E5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
