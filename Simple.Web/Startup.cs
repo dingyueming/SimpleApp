@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,7 +25,7 @@ namespace Simple.Web
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -33,6 +35,8 @@ namespace Simple.Web
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            #region Ids4
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -61,6 +65,18 @@ namespace Simple.Web
 
                     options.ClaimActions.MapJsonKey("website", "website");
                 });
+
+            #endregion
+
+            ContainerBuilder builder = new ContainerBuilder();
+            //将services中的服务填充到Autofac中.
+            builder.Populate(services);
+            //新模块组件注册
+            builder.RegisterModule<DefaultModuleRegister>();
+            //创建容器.
+            var autoFacContainer = builder.Build();
+            //使用容器创建 AutofacServiceProvider 
+            return new AutofacServiceProvider(autoFacContainer);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
