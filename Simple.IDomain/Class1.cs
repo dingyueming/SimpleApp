@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Simple.IApplication
+namespace Simple.IDomain
 {
     public class Class1
     {

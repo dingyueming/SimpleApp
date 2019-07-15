@@ -4,4 +4,15 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.Domain\Simple.Domain.csproj" />
+    <ProjectReference Include="..\Simple.ExEntity\Simple.ExEntity.csproj" />
+    <ProjectReference Include="..\Simple.IApplication\Simple.IApplication.csproj" />
+    <ProjectReference Include="..\Simple.IDomain\Simple.IDomain.csproj" />
+  </ItemGroup>
+
 </Project>

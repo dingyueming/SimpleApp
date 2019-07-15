@@ -14,8 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Simple.Application\Simple.Application.csproj" />
+    <ProjectReference Include="..\Simple.IApplication\Simple.IApplication.csproj" />
     <ProjectReference Include="..\Simple.Infrastructure\Simple.Infrastructure.csproj" />
-    <ProjectReference Include="..\Simple.Lib\Simple.Lib.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Simple.Application;
 
 namespace Simple.Web
 {
@@ -72,7 +73,7 @@ namespace Simple.Web
             //将services中的服务填充到Autofac中.
             builder.Populate(services);
             //新模块组件注册
-            builder.RegisterModule<DefaultModuleRegister>();
+            builder.RegisterModule<ApplicationModule>();
             //创建容器.
             var autoFacContainer = builder.Build();
             //使用容器创建 AutofacServiceProvider 

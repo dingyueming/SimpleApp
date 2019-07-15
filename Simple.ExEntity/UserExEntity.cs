@@ -2,7 +2,7 @@
 
 namespace Simple.ExEntity
 {
-    public class Class1
+    public class UserExEntity
     {
     }
 }

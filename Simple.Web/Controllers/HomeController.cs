@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Simple.IApplication.SystemModule;
 using Simple.Web.Models;
 
 namespace Simple.Web.Controllers
@@ -13,6 +14,11 @@ namespace Simple.Web.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private readonly IUserService _userService;
+        public HomeController(IUserService userService)
+        {
+            _userService = userService;
+        }
         public IActionResult Index()
         {
             return View();
@@ -20,6 +26,7 @@ namespace Simple.Web.Controllers
 
         public IActionResult About()
         {
+            _userService.Add();
             ViewData["Message"] = "Your application description page.";
             SignOut();
             return View();

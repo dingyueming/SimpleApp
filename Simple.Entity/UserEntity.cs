@@ -2,7 +2,7 @@
 
 namespace Simple.Entity
 {
-    public class Test
+    public class UserEntity
     {
     }
 }
