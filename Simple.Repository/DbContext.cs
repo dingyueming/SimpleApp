@@ -1,7 +1,8 @@
-﻿using System.Data.SqlClient;
-using Dapper;
+﻿using Dapper;
 using Oracle.ManagedDataAccess;
 using Oracle.ManagedDataAccess.Client;
+using Simple.Entity;
+using Simple.Infrastructure.Tools;
 
 namespace Simple.Repository
 {
@@ -10,11 +11,18 @@ namespace Simple.Repository
     /// </summary>
     public class DbContext : Database<DbContext>
     {
-
+        public Table<AUTHEntity> AuthTable { get; set; }
     }
 
     public class DbContextFactory
     {
+        private readonly string _connStr;
+        public DbContextFactory(ConfigTool configTool)
+        {
+            //_connStr = configTool.AppSetting<string>("ConnectionStr");
+        }
+
+
         public static DbContext GetDb(string connString)
         {
             var connection = new OracleConnection(connString);
@@ -24,6 +32,6 @@ namespace Simple.Repository
             return dbContext;
         }
 
-        public static DbContext Default => GetDb("");
+        public static DbContext Default => GetDb("User ID=newgps;Password=newgps;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=192.168.1.12)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORAGPS)))");
     }
 }

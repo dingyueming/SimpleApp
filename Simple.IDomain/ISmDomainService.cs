@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.Domain.SystemModule
+namespace Simple.IDomain
 {
-    public class SystemModuleDomain
+    public interface ISmDomainService
     {
+        void AddUser();
     }
 }

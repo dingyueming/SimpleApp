@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Simple.Application;
+using Simple.Infrastructure;
 
 namespace Simple.Web
 {
@@ -68,12 +70,21 @@ namespace Simple.Web
                 });
 
             #endregion
+            
+            #region 注册配置文件 Microsoft.Extensions.Configuration.Json
+
+            var configBuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+            var configuration = configBuilder.Build();
+            services.AddSingleton<IConfiguration>(configuration);
+
+            #endregion
 
             ContainerBuilder builder = new ContainerBuilder();
             //将services中的服务填充到Autofac中.
             builder.Populate(services);
             //新模块组件注册
             builder.RegisterModule<ApplicationModule>();
+            builder.RegisterModule<InfModule>();
             //创建容器.
             var autoFacContainer = builder.Build();
             //使用容器创建 AutofacServiceProvider 

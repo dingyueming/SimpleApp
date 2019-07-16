@@ -8,4 +8,10 @@
     <PackageReference Include="Autofac" Version="4.9.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.IDomain\Simple.IDomain.csproj" />
+    <ProjectReference Include="..\Simple.IRepository\Simple.IRepository.csproj" />
+    <ProjectReference Include="..\Simple.Repository\Simple.Repository.csproj" />
+  </ItemGroup>
+
 </Project>

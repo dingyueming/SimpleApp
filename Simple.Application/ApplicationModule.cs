@@ -1,5 +1,6 @@
 ﻿using Autofac;
-using Simple.Application.SystemModule;
+using Simple.Application.SM;
+using Simple.Domain;
 
 namespace Simple.Application
 {
@@ -7,9 +8,10 @@ namespace Simple.Application
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<UserService>().AsImplementedInterfaces();
+            builder.RegisterModule<DomainModule>();
 
-            //builder.RegisterModule<ApplicationModule>();
+            builder.RegisterType<UserService>().AsImplementedInterfaces();
+            
         }
     }
 }
