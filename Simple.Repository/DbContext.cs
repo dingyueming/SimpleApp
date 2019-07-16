@@ -11,12 +11,12 @@ namespace Simple.Repository
     /// </summary>
     public class DbContext : Database<DbContext>
     {
-        public Table<AUTHEntity> AuthTable { get; set; }
+        public Table<AUTHEntity> Auth { get; set; }
     }
 
     public class DbContextFactory
     {
-        private readonly string _connStr;
+        //private readonly string _connStr;
         public DbContextFactory(ConfigTool configTool)
         {
             //_connStr = configTool.AppSetting<string>("ConnectionStr");

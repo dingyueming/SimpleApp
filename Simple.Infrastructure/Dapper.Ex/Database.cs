@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text;
 using System.Data.Common;
+using System.Globalization;
 using System.Reflection.Emit;
 
 namespace Dapper
@@ -58,7 +59,8 @@ namespace Dapper
             public virtual int? Insert(dynamic data)
             {
                 //seq
-                data.Id = $"SEQ_{ tableName}";
+                var seqSql = $"select seq_{TableName}.nextval from dual";
+                data.Id = database._connection.ExecuteScalar<int>(seqSql);
                 var o = (object)data;
                 List<string> paramNames = GetParamNames(o);
                 //paramNames.Remove("Id");
@@ -326,10 +328,11 @@ namespace Dapper
                 }
             }
 
-            var builder = new StringBuilder("select 1 from INFORMATION_SCHEMA.TABLES where ");
-            if (!string.IsNullOrEmpty(schemaName)) builder.Append("TABLE_SCHEMA = @schemaName AND ");
-            builder.Append("TABLE_NAME = @name");
-
+            var builder = new StringBuilder("select 1 from all_tables where ");
+            if (!string.IsNullOrEmpty(schemaName)) builder.Append("owner = :schemaName AND ");
+            builder.Append("TABLE_NAME = :name");
+            schemaName = schemaName?.ToUpper();
+            name = name.ToUpper();
             return _connection.Query(builder.ToString(), new { schemaName, name }, _transaction).Count() == 1;
         }
 
