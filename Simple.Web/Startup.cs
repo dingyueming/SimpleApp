@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -39,38 +40,51 @@ namespace Simple.Web
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            #region Ids4
+            #region Ids4（暂不用）
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddAuthentication(options =>
+            //services.AddAuthentication(options =>
+            //    {
+            //        options.DefaultScheme = "Cookies";
+            //        options.DefaultChallengeScheme = "oidc";
+            //    })
+            //    .AddCookie("Cookies")
+            //    .AddOpenIdConnect("oidc", options =>
+            //    {
+            //        options.SignInScheme = "Cookies";
+
+            //        options.Authority = "http://localhost:6543";
+            //        options.RequireHttpsMetadata = false;
+
+            //        options.ClientId = "mvc";
+            //        options.ClientSecret = "secret";
+            //        options.ResponseType = "code id_token";
+
+            //        options.SaveTokens = true;
+            //        options.GetClaimsFromUserInfoEndpoint = true;
+
+            //        options.Scope.Add("api1");
+            //        options.Scope.Add("offline_access");
+
+            //        options.ClaimActions.MapJsonKey("website", "website");
+            //    });
+
+            #endregion
+
+            #region Cookie登陆
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
                 {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
-                })
-                .AddCookie("Cookies")
-                .AddOpenIdConnect("oidc", options =>
-                {
-                    options.SignInScheme = "Cookies";
-
-                    options.Authority = "http://localhost:6543";
-                    options.RequireHttpsMetadata = false;
-
-                    options.ClientId = "mvc";
-                    options.ClientSecret = "secret";
-                    options.ResponseType = "code id_token";
-
-                    options.SaveTokens = true;
-                    options.GetClaimsFromUserInfoEndpoint = true;
-
-                    options.Scope.Add("api1");
-                    options.Scope.Add("offline_access");
-
-                    options.ClaimActions.MapJsonKey("website", "website");
+                    //需要自定义登陆以及登出页面修改这里
+                    //o.LoginPath = new PathString("/Account/Login");
+                    //o.AccessDeniedPath = new PathString("/Error/Forbidden");
+                    o.ExpireTimeSpan = DateTime.Now.AddMinutes(3) - DateTime.Now;
                 });
 
             #endregion
-            
+
             #region 注册配置文件 Microsoft.Extensions.Configuration.Json
 
             var configBuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
@@ -79,16 +93,18 @@ namespace Simple.Web
 
             #endregion
 
+            #region AutoFac
             ContainerBuilder builder = new ContainerBuilder();
-            //将services中的服务填充到Autofac中.
+            //将services中的服务填充到autoFac中.
             builder.Populate(services);
             //新模块组件注册
             builder.RegisterModule<ApplicationModule>();
-            builder.RegisterModule<InfModule>();
+            builder.RegisterModule<InfrastructureModule>();
             //创建容器.
             var autoFacContainer = builder.Build();
-            //使用容器创建 AutofacServiceProvider 
+            //使用容器创建 autoFacServiceProvider 
             return new AutofacServiceProvider(autoFacContainer);
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

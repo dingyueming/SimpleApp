@@ -10,8 +10,6 @@ namespace Simple.Repository
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<DbContext>().AsImplementedInterfaces().PropertiesAutowired();
-            builder.RegisterType<DbContextFactory>().AsImplementedInterfaces().PropertiesAutowired();
             //注册此程序集下的类型
             builder.RegisterType<AuthRepository>().AsImplementedInterfaces();
         }

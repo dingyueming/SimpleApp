@@ -11,8 +11,7 @@ using Simple.Web.Models;
 
 namespace Simple.Web.Controllers
 {
-    [Authorize]
-    public class HomeController : Controller
+    public class HomeController : SimpleBaseController
     {
         private readonly IUserService _userService;
         public HomeController(IUserService userService)
@@ -26,9 +25,9 @@ namespace Simple.Web.Controllers
 
         public IActionResult About()
         {
-            _userService.Add();
+            //_userService.Add();
+            //return SignOut("Cookies", "oidc");
             ViewData["Message"] = "Your application description page.";
-            SignOut();
             return View();
         }
 

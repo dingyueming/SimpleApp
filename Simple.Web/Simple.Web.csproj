@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\bower_components\**" />
+    <Content Remove="wwwroot\bower_components\**" />
+    <EmbeddedResource Remove="wwwroot\bower_components\**" />
+    <None Remove="wwwroot\bower_components\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
     <PackageReference Include="IdentityServer4" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />

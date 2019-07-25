@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simple.Entity;
+using Simple.Infrastructure;
 using Simple.IRepository.SM;
 
 namespace Simple.Repository.SM
@@ -12,7 +13,7 @@ namespace Simple.Repository.SM
         public async void Add(AUTHEntity entity)
         {
             var dbContext = DbContextFactory.Default;
-            var aa = dbContext.Auth.Insert(entity);
+            //var aa = dbContext.Auth.Insert(entity);
             throw new NotImplementedException();
         }
     }
