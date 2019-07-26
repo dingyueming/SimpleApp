@@ -48,8 +48,7 @@
                     <div class="col-xs-8">
                         <div class="checkbox icheck">
                             <label>
-                                <input v-model="checked" type="checkbox">Remember Me
-                                <label>{{ checked }}</label>
+                                <input type="checkbox">Remember Me
                             </label>
                         </div>
                     </div>
@@ -60,7 +59,7 @@
                     <!-- /.col -->
                 </div>
                 <input type="hidden" name="returnurl" value="@ViewBag.ReturnUrl" />
-                @*<input type="hidden" name="rememberMe" v-model="isRemember"/>*@
+                <input type="hidden" id="rememberMe" name="rememberMe" />
             </form>
             <!-- /.social-auth-links -->
             @*<a href="#">I forgot my password</a><br>
@@ -79,26 +78,20 @@
         var app = new Vue({
             el: '#app',
             data: {
-                checked: false
+
             },
             methods: {
-                setRemember: function (event) {
-                    alert(1);
-                    this.isRemember = !this.isRemember;
-                },
-                say: function (message) {
-                    debugger;
-                    alert(message);
-                    alert(aa);
-                }
+
             }
         });
         $(function () {
-           
             $('input').iCheck({
                 checkboxClass: 'icheckbox_square-blue',
                 radioClass: 'iradio_square-blue',
                 increaseArea: '20%' /* optional */
+            });
+            $('input').on('ifChecked', function (event) {
+                $("#rememberMe").val(this.checked);
             });
         });
     </script>
