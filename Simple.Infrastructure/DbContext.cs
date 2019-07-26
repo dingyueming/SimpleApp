@@ -1,7 +1,7 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Configuration;
 using Oracle.ManagedDataAccess.Client;
 using Simple.Entity;
-using Simple.Infrastructure.Tools;
 
 namespace Simple.Infrastructure
 {
@@ -15,14 +15,16 @@ namespace Simple.Infrastructure
 
     public class DbContextFactory
     {
-        public DbContextFactory()
+        public IConfiguration _configuration;
+        public DbContextFactory(IConfiguration configuration)
         {
-            //_connStr = ConfigTool.AppSetting<string>("ConnectionStr");
+            _configuration = configuration;
         }
 
 
-        public static DbContext GetDb(string connString)
+        public DbContext GetDb()
         {
+            var connString = _configuration["ConnectionStr"];
             var connection = new OracleConnection(connString);
             if (connection.State != System.Data.ConnectionState.Open)
                 connection.Open();
@@ -30,6 +32,6 @@ namespace Simple.Infrastructure
             return dbContext;
         }
 
-        public static DbContext Default => GetDb("User ID=newgps;Password=newgps;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=192.168.1.12)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORAGPS)))");
+        public DbContext Default => this.GetDb();
     }
 }

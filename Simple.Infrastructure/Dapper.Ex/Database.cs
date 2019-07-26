@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text;
 using System.Data.Common;
-using System.Globalization;
 using System.Reflection.Emit;
 
 namespace Dapper
@@ -58,17 +57,15 @@ namespace Dapper
             /// <returns></returns>
             public virtual int? Insert(dynamic data)
             {
-                //seq
-                var seqSql = $"select seq_{TableName}.nextval from dual";
-                data.Id = database._connection.ExecuteScalar<int>(seqSql);
                 var o = (object)data;
                 List<string> paramNames = GetParamNames(o);
-                //paramNames.Remove("Id");
+                paramNames.Remove("Id");
+
                 string cols = string.Join(",", paramNames);
-                string colsParams = string.Join(",", paramNames.Select(p => ":" + p));
-                //var sql = "set nocount on insert " + TableName + " (" + cols + ") values (" + colsParams + ") select cast(scope_identity() as int)";
-                var sql = "insert " + TableName + " (" + cols + ") values (" + colsParams + ")";
-                return database.Execute(sql, o);// <int?>(sql, o).Single();
+                string colsParams = string.Join(",", paramNames.Select(p => "@" + p));
+                var sql = "set nocount on insert " + TableName + " (" + cols + ") values (" + colsParams + ") select cast(scope_identity() as int)";
+
+                return database.Query<int?>(sql, o).Single();
             }
 
             /// <summary>
@@ -83,7 +80,7 @@ namespace Dapper
 
                 var builder = new StringBuilder();
                 builder.Append("update ").Append(TableName).Append(" set ");
-                builder.AppendLine(string.Join(",", paramNames.Where(n => n != "Id").Select(p => p + "= :" + p)));
+                builder.AppendLine(string.Join(",", paramNames.Where(n => n != "Id").Select(p => p + "= @" + p)));
                 builder.Append("where Id = @Id");
 
                 DynamicParameters parameters = new DynamicParameters(data);
@@ -99,7 +96,7 @@ namespace Dapper
             /// <returns></returns>
             public bool Delete(TId id)
             {
-                return database.Execute("delete from " + TableName + " where Id = :id", new { id }) > 0;
+                return database.Execute("delete from " + TableName + " where Id = @id", new { id }) > 0;
             }
 
             /// <summary>
@@ -109,7 +106,7 @@ namespace Dapper
             /// <returns>The record with the specified Id.</returns>
             public T Get(TId id)
             {
-                return database.QueryFirstOrDefault<T>("select * from " + TableName + " where Id = :id", new { id });
+                return database.QueryFirstOrDefault<T>("select * from " + TableName + " where Id = @id", new { id });
             }
 
             /// <summary>
@@ -328,11 +325,10 @@ namespace Dapper
                 }
             }
 
-            var builder = new StringBuilder("select 1 from all_tables where ");
-            if (!string.IsNullOrEmpty(schemaName)) builder.Append("owner = :schemaName AND ");
-            builder.Append("TABLE_NAME = :name");
-            schemaName = schemaName?.ToUpper();
-            name = name.ToUpper();
+            var builder = new StringBuilder("select 1 from INFORMATION_SCHEMA.TABLES where ");
+            if (!string.IsNullOrEmpty(schemaName)) builder.Append("TABLE_SCHEMA = @schemaName AND ");
+            builder.Append("TABLE_NAME = @name");
+
             return _connection.Query(builder.ToString(), new { schemaName, name }, _transaction).Count() == 1;
         }
 

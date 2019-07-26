@@ -23,7 +23,7 @@ namespace Dapper
                 paramNames.Remove("Id");
 
                 string cols = string.Join(",", paramNames);
-                string colsParams = string.Join(",", paramNames.Select(p => ":" + p));
+                string colsParams = string.Join(",", paramNames.Select(p => "@" + p));
                 var sql = "set nocount on insert " + TableName + " (" + cols + ") values (" + colsParams + ") select cast(scope_identity() as int)";
 
                 return (await database.QueryAsync<int?>(sql, o).ConfigureAwait(false)).Single();
@@ -41,8 +41,8 @@ namespace Dapper
 
                 var builder = new StringBuilder();
                 builder.Append("update ").Append(TableName).Append(" set ");
-                builder.AppendLine(string.Join(",", paramNames.Where(n => n != "Id").Select(p => p + "= :" + p)));
-                builder.Append("where Id = :Id");
+                builder.AppendLine(string.Join(",", paramNames.Where(n => n != "Id").Select(p => p + "= @" + p)));
+                builder.Append("where Id = @Id");
 
                 var parameters = new DynamicParameters(data);
                 parameters.Add("Id", id);
@@ -56,7 +56,7 @@ namespace Dapper
             /// <param name="id">The Id of the record to delete.</param>
             /// <returns>The number of rows affected.</returns>
             public async Task<bool> DeleteAsync(TId id) =>
-                (await database.ExecuteAsync("delete from " + TableName + " where Id = :id", new { id }).ConfigureAwait(false)) > 0;
+                (await database.ExecuteAsync("delete from " + TableName + " where Id = @id", new { id }).ConfigureAwait(false)) > 0;
 
             /// <summary>
             /// Asynchronously gets a record with a particular Id from the DB.
@@ -64,7 +64,7 @@ namespace Dapper
             /// <param name="id">The primary key of the table to fetch.</param>
             /// <returns>The record with the specified Id.</returns>
             public Task<T> GetAsync(TId id) =>
-                database.QueryFirstOrDefaultAsync<T>("select * from " + TableName + " where Id = :id", new { id });
+                database.QueryFirstOrDefaultAsync<T>("select * from " + TableName + " where Id = @id", new { id });
 
             /// <summary>
             /// Asynchronously gets the first row from this table (order determined by the database provider).

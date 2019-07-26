@@ -25,7 +25,7 @@ namespace Simple.Web.Controllers
 
         public IActionResult About()
         {
-            //_userService.Add();
+            _userService.Add();
             //return SignOut("Cookies", "oidc");
             ViewData["Message"] = "Your application description page.";
             return View();
