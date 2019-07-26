@@ -80,7 +80,7 @@ namespace Simple.Web
                     //需要自定义登陆以及登出页面修改这里
                     //o.LoginPath = new PathString("/Account/Login");
                     //o.AccessDeniedPath = new PathString("/Error/Forbidden");
-                    o.ExpireTimeSpan = DateTime.Now.AddMinutes(3) - DateTime.Now;
+                    o.ExpireTimeSpan = DateTimeOffset.UtcNow.AddMinutes(5) - DateTimeOffset.UtcNow;
                 });
 
             #endregion

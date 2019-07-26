@@ -16,7 +16,7 @@ namespace Simple.Web.Controllers
     public class AccountController : Controller
     {
         [HttpPost]
-        public async Task<IActionResult> Login(string userName, string password, string returnUrl)
+        public async Task<IActionResult> Login(string userName, string password, string returnUrl, bool rememberMe)
         {
             if (!userName.IsNullOrEmpty())
             {
@@ -38,7 +38,16 @@ namespace Simple.Web.Controllers
                 //创建一个人携带cookie身份证
                 var identity = new ClaimsPrincipal(cookie);
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+                AuthenticationProperties props = null;
+                if (rememberMe)
+                {
+                    props = new AuthenticationProperties
+                    {
+                        ExpiresUtc = DateTimeOffset.UtcNow.Add(TimeSpan.FromDays(30))
+                    };
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), props);
 
                 if (returnUrl.IsNullOrEmpty())
                 {
@@ -70,15 +79,6 @@ namespace Simple.Web.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect(returnUrl ?? Url.Action("Login"));
-        }
-
-        public async Task GetAuth()
-        {
-            var auth = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (auth.Succeeded)
-            {
-                var aa = auth.Principal.Identity;
-            }
         }
     }
 }
