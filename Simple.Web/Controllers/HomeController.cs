@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Simple.IApplication.SystemModule;
+using Simple.IApplication.SM;
 using Simple.Web.Models;
 
 namespace Simple.Web.Controllers

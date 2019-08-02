@@ -35,7 +35,7 @@ namespace Dapper
             public Table(Database<TDatabase> database, string likelyTableName)
             {
                 this.database = database;
-                this.likelyTableName = likelyTableName;
+                this.likelyTableName = "tb_" + likelyTableName;
             }
 
             /// <summary>

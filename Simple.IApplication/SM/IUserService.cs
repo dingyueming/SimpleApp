@@ -1,15 +1,14 @@
-﻿using Simple.Entity;
+﻿using Simple.ExEntity;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Simple.ExEntity;
 
-namespace Simple.IDomain
+namespace Simple.IApplication.SM
 {
-    public interface ISmDomainService
+    public interface IUserService
     {
-        void AddUser();
+        void Add();
 
         Task<List<UsersExEntity>> GetAllUsers();
     }

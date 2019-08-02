@@ -9,27 +9,35 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Simple.ExEntity;
+using Simple.IApplication.SM;
 
 namespace Simple.Web.Controllers
 {
     [AllowAnonymous]
     public class AccountController : Controller
     {
+        private IUserService _userService;
+        public AccountController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(string userName, string password, string returnUrl, bool rememberMe)
         {
-            if (!userName.IsNullOrEmpty())
+            var users = await _userService.GetAllUsers();
+            if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
             {
-                var user = new UserExEntity()
+                var loginUser = users.FirstOrDefault(x => x.UserName == userName && x.UserPwd == password);
+                if (loginUser == null)
                 {
-                    UserName = "zhangsan",
-                    UserPwd = "123456"
-                };
+                    return View();
+                }
                 //证件单元
                 var claims = new List<Claim>()
                 {
-                    new Claim(ClaimTypes.Name,user.UserName),
-                    new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
+                    new Claim(ClaimTypes.Name,loginUser.UserName),
+                    new Claim(ClaimTypes.NameIdentifier,loginUser.Id.ToString())
                 };
 
                 //使用证件单元创建一张cookie身份证

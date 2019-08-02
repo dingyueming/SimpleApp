@@ -11,7 +11,7 @@ namespace Simple.Repository
         protected override void Load(ContainerBuilder builder)
         {
             //注册此程序集下的类型
-            builder.RegisterType<AuthRepository>().AsImplementedInterfaces();
+            builder.RegisterType<UsersRepository>().AsImplementedInterfaces();
         }
     }
 }

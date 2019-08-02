@@ -3,7 +3,7 @@ using System.Security.Principal;
 
 namespace Simple.ExEntity
 {
-    public class UserExEntity
+    public class UsersExEntity
     {
         public int Id { get; set; }
 

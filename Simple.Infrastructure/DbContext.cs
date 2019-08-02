@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Oracle.ManagedDataAccess.Client;
 using Simple.Entity;
+using Newtonsoft.Json;
+using Simple.Infrastructure.CommonModel;
 
 namespace Simple.Infrastructure
 {
@@ -10,7 +12,7 @@ namespace Simple.Infrastructure
     /// </summary>
     public class DbContext : Database<DbContext>
     {
-        public Table<AUTHEntity> Auth { get; set; }
+        public Table<UsersEntity> Users { get; set; }
     }
 
     public class DbContextFactory
@@ -24,8 +26,13 @@ namespace Simple.Infrastructure
 
         public DbContext GetDb()
         {
-            var connString = _configuration["ConnectionStr"];
-            var connection = new OracleConnection(connString);
+            var dbSettingStr = _configuration["DbSetting"];
+            var dbSettingModel = new DbSetting();
+            if (!string.IsNullOrEmpty(dbSettingStr))
+            {
+                dbSettingModel = JsonConvert.DeserializeObject<DbSetting>(dbSettingStr);
+            }
+            var connection = dbSettingModel.DbConnection;
             if (connection.State != System.Data.ConnectionState.Open)
                 connection.Open();
             DbContext dbContext = DbContext.Init(connection, 5);

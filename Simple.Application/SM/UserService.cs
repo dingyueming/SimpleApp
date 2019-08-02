@@ -1,5 +1,8 @@
 ﻿using System;
-using Simple.IApplication.SystemModule;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Simple.ExEntity;
+using Simple.IApplication.SM;
 using Simple.IDomain;
 
 namespace Simple.Application.SM
@@ -15,6 +18,11 @@ namespace Simple.Application.SM
         {
             _smDomainService.AddUser();
             throw new NotImplementedException();
+        }
+
+        public async Task<List<UsersExEntity>> GetAllUsers()
+        {
+            return await _smDomainService.GetAllUsers();
         }
     }
 }
