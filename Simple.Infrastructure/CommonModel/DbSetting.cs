@@ -8,9 +8,15 @@ namespace Simple.Infrastructure.CommonModel
 {
     public class DbSetting
     {
-        public string DbType { get; set; } = "mysql";
 
-        public string ConnectionStr { get; set; } = "server=rm-wz90n4nhkp75xo28o8o.mysql.rds.aliyuncs.com;database=simpledb;userid=root;password=Admin123";
+        public DbSetting(string dbType, string connectionStr)
+        {
+            DbType = dbType;
+            ConnectionStr = connectionStr;
+        }
+        public string DbType { get; private set; } = "mysql";
+
+        public string ConnectionStr { get; private set; } = "server=rm-wz90n4nhkp75xo28o8o.mysql.rds.aliyuncs.com;database=simpledb;userid=root;password=Admin123";
 
         public DbConnection DbConnection
         {

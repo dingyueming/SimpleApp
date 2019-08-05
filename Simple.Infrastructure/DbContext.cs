@@ -26,12 +26,9 @@ namespace Simple.Infrastructure
 
         public DbContext GetDb()
         {
-            var dbSettingStr = configuration["DbSetting"];
-            var dbSettingModel = new DbSetting();
-            if (!string.IsNullOrEmpty(dbSettingStr))
-            {
-                dbSettingModel = JsonConvert.DeserializeObject<DbSetting>(dbSettingStr);
-            }
+            var connectionStr = configuration["DbSetting:ConnectionStr"];
+            var dbType = configuration["DbSetting:DbType"];
+            var dbSettingModel = new DbSetting(dbType, connectionStr);
             var connection = dbSettingModel.DbConnection;
             if (connection.State != System.Data.ConnectionState.Open)
                 connection.Open();
