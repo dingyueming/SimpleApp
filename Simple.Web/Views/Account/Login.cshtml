@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 2 | Log in</title>
+    <title>Admin | Login</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.7 -->
@@ -35,7 +35,7 @@
         <!-- /.login-logo -->
         <div class="login-box-body">
             <p class="login-box-msg">Sign in to start your session</p>
-            <form action="@Url.Action("Login")" method="post">
+            <form id="loginForm" class="form-signin" action="@Url.Action("Login")" method="post">
                 <div class="form-group has-feedback">
                     <input type="text" class="form-control" name="username" id="username" placeholder="UserName">
                     <span class="fa fa-male form-control-feedback"></span>
@@ -54,7 +54,7 @@
                     </div>
                     <!-- /.col -->
                     <div class="col-xs-4">
-                        <button type="submit" v-on:click="say('what')" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -74,6 +74,9 @@
     <script src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- iCheck -->
     <script src="~/plugins/iCheck/icheck.min.js"></script>
+    <!--Bootstrap-validator-->
+    <link rel="stylesheet" href="~/plugins/bootstrap-Validator/bootstrapValidator.css" />
+    <script type="text/javascript" src="~/plugins/bootstrap-Validator/bootstrapValidator.js"></script>
     <script>
         var app = new Vue({
             el: '#app',
@@ -85,6 +88,7 @@
             }
         });
         $(function () {
+            //Icheck插件
             $('input').iCheck({
                 checkboxClass: 'icheckbox_square-blue',
                 radioClass: 'iradio_square-blue',
@@ -92,6 +96,46 @@
             });
             $('input').on('ifChecked', function (event) {
                 $("#rememberMe").val(this.checked);
+            });
+            //表单验证
+            $('#loginForm').bootstrapValidator({
+                message: 'This value is not valid',
+                feedbackIcons: {
+                    //valid: 'glyphicon glyphicon-ok',
+                    //invalid: 'glyphicon glyphicon-remove',
+                    //validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    username: {
+                        message: '用户名无效',
+                        validators: {
+                            notEmpty: {
+                                message: '用户名不能位空'
+                            },
+                            stringLength: {
+                                min: 5,
+                                max: 30,
+                                message: '用户名必须大于6，小于30个字'
+                            }
+                        }
+                    },
+                    password: {
+                        validators: {
+                            notEmpty: {
+                                message: '密码不能位空'
+                            },
+                            stringLength: {
+                                min: 5,
+                                max: 30,
+                                message: '用户名必须大于6，小于30个字'
+                            },
+                            different: {
+                                field: 'username',
+                                message: '用户名和密码不能相同'
+                            }
+                        }
+                    },
+                }
             });
         });
     </script>

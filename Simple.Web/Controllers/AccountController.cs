@@ -28,7 +28,7 @@ namespace Simple.Web.Controllers
             var users = await _userService.GetAllUsers();
             if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
             {
-                var loginUser = users.FirstOrDefault(x => x.UserName == userName && x.UserPwd == password);
+                var loginUser = users.FirstOrDefault(x => x.UsersName == userName && x.Password == password);
                 if (loginUser == null)
                 {
                     return View();
@@ -36,8 +36,9 @@ namespace Simple.Web.Controllers
                 //证件单元
                 var claims = new List<Claim>()
                 {
-                    new Claim(ClaimTypes.Name,loginUser.UserName),
-                    new Claim(ClaimTypes.NameIdentifier,loginUser.Id.ToString())
+                    new Claim(ClaimTypes.Name,loginUser.UsersName),
+                    new Claim(ClaimTypes.NameIdentifier,loginUser.UsersId.ToString()),
+                    new Claim(ClaimTypes.Email,loginUser.Email)
                 };
 
                 //使用证件单元创建一张cookie身份证

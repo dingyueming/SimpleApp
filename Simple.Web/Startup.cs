@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Simple.Application;
 using Simple.Infrastructure;
+using System;
+using System.IO;
 
 namespace Simple.Web
 {
@@ -92,6 +88,8 @@ namespace Simple.Web
             services.AddSingleton<IConfiguration>(configuration);
 
             #endregion
+
+            services.AddAutoMapper();
 
             #region AutoFac
             ContainerBuilder builder = new ContainerBuilder();
