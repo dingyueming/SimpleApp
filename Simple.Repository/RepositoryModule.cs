@@ -10,8 +10,10 @@ namespace Simple.Repository
     {
         protected override void Load(ContainerBuilder builder)
         {
-            //注册此程序集下的类型
-            builder.RegisterType<UsersRepository>().AsImplementedInterfaces();
+            //注册程序集下所有的服务类
+            var assembly = System.Reflection.Assembly.Load("Simple.Repository");
+            builder.RegisterAssemblyTypes(assembly).Where(x => x.Name.EndsWith("Repository")).AsImplementedInterfaces();
+
         }
     }
 }

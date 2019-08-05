@@ -11,23 +11,26 @@ using AutoMapper;
 
 namespace Simple.Domain
 {
+    /// <summary>
+    /// SM模块领域服务
+    /// </summary>
     public class SmDomainService : ISmDomainService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
         public SmDomainService(IUserRepository userRepository, IMapper mapper)
         {
-            _userRepository = userRepository;
+            this.userRepository = userRepository;
             this.mapper = mapper;
         }
         public void AddUser()
         {
-            _userRepository.Add(new UsersEntity());
+            userRepository.Add(new UsersEntity());
         }
 
         public async Task<List<UsersExEntity>> GetAllUsers()
         {
-            var usersEntities = await _userRepository.GetAll();
+            var usersEntities = await userRepository.GetAll();
             var userExEntities = mapper.Map<List<UsersExEntity>>(usersEntities);
             return userExEntities;
         }

@@ -16,18 +16,18 @@ namespace Simple.Web.Controllers
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private IUserService _userService;
+        private IUserService userService;
         public AccountController(IUserService userService)
         {
-            _userService = userService;
+            this.userService = userService;
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(string userName, string password, string returnUrl, bool rememberMe)
         {
-            var users = await _userService.GetAllUsers();
             if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
             {
+                var users = await userService.GetAllUsers();
                 var loginUser = users.FirstOrDefault(x => x.UsersName == userName && x.Password == password);
                 if (loginUser == null)
                 {

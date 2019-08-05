@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -88,8 +87,6 @@ namespace Simple.Web
             services.AddSingleton<IConfiguration>(configuration);
 
             #endregion
-
-            services.AddAutoMapper();
 
             #region AutoFac
             ContainerBuilder builder = new ContainerBuilder();

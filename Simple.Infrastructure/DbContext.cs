@@ -17,16 +17,16 @@ namespace Simple.Infrastructure
 
     public class DbContextFactory
     {
-        public IConfiguration _configuration;
+        public IConfiguration configuration;
         public DbContextFactory(IConfiguration configuration)
         {
-            _configuration = configuration;
+            this.configuration = configuration;
         }
 
 
         public DbContext GetDb()
         {
-            var dbSettingStr = _configuration["DbSetting"];
+            var dbSettingStr = configuration["DbSetting"];
             var dbSettingModel = new DbSetting();
             if (!string.IsNullOrEmpty(dbSettingStr))
             {
