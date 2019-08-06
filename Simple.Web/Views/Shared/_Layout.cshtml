@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Simple.ExEntity.SM
+<!DOCTYPE html>
 <!--
 This is a starter template page. Use this page to start your new project from
 scratch. This page gets reditorid of all links and provides the needed markup only.
@@ -7,7 +8,7 @@ scratch. This page gets reditorid of all links and provides the needed markup on
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>@ViewBag.Title</title>
+    <title>Simple.Application</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="~/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -30,7 +31,8 @@ scratch. This page gets reditorid of all links and provides the needed markup on
     <!-- Google Font -->
     <link rel="stylesheet" href="~/dist/css/GoogleFonts.css">
     <!--Vue开发版本-->
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="~/dist/js/vue.js"></script>
+    <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -57,7 +59,7 @@ desired effect
         <!-- Main Header -->
         <header class="main-header">
             <!-- Logo -->
-            <a href="index2.html" class="logo">
+            <a href="#" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b>A</b>LT</span>
                 <!-- logo for regular state and mobile devices -->
@@ -250,21 +252,20 @@ desired effect
                 </form>
                 <!-- /.search form -->
                 <!-- Sidebar Menu -->
-                <ul class="sidebar-menu" data-widget="tree">
-                    @*<li class="header"></li>*@
+                <ul class="sidebar-menu" data-widget="tree" id="menuDiv">
+                    <li class="header">
+                        All Menus
+                    </li>
                     <!-- Optionally, you can add icons to the links -->
-                    <li><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
-                    <li><a href="@Url.Action("About","Home")"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
-                    <li class="treeview">
+                    <li class="treeview" v-for="firstLvMenu in menus">
                         <a href="#">
-                            <i class="fa fa-link"></i> <span>Multilevel</span>
+                            <i class="fa fa-link"></i> <span>{{firstLvMenu.menusName}}</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#">Link in level 2</a></li>
-                            <li><a href="#">Link in level 2</a></li>
+                            <li v-for="secondLvMenu in firstLvMenu.childMenus"><a :href="secondLvMenu.menusUrl">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-cube"></i>{{secondLvMenu.menusName}}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -277,8 +278,8 @@ desired effect
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <h1>
-                    Page Header
-                    <small>Optional description</small>
+                    @ViewBag.Title
+                    <small>@ViewBag.SubTitle</small>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
@@ -385,5 +386,26 @@ desired effect
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. -->
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: '#menuDiv',
+            data: {
+                menus: [],
+            },
+            methods: {
+                QueryMenus: function () {
+                    axios.post('@Url.Action("QueryMenus","_Layout")', {}).then(function (response) {
+                        vm.menus = response.data;
+                        console.log( vm.menus);
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }
+            }
+        })
+        $(function () {
+            vm.QueryMenus();
+        })
+    </script>
 </body>
 </html>

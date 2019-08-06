@@ -12,7 +12,16 @@ namespace Simple.Infrastructure
     /// </summary>
     public class DbContext : Database<DbContext>
     {
+        #region SM模块
+        /// <summary>
+        /// 用户表
+        /// </summary>
         public Table<UsersEntity> Users { get; set; }
+        /// <summary>
+        /// 菜单表
+        /// </summary>
+        public Table<MenusEntity> Menus { get; set; }
+        #endregion
     }
 
     public class DbContextFactory

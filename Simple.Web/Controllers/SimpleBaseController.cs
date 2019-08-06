@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Simple.IApplication.SM;
 
 namespace Simple.Web.Controllers
 {
     [Authorize]
     public class SimpleBaseController : Controller
     {
-
         public async Task GetAuth()
         {
             var auth = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);

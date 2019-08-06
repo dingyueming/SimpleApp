@@ -13,19 +13,21 @@ namespace Simple.Web.Controllers
 {
     public class HomeController : SimpleBaseController
     {
-        private readonly IUserService _userService;
-        public HomeController(IUserService userService)
+        private readonly IUserService userService;
+        private readonly IMenusService menusService;
+        public HomeController(IUserService userService, IMenusService menusService)
         {
-            _userService = userService;
+            this.userService = userService;
+            this.menusService = menusService;
         }
         public IActionResult Index()
         {
             return View();
         }
-
+        
         public IActionResult About()
         {
-            _userService.Add();
+            //userService.Add();
             //return SignOut("Cookies", "oidc");
             ViewData["Message"] = "Your application description page.";
             return View();

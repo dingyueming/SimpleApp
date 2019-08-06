@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Simple.Entity;
 using Simple.ExEntity;
+using Simple.ExEntity.SM;
 
 namespace Simple.Domain
 {
@@ -15,6 +16,7 @@ namespace Simple.Domain
         public SimpleProfile()
         {
             CreateMap<UsersEntity, UsersExEntity>();
+            CreateMap<MenusEntity, MenusExEntity>();
         }
     }
 }

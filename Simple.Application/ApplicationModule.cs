@@ -12,7 +12,7 @@ namespace Simple.Application
 
             //注册程序集下所有的服务类
             var assembly = System.Reflection.Assembly.Load("Simple.Application");
-            builder.RegisterAssemblyTypes(assembly).Where(x => x.Name.EndsWith("Service")).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(assembly).Where(x => x.Name.EndsWith("Service")).AsImplementedInterfaces().PropertiesAutowired();
 
         }
     }
