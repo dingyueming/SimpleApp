@@ -252,12 +252,12 @@ desired effect
                 </form>
                 <!-- /.search form -->
                 <!-- Sidebar Menu -->
-                <ul class="sidebar-menu" data-widget="tree" id="menuDiv">
+                <ul class="sidebar-menu" data-widget="tree" id="menudiv">
                     <li class="header">
                         All Menus
                     </li>
                     <!-- Optionally, you can add icons to the links -->
-                    <li class="treeview" v-for="firstLvMenu in menus">
+                    <li class="treeview" v-bind:class="{active:firstLvMenu.isActive}" v-for="firstLvMenu in menus">
                         <a href="#">
                             <i class="fa fa-link"></i> <span>{{firstLvMenu.menusName}}</span>
                             <span class="pull-right-container">
@@ -265,7 +265,7 @@ desired effect
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li v-for="secondLvMenu in firstLvMenu.childMenus"><a :href="secondLvMenu.menusUrl">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-cube"></i>{{secondLvMenu.menusName}}</a></li>
+                            <li v-bind:class="{active:secondLvMenu.isActive}" v-for="secondLvMenu in firstLvMenu.childMenus"><a :href="secondLvMenu.menusUrl">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-cube"></i>{{secondLvMenu.menusName}}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -388,23 +388,34 @@ desired effect
          user experience. -->
     <script type="text/javascript">
         var vm = new Vue({
-            el: '#menuDiv',
+            el: '#menudiv',
             data: {
+                isActive:true,
                 menus: [],
             },
             methods: {
-                QueryMenus: function () {
+                QueryMenus: function (param) {
+                    vm.isActive = false;
                     axios.post('@Url.Action("QueryMenus","_Layout")', {}).then(function (response) {
-                        vm.menus = response.data;
-                        console.log( vm.menus);
+                        response.data.forEach(function (menu, index) {
+                            menu.childMenus.forEach(function (childMenu, index) {
+                                if (childMenu.menusUrl == param) {
+                                    vm.isActive = true;
+                                }
+                                childMenu.isActive = vm.isActive;
+                            });
+                            menu.isActive = vm.isActive;
+                            vm.menus.push(menu);
+                        });
+                        console.log(vm.menus);
                     }).catch(function (error) {
                         console.log(error);
                     });
                 }
             }
-        })
+        });
         $(function () {
-            vm.QueryMenus();
+            vm.QueryMenus(window.location.href);
         })
     </script>
 </body>

@@ -121,7 +121,7 @@ namespace Simple.Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=About}/{id?}");
+                    template: "{controller=Home}/{action=index}/{id?}");
             });
         }
     }
