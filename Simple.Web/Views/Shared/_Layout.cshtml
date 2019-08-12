@@ -257,7 +257,7 @@ desired effect
                         All Menus
                     </li>
                     <!-- Optionally, you can add icons to the links -->
-                    <li class="treeview" v-bind:class="{active:firstLvMenu.isActive}" v-for="firstLvMenu in menus">
+                    <li class="treeview" v-bind:class="{'menu-open':firstLvMenu.isActive,'active':firstLvMenu.isActive}" v-for="firstLvMenu in menus">
                         <a href="#">
                             <i v-bind:class="SetIconClass(firstLvMenu.menusIcon)"></i> <span>{{firstLvMenu.menusName}}</span>
                             <span class="pull-right-container">
