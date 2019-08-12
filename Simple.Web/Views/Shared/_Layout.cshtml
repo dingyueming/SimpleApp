@@ -259,13 +259,17 @@ desired effect
                     <!-- Optionally, you can add icons to the links -->
                     <li class="treeview" v-bind:class="{active:firstLvMenu.isActive}" v-for="firstLvMenu in menus">
                         <a href="#">
-                            <i class="fa fa-link"></i> <span>{{firstLvMenu.menusName}}</span>
+                            <i v-bind:class="SetIconClass(firstLvMenu.menusIcon)"></i> <span>{{firstLvMenu.menusName}}</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li v-bind:class="{active:secondLvMenu.isActive}" v-for="secondLvMenu in firstLvMenu.childMenus"><a :href="secondLvMenu.menusUrl">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-cube"></i>{{secondLvMenu.menusName}}</a></li>
+                            <li v-bind:class="{active:secondLvMenu.isActive}" v-for="secondLvMenu in firstLvMenu.childMenus">
+                                <a :href="secondLvMenu.menusUrl" style="cursor:pointer;">
+                                    <i style="margin-left:10px;" v-bind:class="SetIconClass(secondLvMenu.menusIcon)"></i>{{secondLvMenu.menusName}}
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
@@ -411,6 +415,9 @@ desired effect
                     }).catch(function (error) {
                         console.log(error);
                     });
+                },
+                SetIconClass(param) {
+                    return param;
                 }
             }
         });

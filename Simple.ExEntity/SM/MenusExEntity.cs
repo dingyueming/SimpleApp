@@ -19,6 +19,10 @@ namespace Simple.ExEntity.SM
         /// </summary>
         public string MenusName { get; set; }
         /// <summary>
+        /// 菜单图标
+        /// </summary>
+        public string MenusIcon { get; set; }
+        /// <summary>
         /// 菜单地址
         /// </summary>
         public string MenusUrl { get; set; }

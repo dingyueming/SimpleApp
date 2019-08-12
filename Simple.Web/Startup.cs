@@ -75,7 +75,7 @@ namespace Simple.Web
                     //需要自定义登陆以及登出页面修改这里
                     //o.LoginPath = new PathString("/Account/Login");
                     //o.AccessDeniedPath = new PathString("/Error/Forbidden");
-                    o.ExpireTimeSpan = DateTimeOffset.UtcNow.AddMinutes(5) - DateTimeOffset.UtcNow;
+                    o.ExpireTimeSpan = DateTimeOffset.UtcNow.AddMinutes(30) - DateTimeOffset.UtcNow;
                 });
 
             #endregion
