@@ -286,8 +286,8 @@ desired effect
                     <small>@ViewBag.SubTitle</small>
                 </h1>
                 <ol class="breadcrumb">
-                    <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
-                    <li class="active">Here</li>
+                    <li><a href="#"><i class="fa fa-vimeo-square"></i> Version</a></li>
+                    <li class="active">@ViewBag.Version</li>
                 </ol>
             </section>
             <!-- Main content -->
@@ -394,21 +394,20 @@ desired effect
         var vm = new Vue({
             el: '#menudiv',
             data: {
-                isActive:true,
                 menus: [],
             },
             methods: {
                 QueryMenus: function (param) {
-                    vm.isActive = false;
                     axios.post('@Url.Action("QueryMenus","_Layout")', {}).then(function (response) {
                         response.data.forEach(function (menu, index) {
+                            var arrUrl = [];
                             menu.childMenus.forEach(function (childMenu, index) {
                                 if (childMenu.menusUrl == param) {
-                                    vm.isActive = true;
+                                    childMenu.isActive = true;
                                 }
-                                childMenu.isActive = vm.isActive;
+                                arrUrl.push(childMenu.menusUrl);
                             });
-                            menu.isActive = vm.isActive;
+                            menu.isActive = arrUrl.indexOf(param) > -1;
                             vm.menus.push(menu);
                         });
                         console.log(vm.menus);
