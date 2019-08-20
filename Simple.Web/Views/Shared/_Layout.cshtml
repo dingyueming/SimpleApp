@@ -28,6 +28,8 @@ scratch. This page gets reditorid of all links and provides the needed markup on
     <script src="~/dist/js/html5shiv.min.js"></script>
     <script src="~/dist/js/respond.min.js"></script>
     <![endif]-->
+    <!-- jQuery 3 -->
+    <script src="~/bower_components/jquery/dist/jquery.min.js"></script>
     <!-- Google Font -->
     <link rel="stylesheet" href="~/dist/css/GoogleFonts.css">
     <!--Vue开发版本-->
@@ -286,7 +288,7 @@ desired effect
                     <small>@ViewBag.SubTitle</small>
                 </h1>
                 <ol class="breadcrumb">
-                    <li><a href="#"><i class="fa fa-vimeo-square"></i> Version</a></li>
+                    <li><i class="fa fa-vimeo-square"></i> Version</li>
                     <li class="active">@ViewBag.Version</li>
                 </ol>
             </section>
@@ -381,8 +383,7 @@ desired effect
     </div>
     <!-- ./wrapper -->
     <!-- REQUIRED JS SCRIPTS -->
-    <!-- jQuery 3 -->
-    <script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+    
     <!-- Bootstrap 3.3.7 -->
     <script src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- AdminLTE App -->
@@ -391,7 +392,7 @@ desired effect
          Both of these plugins are recommended to enhance the
          user experience. -->
     <script type="text/javascript">
-        var vm = new Vue({
+        var vmLayout = new Vue({
             el: '#menudiv',
             data: {
                 menus: [],
@@ -408,9 +409,9 @@ desired effect
                                 arrUrl.push(childMenu.menusUrl);
                             });
                             menu.isActive = arrUrl.indexOf(param) > -1;
-                            vm.menus.push(menu);
+                            vmLayout.menus.push(menu);
                         });
-                        console.log(vm.menus);
+                        console.log(vmLayout.menus);
                     }).catch(function (error) {
                         console.log(error);
                     });
@@ -421,7 +422,7 @@ desired effect
             }
         });
         $(function () {
-            vm.QueryMenus(window.location.href);
+            vmLayout.QueryMenus(window.location.href);
         })
     </script>
 </body>

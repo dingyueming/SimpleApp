@@ -4,6 +4,28 @@
     ViewBag.Version = "20190813";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div id="bodyDiv">
+    <h2>{{vm.message}}</h2>
+</div>
 
-<h2>About</h2>
 
+<script type="text/javascript">
+    var vm = new Vue({
+        el: '#bodyDiv',
+        data: {
+            // declare message with an empty value
+            message: ''
+        },
+        methods: {
+            SetMsgValue: function () {
+                vm.message = "123";
+            },
+        },
+        template: '<div>{{ message }}</div>'
+    });
+    $(function () {
+        vm.SetMsgValue();
+        //vm.message = "123";
+        debugger;
+    });
+</script>
