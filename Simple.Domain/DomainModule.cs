@@ -21,7 +21,7 @@ namespace Simple.Domain
             //注册automapper
             IConfigurationProvider config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<SimpleProfile>();
+                cfg.AddProfile<AutoMapperProfile>();
             });
             builder.RegisterInstance(config);
             builder.RegisterType<Mapper>().AsImplementedInterfaces();

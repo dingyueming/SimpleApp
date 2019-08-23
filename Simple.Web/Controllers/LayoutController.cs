@@ -7,10 +7,10 @@ using Simple.IApplication.SM;
 
 namespace Simple.Web.Controllers
 {
-    public class _LayoutController : SimpleBaseController
+    public class LayoutController : SimpleBaseController
     {
         private readonly IMenusService menusService;
-        public _LayoutController(IMenusService menusService)
+        public LayoutController(IMenusService menusService)
         {
             this.menusService = menusService;
         }
