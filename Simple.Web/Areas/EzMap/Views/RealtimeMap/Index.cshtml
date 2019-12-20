@@ -1,0 +1,185 @@
+﻿
+@{
+    ViewData["Title"] = "实时监控";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Version"] = "20191219";
+}
+<link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.css">
+<script src="http://39.104.61.84:9001/EzServerClient/lib/EzMapAPI.js"></script>
+<script src="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.js"></script>
+<!-- Main row -->
+<div class="row">
+    <!-- /.col -->
+    <div class="col-md-2">
+        <!-- Info Boxes Style 2 -->
+        <!-- PRODUCT LIST -->
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h4 class="box-title">设备列表</h4>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div style="height:459px;">
+
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-md-10">
+        <!-- MAP & BOX PANE -->
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h4 class="box-title">实时地图</h4>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="pad">
+                            <!-- Map will be created here -->
+                            <!-- 提供地图容器，其中地图容器必须提供id号，用于生成地图 -->
+                            <div id="map" style="width:100%;height:459px;"></div>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">实时定位数据</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+                <table class="table table-condensed">
+                    <tr>
+                        <th style="width: 10px">#</th>
+                        <th>Task</th>
+                        <th>Progress</th>
+                        <th style="width: 40px">Label</th>
+                    </tr>
+                    <tr>
+                        <td>1.</td>
+                        <td>Update software</td>
+                        <td>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-red">55%</span></td>
+                    </tr>
+                    <tr>
+                        <td>2.</td>
+                        <td>Clean database</td>
+                        <td>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-yellow">70%</span></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td>Cron job running</td>
+                        <td>
+                            <div class="progress progress-xs progress-striped active">
+                                <div class="progress-bar progress-bar-primary" style="width: 30%"></div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-light-blue">30%</span></td>
+                    </tr>
+                    <tr>
+                        <td>4.</td>
+                        <td>Fix and squish bugs</td>
+                        <td>
+                            <div class="progress progress-xs progress-striped active">
+                                <div class="progress-bar progress-bar-success" style="width: 90%"></div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-green">90%</span></td>
+                    </tr>
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+<script>
+    /**
+     * 这里的map为上文HTML中新建的地图容器ID号；
+     * 下面一行代码便可以加载地图到browser上,前提是
+     * 在EzMapAPI.js中设置了相应的参数（具体查看EzMapAPI.js）
+     */
+    var map = new EzMap("map");
+    // 添加地图控件 (级别控制条，也可以选择不添加)
+    map.showStandMapControl();
+    //marker点
+    var position = new EzCoord(116.24765, 39.94921);
+    var icon = new EzIcon({
+        src: '@Url.Content("~/plugins/ezMap/images/run.png")',
+        anchor: [0.5, 1],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'fraction',
+        opacity: 1
+    });
+    var marker = new EzMarker(position,icon);
+    map.addOverlay(marker);
+    //增加监听事件
+    //map.addMapEventListener(Ez.Event.MAP_MOUSEMOVE, function(evt) {
+    //    var pixel = evt.pixel;
+    //    var marker = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+    //        if (feature instanceof EzMarker) {
+    //            return feature;
+    //        }
+    //    });
+    //    if (marker) {
+    //        this.getViewport().style.cursor = 'pointer';
+    //    } else {
+    //        this.getViewport().style.cursor = '';
+    //    }
+    //});
+    var strHTML1 = '<div>我是一个marker</div>';
+    var strHTML2 = '<div>我是一个marker</div><div style="background-color:red;width:100%;height:5px;">haha</div>'
+    var strhtml = strHTML2;
+    map.addMapEventListener(Ez.Event.MAP_CLICK, function(evt) {
+        var pixel = evt.pixel;
+        var coord = evt.coordinate;
+        var marker = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+            if (feature instanceof EzMarker) {
+                return feature;
+            }
+        });
+        if (marker) {
+            //通过单击marker时打开popup
+            marker.openInfoWindow(strhtml);
+        }
+    });
+
+</script>
+

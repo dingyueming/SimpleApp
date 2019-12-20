@@ -1677,6 +1677,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\EzMap\Data\" />
+    <Folder Include="Areas\EzMap\Models\" />
     <Folder Include="Areas\SysManager\Controllers\" />
     <Folder Include="Areas\SysManager\Data\" />
     <Folder Include="Areas\SysManager\Models\" />
