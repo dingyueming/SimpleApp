@@ -1667,11 +1667,13 @@
     <PackageReference Include="IdentityServer4" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.10" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Simple.Application\Simple.Application.csproj" />
+    <ProjectReference Include="..\Simple.Common\Simple.Common.csproj" />
     <ProjectReference Include="..\Simple.IApplication\Simple.IApplication.csproj" />
     <ProjectReference Include="..\Simple.Infrastructure\Simple.Infrastructure.csproj" />
   </ItemGroup>
@@ -1679,10 +1681,6 @@
   <ItemGroup>
     <Folder Include="Areas\EzMap\Data\" />
     <Folder Include="Areas\EzMap\Models\" />
-    <Folder Include="Areas\SysManager\Controllers\" />
-    <Folder Include="Areas\SysManager\Data\" />
-    <Folder Include="Areas\SysManager\Models\" />
-    <Folder Include="Areas\SysManager\Views\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

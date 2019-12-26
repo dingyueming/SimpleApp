@@ -17,9 +17,13 @@ namespace Simple.Web
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:6542")
-                .UseStartup<Startup>();
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            var configuration = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory)
+                                          .AddJsonFile("host.json")
+                                          .Build();
+            return WebHost.CreateDefaultBuilder(args).UseUrls(configuration["url"])
+                                                     .UseStartup<Startup>();
+        }
     }
 }

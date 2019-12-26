@@ -10,9 +10,15 @@ namespace Simple.IDomain
 {
     public interface ISmDomainService
     {
-        void AddUser();
 
         Task<List<UsersExEntity>> GetAllUsers();
+
+        #region 用户管理
+
+        Task<List<AuthExEntity>> GetAllAuthUsers();
+
+        #endregion
+
         #region 菜单管理
 
         /// <summary>

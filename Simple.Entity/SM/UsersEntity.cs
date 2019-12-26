@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Simple.Entity
 {
+    [Table("TB_USERS")]
     public class UsersEntity
     {
         /// <summary>
         /// 用户ID
         /// </summary>
+        [Key]
         public int UsersId { get; set; }
         /// <summary>
         /// 用户名

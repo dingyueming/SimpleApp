@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Simple.Entity
 {
+    [Table("TB_MENUS")]
     public class MenusEntity
     {
         /// <summary>
         /// 菜单ID
         /// </summary>
+        [Key]
         public int MenusId { get; set; }
         /// <summary>
         /// 父级菜单ID
@@ -26,6 +29,10 @@ namespace Simple.Entity
         /// 菜单地址
         /// </summary>
         public string MenusUrl { get; set; }
+        /// <summary>
+        /// 排序
+        /// </summary>
+        public int OrderIndex { get; set; }
         /// <summary>
         /// 数据状态
         /// </summary>

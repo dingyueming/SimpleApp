@@ -1,4 +1,5 @@
 ﻿using Simple.ExEntity;
+using Simple.ExEntity.SM;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Simple.IApplication.SM
 {
-    public interface IUserService
+    public interface IAuthService
     {
         void Add();
 
-        Task<List<UsersExEntity>> GetAllUsers();
+        Task<List<AuthExEntity>> GetAllUsers();
     }
 }

@@ -23,30 +23,45 @@ namespace Simple.Domain
         private readonly IMapper mapper;
         private readonly IUserRepository userRepository;
         private readonly IMenusRepository menusRepository;
+        private readonly IAuthRepository authRepository;
         private readonly IConfiguration configuration;
-        public SmDomainService(IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository)
+        public SmDomainService(IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository
+            , IAuthRepository authRepository)
         {
             this.mapper = mapper;
             this.userRepository = userRepository;
             this.menusRepository = menusRepository;
             this.configuration = configuration;
+            this.authRepository = authRepository;
         }
 
         #endregion
 
         #region 用户管理
 
-        public void AddUser()
-        {
-            userRepository.Add(new UsersEntity());
-        }
-
-
         public async Task<List<UsersExEntity>> GetAllUsers()
         {
-            var usersEntities = await userRepository.GetAll();
+            var usersEntities = await userRepository.GetAllAsync();
             var userExEntities = mapper.Map<List<UsersExEntity>>(usersEntities);
             return userExEntities;
+        }
+
+        #endregion
+
+        #region 用户管理Auth
+
+        //public void AddUser()
+        //{
+        //    userRepository.Add(new UsersEntity());
+        //}
+
+
+        public async Task<List<AuthExEntity>> GetAllAuthUsers()
+        {
+            //var authEntities = await authRepository();
+            //var authExEntities = mapper.Map<List<AuthExEntity>>(authEntities);
+            //return authExEntities;
+            return null;
         }
 
         #endregion
@@ -55,17 +70,16 @@ namespace Simple.Domain
 
         public async Task<List<MenusExEntity>> GetAllMenus()
         {
-            var list = await menusRepository.GetAll();
-            var exList = mapper.Map<List<MenusExEntity>>(list);
+            var list = await menusRepository.GetAllAsync();
+            var exList = mapper.Map<List<MenusExEntity>>(list).ToList();
             exList.ForEach(x =>
-            {
-                x.ChildMenus = exList.Where(o => o.ParentId == x.MenusId).ToList();
-                var localUrl = configuration["localUrl"];
-                x.MenusUrl = localUrl + x.MenusUrl;
-            });
+              {
+                  x.ChildMenus = exList.Where(o => o.ParentId == x.MenusId).ToList().OrderBy(o => o.OrderIndex).ToList();
+                  var localUrl = configuration["localUrl"];
+                  x.MenusUrl = localUrl + x.MenusUrl;
+              });
             return exList.Where(x => x.ParentId == 0).ToList();
         }
-
         #endregion
     }
 }

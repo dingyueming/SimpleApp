@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Simple.Application;
 using Simple.Infrastructure;
+using Simple.Web.Other;
 using System;
 using System.IO;
 
@@ -34,6 +35,12 @@ namespace Simple.Web
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            #region SignalR
+
+            services.AddSignalR().AddJsonProtocol();
+
+            #endregion
 
             #region Ids4（暂不用）
 
@@ -117,6 +124,11 @@ namespace Simple.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            app.UseSignalR(route =>
+            {
+                route.MapHub<MapHub>("/mapHub");
+            });
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

@@ -16,7 +16,6 @@ namespace Simple.Application.SM
         }
         public void Add()
         {
-            _smDomainService.AddUser();
             throw new NotImplementedException();
         }
 

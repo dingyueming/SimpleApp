@@ -5,29 +5,30 @@ using System.Text;
 using System.Threading.Tasks;
 using Simple.Entity;
 using Simple.Infrastructure;
+using Simple.Infrastructure.Dapper.Contrib;
 using Simple.IRepository.SM;
 
 namespace Simple.Repository.SM
 {
-    public class UsersRepository : IUserRepository
+    public class UsersRepository : BaseRepository<UsersEntity>, IUserRepository
     {
-        private DbContextFactory dbContextFactory { get; set; }
-        public UsersRepository(DbContextFactory dbContextFactory)
+        public UsersRepository(ConnectionFactory connectionFactory) : base(connectionFactory)
         {
-            this.dbContextFactory = dbContextFactory;
+            //base.PrimaryKey=
         }
+
+
+
         public async Task<int> Add(UsersEntity entity)
         {
-            var dbContext = dbContextFactory.Default;
-            var id = await dbContext.Users.InsertAsync(entity);
-            return id ?? 0;
+            var id = await base.InsertAsync(entity);
+            return 0;
         }
 
         public async Task<List<UsersEntity>> GetAll()
         {
-            var dbContext = dbContextFactory.Default;
-            var list = await dbContext.Users.AllAsync();
-            return list.ToList();
+            var result = await base.GetAllAsync();
+            return result.ToList();
         }
     }
 }

@@ -1,0 +1,345 @@
+[
+  {
+    "NO": 205,
+    "EDESC": "北斗号码不存在",
+    "DESC_EN": null,
+    "DESC_CN": null,
+    "EDESC_RUS": null
+  },
+  {
+    "NO": 37,
+    "EDESC": "没有该终端",
+    "DESC_EN": "No this Terminal",
+    "DESC_CN": "没有该终端",
+    "EDESC_RUS": "Отсутствие терминала"
+  },
+  {
+    "NO": 1,
+    "EDESC": "密码更新失败",
+    "DESC_EN": "failed to change password",
+    "DESC_CN": "密码更新失败",
+    "EDESC_RUS": "Изменение пароля закончилось неуспешно"
+  },
+  {
+    "NO": 2,
+    "EDESC": "消息长度错误",
+    "DESC_EN": "message length is incorrect",
+    "DESC_CN": "消息长度错误",
+    "EDESC_RUS": "Ошибка длины сообщения\nЗапрос к базе данных не удался"
+  },
+  {
+    "NO": 3,
+    "EDESC": "数据库查询失败",
+    "DESC_EN": "failed to query database",
+    "DESC_CN": "数据库查询失败",
+    "EDESC_RUS": "Запрос к базе данных не удался"
+  },
+  {
+    "NO": 4,
+    "EDESC": "用户名或密码错误",
+    "DESC_EN": "username or password is incorrect",
+    "DESC_CN": "用户名或密码错误",
+    "EDESC_RUS": "Неверный логин или пароль"
+  },
+  {
+    "NO": 5,
+    "EDESC": "用户连接超时",
+    "DESC_EN": "connecting is timeout ",
+    "DESC_CN": "用户连接超时",
+    "EDESC_RUS": "Тайм-аут подключения"
+  },
+  {
+    "NO": 6,
+    "EDESC": "用户号错误",
+    "DESC_EN": "usercode is incorrect",
+    "DESC_CN": "用户号错误",
+    "EDESC_RUS": "Неверный номер пользователя"
+  },
+  {
+    "NO": 7,
+    "EDESC": "旧密码错误",
+    "DESC_EN": "old password is incorrect",
+    "DESC_CN": "旧密码错误",
+    "EDESC_RUS": "Старый пароль неверен"
+  },
+  {
+    "NO": 8,
+    "EDESC": "新密码长度错误",
+    "DESC_EN": "new password's length is incorrect",
+    "DESC_CN": "新密码长度错误",
+    "EDESC_RUS": "Неверная длина нового пароля"
+  },
+  {
+    "NO": 10,
+    "EDESC": "密码认证失败",
+    "DESC_EN": "failed to verify password",
+    "DESC_CN": "密码认证失败",
+    "EDESC_RUS": "Безуспешная идентификации пароля"
+  },
+  {
+    "NO": 11,
+    "EDESC": "密码长度错误",
+    "DESC_EN": "password's lenght is incorrect",
+    "DESC_CN": "密码长度错误",
+    "EDESC_RUS": "Неверная длина пароля"
+  },
+  {
+    "NO": 12,
+    "EDESC": "同时只能允许一个终端设置程序",
+    "DESC_EN": "only one terminal setting program should be permitted",
+    "DESC_CN": "同时只能允许一个终端设置程序",
+    "EDESC_RUS": "Одновременно разрешить только одиной программе настройки терминала"
+  },
+  {
+    "NO": 13,
+    "EDESC": "无效的接入类型",
+    "DESC_EN": "invalid connection type",
+    "DESC_CN": "无效的接入类型",
+    "EDESC_RUS": "Неверный тип доступа"
+  },
+  {
+    "NO": 14,
+    "EDESC": "无效的命令",
+    "DESC_EN": "invalid order",
+    "DESC_CN": "无效的命令",
+    "EDESC_RUS": "Неверная команда"
+  },
+  {
+    "NO": 15,
+    "EDESC": "用户已经在线",
+    "DESC_EN": "user has been online",
+    "DESC_CN": "用户已经在线",
+    "EDESC_RUS": "Пользователи уже онлайн"
+  },
+  {
+    "NO": 16,
+    "EDESC": "停止监控失败，无效的状态",
+    "DESC_EN": "failed to stop monitoring,invalid state",
+    "DESC_CN": "停止监控失败，无效的状态",
+    "EDESC_RUS": "Не удалось остановить мониторинг, недопустимое состояние"
+  },
+  {
+    "NO": 17,
+    "EDESC": "停止监控失败，异常",
+    "DESC_EN": "failed to stop monitoring,abnormal state",
+    "DESC_CN": "停止监控失败，异常",
+    "EDESC_RUS": "Не удалось остановить мониторинг, ненормально"
+  },
+  {
+    "NO": 18,
+    "EDESC": "终端标识号错误",
+    "DESC_EN": "terminal ID is incorrect",
+    "DESC_CN": "终端标识号错误",
+    "EDESC_RUS": "Ошибка идентификации номера терминала"
+  },
+  {
+    "NO": 19,
+    "EDESC": "无效的车台类型",
+    "DESC_EN": "invalid car type",
+    "DESC_CN": "无效的车台类型",
+    "EDESC_RUS": "Неверный тип автомобиля"
+  },
+  {
+    "NO": 20,
+    "EDESC": "已达到系统终端容量",
+    "DESC_EN": "system has been added to  the maximal terminal car's number",
+    "DESC_CN": "已达到系统终端容量",
+    "EDESC_RUS": "Емкость системы терминала была достигнута"
+  },
+  {
+    "NO": 21,
+    "EDESC": "数据包格式错误",
+    "DESC_EN": "package format is incorrect",
+    "DESC_CN": "数据包格式错误",
+    "EDESC_RUS": "Ошибка формата данного пакета"
+  },
+  {
+    "NO": 22,
+    "EDESC": "找不到对应的终端协议解释程序",
+    "DESC_EN": "can not find the corresponding  protocol ",
+    "DESC_CN": "找不到对应的终端协议解释程序",
+    "EDESC_RUS": "Не найден соответствующий программе терминала протокол объяснения"
+  },
+  {
+    "NO": 23,
+    "EDESC": "通信代理或分中心错误",
+    "DESC_EN": "communication agent or subcenter is incorrect",
+    "DESC_CN": "通信代理或分中心错误",
+    "EDESC_RUS": "Ошибка связи агентов или  центрально-сервисная"
+  },
+  {
+    "NO": 24,
+    "EDESC": "校验和错误",
+    "DESC_EN": "check sum is incorrect",
+    "DESC_CN": "校验和错误",
+    "EDESC_RUS": "Проверка и ошибок"
+  },
+  {
+    "NO": 25,
+    "EDESC": "不允许的权限",
+    "DESC_EN": "no right to visit",
+    "DESC_CN": "不允许的权限",
+    "EDESC_RUS": "Запрещенные полномочия"
+  },
+  {
+    "NO": 26,
+    "EDESC": "无效的监控类型",
+    "DESC_EN": "invalid monitor type",
+    "DESC_CN": "无效的监控类型",
+    "EDESC_RUS": "Неверный тип монитора"
+  },
+  {
+    "NO": 27,
+    "EDESC": "无效的监控参数",
+    "DESC_EN": "invalid monitor parameter",
+    "DESC_CN": "无效的监控参数",
+    "EDESC_RUS": "Неверные параметры мониторинга"
+  },
+  {
+    "NO": 28,
+    "EDESC": "系统已达到最大坐席限制",
+    "DESC_EN": "system has been added to  the maximal client's number",
+    "DESC_CN": "系统已达到最大坐席限制",
+    "EDESC_RUS": "Система достигла максимальных пределов пользователей"
+  },
+  {
+    "NO": 30,
+    "EDESC": "不支持的指令",
+    "DESC_EN": "unsupported order",
+    "DESC_CN": "不支持的指令",
+    "EDESC_RUS": "Не поддерживаемые инструкции"
+  },
+  {
+    "NO": 31,
+    "EDESC": "终端不在线",
+    "DESC_EN": "terminal car is not on line",
+    "DESC_CN": "终端不在线",
+    "EDESC_RUS": "Терминал не онлайн"
+  },
+  {
+    "NO": 32,
+    "EDESC": "监听电话错误",
+    "DESC_EN": "monitor telephone is incorrect",
+    "DESC_CN": "监听电话错误",
+    "EDESC_RUS": "Ошибка информации телефона мониторинга"
+  },
+  {
+    "NO": 33,
+    "EDESC": "分机号码错误",
+    "DESC_EN": "extension code is incorrect",
+    "DESC_CN": "分机号码错误",
+    "EDESC_RUS": "Ошибка внутренний телефон"
+  },
+  {
+    "NO": 29,
+    "EDESC": "处理异常",
+    "DESC_EN": "deal with Exception",
+    "DESC_CN": "处理异常",
+    "EDESC_RUS": "Исключеная обработка"
+  },
+  {
+    "NO": 34,
+    "EDESC": "命令超时",
+    "DESC_EN": "commnd timeout",
+    "DESC_CN": "命令超时",
+    "EDESC_RUS": "Тайм-аут команды"
+  },
+  {
+    "NO": 35,
+    "EDESC": "短信发送失败",
+    "DESC_EN": "Send Short message is failed ",
+    "DESC_CN": "短信发送失败",
+    "EDESC_RUS": "Отправить сообщение не удалось"
+  },
+  {
+    "NO": 36,
+    "EDESC": "终端返回错误",
+    "DESC_EN": "Error from terminal",
+    "DESC_CN": "终端返回错误",
+    "EDESC_RUS": "Терминал возвращает ошибку"
+  },
+  {
+    "NO": 9,
+    "EDESC": "消息过长只能发送140个字节",
+    "DESC_EN": null,
+    "DESC_CN": "消息过长只能发送140个字节",
+    "EDESC_RUS": "Слишком длинное сообщение, можно отправлять только 140 байт"
+  },
+  {
+    "NO": 0,
+    "EDESC": "成功",
+    "DESC_EN": null,
+    "DESC_CN": null,
+    "EDESC_RUS": "Завершено"
+  },
+  {
+    "NO": 100,
+    "EDESC": "向中心发送指令失败",
+    "DESC_EN": null,
+    "DESC_CN": "向中心发送指令失败",
+    "EDESC_RUS": "Не удалось отправить команды в центр"
+  },
+  {
+    "NO": 38,
+    "EDESC": "不支持的区域类型",
+    "DESC_EN": null,
+    "DESC_CN": "不支持的区域类型",
+    "EDESC_RUS": "Типа области который Не поддерживается"
+  },
+  {
+    "NO": 39,
+    "EDESC": "终端已达到最大区域数",
+    "DESC_EN": null,
+    "DESC_CN": null,
+    "EDESC_RUS": "Терминал достигнуто максимальное количество зон"
+  },
+  {
+    "NO": 200,
+    "EDESC": "失败(终端)",
+    "DESC_EN": null,
+    "DESC_CN": null,
+    "EDESC_RUS": "Отказ (терминал)"
+  },
+  {
+    "NO": 201,
+    "EDESC": "消息有误(终端)",
+    "DESC_EN": null,
+    "DESC_CN": null,
+    "EDESC_RUS": "Сообщение по ошибке (терминал)"
+  },
+  {
+    "NO": 202,
+    "EDESC": "不支持(终端)",
+    "DESC_EN": null,
+    "DESC_CN": null,
+    "EDESC_RUS": "Не поддерживается (терминал)"
+  },
+  {
+    "NO": 203,
+    "EDESC": "超时(终端返回)",
+    "DESC_EN": null,
+    "DESC_CN": null,
+    "EDESC_RUS": "Время ожидания ответа (терминал)"
+  },
+  {
+    "NO": 40,
+    "EDESC": "正在取图片，指令被忽略",
+    "DESC_EN": null,
+    "DESC_CN": null,
+    "EDESC_RUS": "Повторно Фотосъемка, инструкция игнорируется"
+  },
+  {
+    "NO": 204,
+    "EDESC": "电子锁中控器返回失败",
+    "DESC_EN": null,
+    "DESC_CN": null,
+    "EDESC_RUS": null
+  },
+  {
+    "NO": 41,
+    "EDESC": "110接警用户不在线",
+    "DESC_EN": null,
+    "DESC_CN": "110接警用户不在线",
+    "EDESC_RUS": null
+  }
+]

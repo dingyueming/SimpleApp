@@ -27,6 +27,10 @@ namespace Simple.ExEntity.SM
         /// </summary>
         public string MenusUrl { get; set; }
         /// <summary>
+        /// 排序
+        /// </summary>
+        public int OrderIndex { get; set; }
+        /// <summary>
         /// 数据状态
         /// </summary>
         public int Status { get; set; }

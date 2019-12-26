@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Autofac;
+using Simple.Infrastructure.Dapper.Contrib;
 
 namespace Simple.Infrastructure
 {
@@ -11,6 +12,8 @@ namespace Simple.Infrastructure
         {
             builder.RegisterType<DbContext>().AsImplementedInterfaces().PropertiesAutowired();
             builder.RegisterType<DbContextFactory>().PropertiesAutowired();
+
+            builder.RegisterType<ConnectionFactory>().PropertiesAutowired();
         }
     }
 }

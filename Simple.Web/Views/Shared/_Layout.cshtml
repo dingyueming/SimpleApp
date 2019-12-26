@@ -8,7 +8,7 @@ scratch. This page gets reditorid of all links and provides the needed markup on
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Simple.Application</title>
+    <title>全球卫星定位系统</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="~/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -63,9 +63,9 @@ desired effect
             <!-- Logo -->
             <a href="#" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><b>A</b>LT</span>
+                <span class="logo-mini"><b>GNSS</b></span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>Admin</b>LTE</span>
+                <span class="logo-lg"><b>GNSS</b>定位系统</span>
             </a>
             <!-- Header Navbar -->
             <nav class="navbar navbar-static-top" role="navigation">
@@ -293,7 +293,7 @@ desired effect
                 </ol>
             </section>
             <!-- Main content -->
-            <section class="content container-fluid">
+            <section class="content container-fluid" id="vmContent">
                 <!--------------------------
                 | Your Page Content Here |
                 -------------------------->
@@ -303,14 +303,14 @@ desired effect
         </div>
         <!-- /.content-wrapper -->
         <!-- Main Footer -->
-        <footer class="main-footer">
+        @*<footer class="main-footer">
             <!-- To the right -->
             <div class="pull-right hidden-xs">
                 Anything you want
             </div>
             <!-- Default to the left -->
             <strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
-        </footer>
+        </footer>*@
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">
             <!-- Create the tabs -->
@@ -383,7 +383,6 @@ desired effect
     </div>
     <!-- ./wrapper -->
     <!-- REQUIRED JS SCRIPTS -->
-    
     <!-- Bootstrap 3.3.7 -->
     <script src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- AdminLTE App -->
@@ -400,6 +399,7 @@ desired effect
             methods: {
                 QueryMenus: function (param) {
                     axios.post('@Url.Action("QueryMenus","Layout")', {}).then(function (response) {
+                        console.log(response);
                         response.data.forEach(function (menu, index) {
                             var arrUrl = [];
                             menu.childMenus.forEach(function (childMenu, index) {

@@ -5,8 +5,13 @@
     ViewData["Version"] = "20191219";
 }
 <link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.css">
+<link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/mapDemopage/css/popup.css">
 <script src="http://39.104.61.84:9001/EzServerClient/lib/EzMapAPI.js"></script>
 <script src="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.js"></script>
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/plugins/ezMap/js/MapTools.js"></script>
+<script src="~/plugins/bootstrap-treeview/bootstrap-treeview.js"></script>
+@*tree*@
 <!-- Main row -->
 <div class="row">
     <!-- /.col -->
@@ -16,7 +21,6 @@
         <div class="box box-primary">
             <div class="box-header with-border">
                 <h4 class="box-title">设备列表</h4>
-
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
                         <i class="fa fa-minus"></i>
@@ -25,7 +29,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-                <div style="height:459px;">
+                <div style="height:459px; overflow:auto;" id="tree">
 
                 </div>
             </div>
@@ -75,7 +79,7 @@
                 </div>
             </div>
             <!-- /.box-header -->
-            <div class="box-body no-padding">
+            <div class="box-body no-padding" style="overflow:auto; height:200px;">
                 <table class="table table-condensed">
                     <tr>
                         <th style="width: 10px">#</th>
@@ -91,7 +95,9 @@
                                 <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
                             </div>
                         </td>
-                        <td><span class="badge bg-red">55%</span></td>
+                        <td>
+                            <span class="badge bg-red">55%</span>
+                        </td>
                     </tr>
                     <tr>
                         <td>2.</td>
@@ -101,7 +107,9 @@
                                 <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
                             </div>
                         </td>
-                        <td><span class="badge bg-yellow">70%</span></td>
+                        <td>
+                            <span class="badge bg-yellow">70%</span>
+                        </td>
                     </tr>
                     <tr>
                         <td>3.</td>
@@ -111,7 +119,9 @@
                                 <div class="progress-bar progress-bar-primary" style="width: 30%"></div>
                             </div>
                         </td>
-                        <td><span class="badge bg-light-blue">30%</span></td>
+                        <td>
+                            <span class="badge bg-light-blue">30%</span>
+                        </td>
                     </tr>
                     <tr>
                         <td>4.</td>
@@ -121,7 +131,57 @@
                                 <div class="progress-bar progress-bar-success" style="width: 90%"></div>
                             </div>
                         </td>
-                        <td><span class="badge bg-green">90%</span></td>
+                        <td>
+                            <span class="badge bg-green">90%</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2.</td>
+                        <td>Clean database</td>
+                        <td>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-yellow">70%</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td>Cron job running</td>
+                        <td>
+                            <div class="progress progress-xs progress-striped active">
+                                <div class="progress-bar progress-bar-primary" style="width: 30%"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light-blue">30%</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4.</td>
+                        <td>Fix and squish bugs</td>
+                        <td>
+                            <div class="progress progress-xs progress-striped active">
+                                <div class="progress-bar progress-bar-success" style="width: 90%"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-green">90%</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4.</td>
+                        <td>Fix and squish bugs</td>
+                        <td>
+                            <div class="progress progress-xs progress-striped active">
+                                <div class="progress-bar progress-bar-success" style="width: 90%"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-green">90%</span>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -131,6 +191,40 @@
 </div>
 <!-- /.row -->
 <script>
+    //定义全局变量
+    var deviceList;//定位设备列表
+    //获取当前用户所拥有的设备
+    function getDeviceList(callback) {
+        $.ajax({
+            type: 'post',
+            url: '@Url.Page("/CarStatus", "CarList", new { area="EmergencyCommand"})',
+            headers: { "RequestVerificationToken": GetRequestVerificationToken() },
+            data: {},
+            success: function (datas) {
+                carList = datas;
+                //if (isFunction(callback))
+                callback();
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+    }
+    //获取设备最后一次定位的数据
+    function getLastTrackList(callback) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Page("/CarStatus", "CarTrack", new { area="EmergencyCommand"})',
+            headers: { "RequestVerificationToken": GetRequestVerificationToken() },
+            success: function (datas) {
+                //if (isFunction(callback))
+                callback(datas);
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+    }
     /**
      * 这里的map为上文HTML中新建的地图容器ID号；
      * 下面一行代码便可以加载地图到browser上,前提是
@@ -139,47 +233,217 @@
     var map = new EzMap("map");
     // 添加地图控件 (级别控制条，也可以选择不添加)
     map.showStandMapControl();
-    //marker点
-    var position = new EzCoord(116.24765, 39.94921);
-    var icon = new EzIcon({
-        src: '@Url.Content("~/plugins/ezMap/images/run.png")',
-        anchor: [0.5, 1],
-        anchorXUnits: 'fraction',
-        anchorYUnits: 'fraction',
-        opacity: 1
-    });
-    var marker = new EzMarker(position,icon);
-    map.addOverlay(marker);
-    //增加监听事件
-    //map.addMapEventListener(Ez.Event.MAP_MOUSEMOVE, function(evt) {
-    //    var pixel = evt.pixel;
-    //    var marker = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
-    //        if (feature instanceof EzMarker) {
-    //            return feature;
-    //        }
-    //    });
-    //    if (marker) {
-    //        this.getViewport().style.cursor = 'pointer';
-    //    } else {
-    //        this.getViewport().style.cursor = '';
-    //    }
-    //});
-    var strHTML1 = '<div>我是一个marker</div>';
-    var strHTML2 = '<div>我是一个marker</div><div style="background-color:red;width:100%;height:5px;">haha</div>'
-    var strhtml = strHTML2;
-    map.addMapEventListener(Ez.Event.MAP_CLICK, function(evt) {
-        var pixel = evt.pixel;
-        var coord = evt.coordinate;
-        var marker = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
-            if (feature instanceof EzMarker) {
-                return feature;
+    //设置地图级别
+    map.zoomTo(5);
+    //设置中心点
+    var centerCoord = new EzCoord(116, 40);
+    map.centerAtLatlng(centerCoord);
+    //获取当前用户所要定位的设备
+    getDeviceList(function () {
+        //获取设备最后一次定位的数据
+        getLastTrackList(function (lastTrackList) {
+            if (Array.isArray(lastTrackList)) {
+                lastTrackList.forEach(function (lastTrackData, index, arr) {
+                    var device = getDeviceByMac(lastTrackData.MAC);
+                    if (device) {
+                        device.lastTrackData = lastTrackData;
+                        var icon = new EzIcon({
+                            src: '@Url.Content("~/plugins/ezMap/images/")'+getCarStateIcon(data),//item.iconImage
+                            anchor: [0.5, 1],
+                            anchorXUnits: 'fraction',
+                            anchorYUnits: 'fraction',
+                            opacity: 1
+                        });
+                        //marker点
+                        var position = new EzCoord(lastTrackData.LONGITUDE, lastTrackData.LATITUDE);
+                        var marker = new EzMarker(position, icon);
+                        map.addOverlay(marker);
+                        device.marker = marker;
+                    }
+                });
             }
         });
-        if (marker) {
-            //通过单击marker时打开popup
-            marker.openInfoWindow(strhtml);
-        }
     });
+    //更新设备位置
+    function updateGpsData(lastTrackData) {
+        if (!checkLoLa(data.LONGITUDE, data.LATITUDE)) return;
+        var device = getDeviceByMac(data.MAC);
+        if (device) {
+            device.lastTrackData = lastTrackData;
+            var newpos = new EzCoord(lastTrackData.LONGITUDE, lastTrackData.LATITUDE);
+            device.marker.setPoint(newpos);
+        }
+    }
+    //更新实时定位数据
+    function updateGpsTable(lastTrackData) {
 
+    }
+    //根据Mac获取设备
+    function getDeviceByMac(mac) {
+        if (isArray(carList)) {
+            for (var i = 0; i < carList.length; i++) {
+                if (carList[i].MAC === mac) {
+                    return deviceList[i];
+                }
+            }
+        }
+    }
+</script>
+<script>
+    function getTree() {
+        var defaultData = [
+            {
+                text: 'Parent 1',
+                href: '#parent1',
+                tags: ['4'],
+                nodes: [
+                    {
+                        text: 'Child 1',
+                        href: '#child1',
+                        tags: ['2'],
+                        nodes: [
+                            {
+                                text: 'Grandchild 1',
+                                href: '#grandchild1',
+                                tags: ['0']
+                            },
+                            {
+                                text: 'Grandchild 2',
+                                href: '#grandchild2',
+                                tags: ['0']
+                            }
+                        ]
+                    },
+                    {
+                        text: 'Child 2',
+                        href: '#child2',
+                        tags: ['0']
+                    }
+                ]
+            },
+            {
+                text: 'Parent 2',
+                href: '#parent2',
+                tags: ['0'],
+                nodes: [
+                    {
+                        text: 'Child 1',
+                        href: '#child1',
+                        tags: ['2'],
+                        nodes: [
+                            {
+                                text: 'Grandchild 1',
+                                href: '#grandchild1',
+                                tags: ['0']
+                            },
+                            {
+                                text: 'Grandchild 2',
+                                href: '#grandchild2',
+                                tags: ['0']
+                            }
+                        ]
+                    },
+                    {
+                        text: 'Child 2',
+                        href: '#child2',
+                        tags: ['0']
+                    }
+                ]
+            },
+            {
+                text: 'Parent 3',
+                href: '#parent3',
+                tags: ['0']
+            },
+            {
+                text: 'Parent 4',
+                href: '#parent4',
+                tags: ['0']
+            },
+            {
+                text: 'Parent 5',
+                href: '#parent5',
+                tags: ['0']
+            }
+        ];
+        var alternateData = [
+            {
+                text: 'Parent 1',
+                tags: ['2'],
+                nodes: [
+                    {
+                        text: 'Child 1',
+                        tags: ['3'],
+                        nodes: [
+                            {
+                                text: 'Grandchild 1',
+                                tags: ['6']
+                            },
+                            {
+                                text: 'Grandchild 2',
+                                tags: ['3']
+                            }
+                        ]
+                    },
+                    {
+                        text: 'Child 2',
+                        tags: ['3']
+                    }
+                ]
+            },
+            {
+                text: 'Parent 2',
+                tags: ['7']
+            },
+            {
+                text: 'Parent 3',
+                icon: 'glyphicon glyphicon-earphone',
+                href: '#demo',
+                tags: ['11']
+            },
+            {
+                text: 'Parent 4',
+                icon: 'glyphicon glyphicon-cloud-download',
+                href: '/demo.html',
+                tags: ['19'],
+                selected: true
+            },
+            {
+                text: 'Parent 5',
+                icon: 'glyphicon glyphicon-certificate',
+                color: 'pink',
+                backColor: 'red',
+                href: 'http://www.tesco.com',
+                tags: ['available', '0']
+            }
+        ];
+        return alternateData;
+    }
+    $(function () {
+        $('#tree').treeview({
+            data: getTree(),
+            expandIcon: 'glyphicon glyphicon-chevron-right',
+            collapseIcon: 'glyphicon glyphicon-chevron-down',
+            nodeIcon: 'glyphicon glyphicon-bookmark',
+            showIcon: true,
+            showCheckbox: true,
+        });
+    });
+</script>
+<script>
+    //SignalR
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/mapHub")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+    connection.start().catch(err => console.error(err.toString()));
+    connection.on("SendMessage", (user, message) => {
+        const encodedMsg = user + " 说：" + message;
+        const li = document.createElement("li");
+        li.textContent = encodedMsg;
+        document.getElementById("messagesList").appendChild(li);
+        document.getElementById('message').value = null;
+    });
+//connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
 </script>
 

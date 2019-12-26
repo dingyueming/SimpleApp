@@ -5,29 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Simple.Entity;
 using Simple.Infrastructure;
+using Simple.Infrastructure.Dapper.Contrib;
 using Simple.IRepository.SM;
 
 namespace Simple.Repository.SM
 {
-    public class MenusRepository : IMenusRepository
+    public class MenusRepository : BaseRepository<MenusEntity>, IMenusRepository
     {
-        private DbContextFactory dbContextFactory { get; set; }
-        public MenusRepository(DbContextFactory dbContextFactory)
+        public MenusRepository(ConnectionFactory connectionFactory) : base(connectionFactory)
         {
-            this.dbContextFactory = dbContextFactory;
         }
         public async Task<int> Add(MenusEntity entity)
         {
-            var dbContext = dbContextFactory.Default;
-            var id = await dbContext.Users.InsertAsync(entity);
-            return id ?? 0;
+            return 0;
         }
 
         public async Task<List<MenusEntity>> GetAll()
         {
-            var dbContext = dbContextFactory.Default;
-            var list = await dbContext.Menus.AllAsync();
-            return list.ToList();
+            var result = await base.GetAllAsync();
+            return result.ToList();
         }
     }
 }
