@@ -10,9 +10,6 @@ namespace Simple.Infrastructure
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<DbContext>().AsImplementedInterfaces().PropertiesAutowired();
-            builder.RegisterType<DbContextFactory>().PropertiesAutowired();
-
             builder.RegisterType<ConnectionFactory>().PropertiesAutowired();
         }
     }

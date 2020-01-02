@@ -28,13 +28,6 @@ namespace Simple.Infrastructure.Dapper.Contrib
         /// </summary>
         public PropertyInfo PrimaryKey { get; set; }
 
-        private ConnectionFactory connectionFactory;
-
-        public BaseRepository(ConnectionFactory connectionFactory)
-        {
-            this.connectionFactory = connectionFactory;
-        }
-
         /// <summary>
         /// 数据库连接
         /// </summary>
@@ -42,7 +35,7 @@ namespace Simple.Infrastructure.Dapper.Contrib
         {
             get
             {
-                var connection = connectionFactory.CreateConnection();
+                var connection = ConnectionFactory.CreateConnection();
                 connection.Open();
                 return connection;
             }

@@ -14,17 +14,15 @@ namespace Simple.Web.Controllers
     public class HomeController : SimpleBaseController
     {
         private readonly IUserService userService;
-        private readonly IMenusService menusService;
-        public HomeController(IUserService userService, IMenusService menusService)
+        public HomeController(IUserService userService, IServiceProvider serviceProvider) : base(serviceProvider)
         {
             this.userService = userService;
-            this.menusService = menusService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
-        
+        //public override IActionResult Index()
+        //{
+        //    return View();
+        //}
+
         public IActionResult About()
         {
             //userService.Add();

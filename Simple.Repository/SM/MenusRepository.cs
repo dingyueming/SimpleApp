@@ -12,9 +12,6 @@ namespace Simple.Repository.SM
 {
     public class MenusRepository : BaseRepository<MenusEntity>, IMenusRepository
     {
-        public MenusRepository(ConnectionFactory connectionFactory) : base(connectionFactory)
-        {
-        }
         public async Task<int> Add(MenusEntity entity)
         {
             return 0;

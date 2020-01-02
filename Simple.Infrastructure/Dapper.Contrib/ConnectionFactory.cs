@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Simple.Infrastructure.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,13 +12,6 @@ namespace Simple.Infrastructure.Dapper.Contrib
     /// </summary>
     public class ConnectionFactory
     {
-
-        private IConfiguration configuration;
-        public ConnectionFactory(IConfiguration configuration)
-        {
-            this.configuration = configuration;
-        }
-
         /// <summary>
         /// 转换数据库类型
         /// </summary>
@@ -41,13 +35,13 @@ namespace Simple.Infrastructure.Dapper.Contrib
         /// 获取数据库连接
         /// </summary>
         /// <returns></returns>
-        public IDbConnection CreateConnection()
+        public static IDbConnection CreateConnection()
         {
-            IDbConnection connection = null;            
+            IDbConnection connection = null;
             //获取配置进行转换
-            var type = configuration["DbSetting:DbType"];
+            var type = ConfigHelper.GetSectionValue("DbSetting:DbType");
             var dbType = GetDataBaseType(type);
-            var strConn = configuration["DbSetting:ConnectionStr"];
+            var strConn = ConfigHelper.GetSectionValue("DbSetting:ConnectionStr");
 
             switch (dbType)
             {

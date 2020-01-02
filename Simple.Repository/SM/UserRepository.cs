@@ -12,13 +12,6 @@ namespace Simple.Repository.SM
 {
     public class UsersRepository : BaseRepository<UsersEntity>, IUserRepository
     {
-        public UsersRepository(ConnectionFactory connectionFactory) : base(connectionFactory)
-        {
-            //base.PrimaryKey=
-        }
-
-
-
         public async Task<int> Add(UsersEntity entity)
         {
             var id = await base.InsertAsync(entity);

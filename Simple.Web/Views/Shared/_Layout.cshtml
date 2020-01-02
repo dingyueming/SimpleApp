@@ -27,6 +27,7 @@ scratch. This page gets reditorid of all links and provides the needed markup on
     <!--[if lt IE 9]>
     <script src="~/dist/js/html5shiv.min.js"></script>
     <script src="~/dist/js/respond.min.js"></script>
+    @RenderSection("style", false)
     <![endif]-->
     <!-- jQuery 3 -->
     <script src="~/bower_components/jquery/dist/jquery.min.js"></script>
@@ -35,6 +36,7 @@ scratch. This page gets reditorid of all links and provides the needed markup on
     <!--Vue开发版本-->
     <script src="~/dist/js/vue.js"></script>
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+    @RenderSection("script", false)
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -181,15 +183,15 @@ desired effect
                                 <!-- The user image in the navbar-->
                                 <img src="~/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
                                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                                <span class="hidden-xs">Alexander Pierce</span>
+                                <span class="hidden-xs">@ViewBag.UserName</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- The user image in the menu -->
                                 <li class="user-header">
                                     <img src="~/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                                     <p>
-                                        Alexander Pierce - Web Developer
-                                        <small>Member since Nov. 2012</small>
+                                        @ViewBag.UserName - 管理员
+                                        <small>@DateTime.Now.ToString("yyyy年MM月dd日")</small>
                                     </p>
                                 </li>
                                 <!-- Menu Body -->
@@ -254,7 +256,7 @@ desired effect
                 </form>
                 <!-- /.search form -->
                 <!-- Sidebar Menu -->
-                <ul class="sidebar-menu" data-widget="tree" id="menudiv">
+                <ul class="sidebar-menu" data-widget="tree" id="vmMenu">
                     <li class="header">
                         All Menus
                     </li>
@@ -293,7 +295,7 @@ desired effect
                 </ol>
             </section>
             <!-- Main content -->
-            <section class="content container-fluid" id="vmContent">
+            <section class="content container-fluid">
                 <!--------------------------
                 | Your Page Content Here |
                 -------------------------->
@@ -304,13 +306,13 @@ desired effect
         <!-- /.content-wrapper -->
         <!-- Main Footer -->
         @*<footer class="main-footer">
-            <!-- To the right -->
-            <div class="pull-right hidden-xs">
-                Anything you want
-            </div>
-            <!-- Default to the left -->
-            <strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
-        </footer>*@
+                <!-- To the right -->
+                <div class="pull-right hidden-xs">
+                    Anything you want
+                </div>
+                <!-- Default to the left -->
+                <strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
+            </footer>*@
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">
             <!-- Create the tabs -->
@@ -391,15 +393,14 @@ desired effect
          Both of these plugins are recommended to enhance the
          user experience. -->
     <script type="text/javascript">
-        var vmLayout = new Vue({
-            el: '#menudiv',
+        var vmMenu = new Vue({
+            el: '#vmMenu',
             data: {
                 menus: [],
             },
             methods: {
                 QueryMenus: function (param) {
-                    axios.post('@Url.Action("QueryMenus","Layout")', {}).then(function (response) {
-                        console.log(response);
+                    axios.post('@Url.Action("QueryMenus")', {}).then(function (response) {
                         response.data.forEach(function (menu, index) {
                             var arrUrl = [];
                             menu.childMenus.forEach(function (childMenu, index) {
@@ -409,9 +410,9 @@ desired effect
                                 arrUrl.push(childMenu.menusUrl);
                             });
                             menu.isActive = arrUrl.indexOf(param) > -1;
-                            vmLayout.menus.push(menu);
+                            vmMenu.menus.push(menu);
                         });
-                        console.log(vmLayout.menus);
+                        console.log(vmMenu.menus);
                     }).catch(function (error) {
                         console.log(error);
                     });
@@ -419,11 +420,11 @@ desired effect
                 SetIconClass(param) {
                     return param;
                 }
+            },
+            mounted: function () {
+                this.QueryMenus(window.location.href);
             }
         });
-        $(function () {
-            vmLayout.QueryMenus(window.location.href);
-        })
     </script>
 </body>
 </html>

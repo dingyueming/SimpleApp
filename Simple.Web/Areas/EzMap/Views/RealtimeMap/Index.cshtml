@@ -4,21 +4,33 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Version"] = "20191219";
 }
+@*@section style{*@
 <link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.css">
 <link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/mapDemopage/css/popup.css">
+<!--ztree-->
+@*<link rel="stylesheet" href="~/lib/ztree/css/demo.css" type="text/css">*@
+<link rel="stylesheet" href="~/lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+@* } *@
+@*@section script{*@
 <script src="http://39.104.61.84:9001/EzServerClient/lib/EzMapAPI.js"></script>
 <script src="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.js"></script>
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script src="~/plugins/ezMap/js/MapTools.js"></script>
-<script src="~/plugins/bootstrap-treeview/bootstrap-treeview.js"></script>
+<!--ztree-->
+<script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.exhide.js"></script>
+<script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.exedit.js"></script>
+<script type="text/javascript" src="~/lib/ztree/demo/js/fuzzysearch.js"></script>
+@* } *@
 @*tree*@
 <!-- Main row -->
 <div class="row">
     <!-- /.col -->
-    <div class="col-md-2">
+    <div class="col-md-2" id="vmDeviceTree">
         <!-- Info Boxes Style 2 -->
         <!-- PRODUCT LIST -->
-        <div class="box box-primary">
+        <div class="box box-primary" style="width:275px;">
             <div class="box-header with-border">
                 <h4 class="box-title">设备列表</h4>
                 <div class="box-tools pull-right">
@@ -29,9 +41,8 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-                <div style="height:459px; overflow:auto;" id="tree">
-
-                </div>
+                <input type="text" id="key" value="" style="width:100%;" class="empty" placeholder="请输入关键字" /><br />
+                <ul id="treeDemo" class="ztree" style="border:0px; height:440px;width:100%; margin-top:3px; overflow:auto;"></ul>
             </div>
             <!-- /.box-body -->
         </div>
@@ -56,7 +67,7 @@
                         <div class="pad">
                             <!-- Map will be created here -->
                             <!-- 提供地图容器，其中地图容器必须提供id号，用于生成地图 -->
-                            <div id="map" style="width:100%;height:459px;"></div>
+                            <div id="map" style="width:100%;height:469px;"></div>
                         </div>
                     </div>
                     <!-- /.col -->
@@ -67,7 +78,7 @@
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row" id="vmRealTime">
     <div class="col-md-12">
         <div class="box">
             <div class="box-header">
@@ -82,106 +93,20 @@
             <div class="box-body no-padding" style="overflow:auto; height:200px;">
                 <table class="table table-condensed">
                     <tr>
-                        <th style="width: 10px">#</th>
-                        <th>Task</th>
-                        <th>Progress</th>
-                        <th style="width: 40px">Label</th>
+                        <th>序号</th>
+                        <th>设备编号</th>
+                        <th>设备名称</th>
+                        <th>设备状态</th>
+                        <th>采购日期</th>
+                        <th>设备管理员</th>
                     </tr>
-                    <tr>
-                        <td>1.</td>
-                        <td>Update software</td>
-                        <td>
-                            <div class="progress progress-xs">
-                                <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-red">55%</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2.</td>
-                        <td>Clean database</td>
-                        <td>
-                            <div class="progress progress-xs">
-                                <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-yellow">70%</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3.</td>
-                        <td>Cron job running</td>
-                        <td>
-                            <div class="progress progress-xs progress-striped active">
-                                <div class="progress-bar progress-bar-primary" style="width: 30%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-light-blue">30%</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4.</td>
-                        <td>Fix and squish bugs</td>
-                        <td>
-                            <div class="progress progress-xs progress-striped active">
-                                <div class="progress-bar progress-bar-success" style="width: 90%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-green">90%</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2.</td>
-                        <td>Clean database</td>
-                        <td>
-                            <div class="progress progress-xs">
-                                <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-yellow">70%</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3.</td>
-                        <td>Cron job running</td>
-                        <td>
-                            <div class="progress progress-xs progress-striped active">
-                                <div class="progress-bar progress-bar-primary" style="width: 30%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-light-blue">30%</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4.</td>
-                        <td>Fix and squish bugs</td>
-                        <td>
-                            <div class="progress progress-xs progress-striped active">
-                                <div class="progress-bar progress-bar-success" style="width: 90%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-green">90%</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4.</td>
-                        <td>Fix and squish bugs</td>
-                        <td>
-                            <div class="progress progress-xs progress-striped active">
-                                <div class="progress-bar progress-bar-success" style="width: 90%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-green">90%</span>
-                        </td>
+                    <tr v-for="(facility,index) in facilities">
+                        <td>{{index+1}}</td>
+                        <td>{{facility.code}}</td>
+                        <td>{{facility.name}}</td>
+                        <td>{{facility.states}}</td>
+                        <td>{{facility.date}}</td>
+                        <td>{{facility.admin}}</td>
                     </tr>
                 </table>
             </div>
@@ -190,6 +115,7 @@
     </div>
 </div>
 <!-- /.row -->
+<!--Map-->
 <script>
     //定义全局变量
     var deviceList;//定位设备列表
@@ -289,149 +215,8 @@
         }
     }
 </script>
+<!--Signal-->
 <script>
-    function getTree() {
-        var defaultData = [
-            {
-                text: 'Parent 1',
-                href: '#parent1',
-                tags: ['4'],
-                nodes: [
-                    {
-                        text: 'Child 1',
-                        href: '#child1',
-                        tags: ['2'],
-                        nodes: [
-                            {
-                                text: 'Grandchild 1',
-                                href: '#grandchild1',
-                                tags: ['0']
-                            },
-                            {
-                                text: 'Grandchild 2',
-                                href: '#grandchild2',
-                                tags: ['0']
-                            }
-                        ]
-                    },
-                    {
-                        text: 'Child 2',
-                        href: '#child2',
-                        tags: ['0']
-                    }
-                ]
-            },
-            {
-                text: 'Parent 2',
-                href: '#parent2',
-                tags: ['0'],
-                nodes: [
-                    {
-                        text: 'Child 1',
-                        href: '#child1',
-                        tags: ['2'],
-                        nodes: [
-                            {
-                                text: 'Grandchild 1',
-                                href: '#grandchild1',
-                                tags: ['0']
-                            },
-                            {
-                                text: 'Grandchild 2',
-                                href: '#grandchild2',
-                                tags: ['0']
-                            }
-                        ]
-                    },
-                    {
-                        text: 'Child 2',
-                        href: '#child2',
-                        tags: ['0']
-                    }
-                ]
-            },
-            {
-                text: 'Parent 3',
-                href: '#parent3',
-                tags: ['0']
-            },
-            {
-                text: 'Parent 4',
-                href: '#parent4',
-                tags: ['0']
-            },
-            {
-                text: 'Parent 5',
-                href: '#parent5',
-                tags: ['0']
-            }
-        ];
-        var alternateData = [
-            {
-                text: 'Parent 1',
-                tags: ['2'],
-                nodes: [
-                    {
-                        text: 'Child 1',
-                        tags: ['3'],
-                        nodes: [
-                            {
-                                text: 'Grandchild 1',
-                                tags: ['6']
-                            },
-                            {
-                                text: 'Grandchild 2',
-                                tags: ['3']
-                            }
-                        ]
-                    },
-                    {
-                        text: 'Child 2',
-                        tags: ['3']
-                    }
-                ]
-            },
-            {
-                text: 'Parent 2',
-                tags: ['7']
-            },
-            {
-                text: 'Parent 3',
-                icon: 'glyphicon glyphicon-earphone',
-                href: '#demo',
-                tags: ['11']
-            },
-            {
-                text: 'Parent 4',
-                icon: 'glyphicon glyphicon-cloud-download',
-                href: '/demo.html',
-                tags: ['19'],
-                selected: true
-            },
-            {
-                text: 'Parent 5',
-                icon: 'glyphicon glyphicon-certificate',
-                color: 'pink',
-                backColor: 'red',
-                href: 'http://www.tesco.com',
-                tags: ['available', '0']
-            }
-        ];
-        return alternateData;
-    }
-    $(function () {
-        $('#tree').treeview({
-            data: getTree(),
-            expandIcon: 'glyphicon glyphicon-chevron-right',
-            collapseIcon: 'glyphicon glyphicon-chevron-down',
-            nodeIcon: 'glyphicon glyphicon-bookmark',
-            showIcon: true,
-            showCheckbox: true,
-        });
-    });
-</script>
-<script>
-    //SignalR
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/mapHub")
         .configureLogging(signalR.LogLevel.Information)
@@ -444,6 +229,87 @@
         document.getElementById("messagesList").appendChild(li);
         document.getElementById('message').value = null;
     });
-//connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+    //connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
 </script>
+<!--VUE-->
+<script>
+    var vmRealTime = new Vue({
+        el: '#vmRealTime',
+        data: {
+            checkAll: false,// 是否全选
+            checkedRows: [],// 选中的行标，用于删除行
+            facilities: [
+                {
+                    code: "A2017-001",
+                    name: "3800充电器",
+                    states: "正常",
+                    date: "2017-01-21",
+                    admin: "andy"
+                },
+                {
+                    code: "A2017-002",
+                    name: "Lenovo Type-c转接器",
+                    states: "正常",
+                    date: "2017-01-21",
+                    admin: "zero"
+                }],// 表格数据
+            newRow: {}// 新增的行数据，用于新增行
+        },
+        methods: {
+            queryRealTimeData: function () {
 
+            },
+            addRow: function () {
+                this.facilities.push(this.newRow);//新行数据追加至表格数据数组中
+                this.newRow = {};//新行数据置空
+            }
+        }
+    });
+    var vmDeviceTree = new Vue({
+        el: '#vmDeviceTree',
+        data: {
+            deviceData:[],
+        },
+        methods: {
+            queryDeviceData: function () {
+                axios.post('@Url.Action("QueryDeviceList")')
+                    .then(function (response) {
+                        this.deviceData = response.data; //debugger;
+                        $.fn.zTree.init($("#treeDemo"), setting, deviceData);
+                        fuzzySearch('treeDemo', '#key', null, true); //初始化模糊搜索方法
+                    })
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                    });
+            }
+        },
+        mounted: function () {
+            this.queryDeviceData();
+        }
+    });
+</script>
+<!--Jquery-->
+<script>
+    var setting = {
+        check: {
+            enable: true//checkbox
+        },
+        view: {
+            nameIsHTML: true, //允许name支持html
+            selectedMulti: false
+        },
+        edit: {
+            enable: false,
+            editNameSelectAll: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }
+    };
+    //$(function () {
+
+    //    vmDeviceTree.queryDeviceData();
+    //});
+</script>
