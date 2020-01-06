@@ -14,14 +14,15 @@ namespace Simple.Application.SM
         {
             _smDomainService = smDomainService;
         }
-        public void Add()
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<List<UsersExEntity>> GetAllUsers()
         {
             return await _smDomainService.GetAllUsers();
+        }
+
+        public async Task<UsersExEntity> GetUserById(int userId)
+        {
+            return await _smDomainService.GetUserById(userId);
         }
     }
 }

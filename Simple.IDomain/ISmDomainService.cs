@@ -11,12 +11,11 @@ namespace Simple.IDomain
     public interface ISmDomainService
     {
 
-        Task<List<UsersExEntity>> GetAllUsers();
-
         #region 用户管理
 
-        Task<List<AuthExEntity>> GetAllAuthUsers();
+        Task<List<UsersExEntity>> GetAllUsers();
 
+        Task<UsersExEntity> GetUserById(int userId);
         #endregion
 
         #region 菜单管理

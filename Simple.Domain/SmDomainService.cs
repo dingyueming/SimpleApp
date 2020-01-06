@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Simple.Entity;
 using Simple.ExEntity;
 using Simple.IDomain;
-using Simple.IRepository.SM;
+using Simple.IRepository;
 using AutoMapper;
 using Simple.ExEntity.SM;
 using System.Linq;
@@ -46,25 +46,17 @@ namespace Simple.Domain
             return userExEntities;
         }
 
-        #endregion
-
-        #region 用户管理Auth
-
-        //public void AddUser()
-        //{
-        //    userRepository.Add(new UsersEntity());
-        //}
-
-
-        public async Task<List<AuthExEntity>> GetAllAuthUsers()
+        public async Task<UsersExEntity> GetUserById(int userId)
         {
-            //var authEntities = await authRepository();
-            //var authExEntities = mapper.Map<List<AuthExEntity>>(authEntities);
-            //return authExEntities;
-            return null;
+            var userEntities = await userRepository.FindByIDAsync(userId);
+            var userExEntities = mapper.Map<UsersExEntity>(userEntities);
+            return userExEntities;
+
         }
 
         #endregion
+
+
 
         #region 菜单管理
 
@@ -80,6 +72,8 @@ namespace Simple.Domain
               });
             return exList.Where(x => x.ParentId == 0).ToList();
         }
+
+
         #endregion
     }
 }

@@ -1,14 +1,13 @@
-﻿using Simple.Entity.GM;
-using Simple.Infrastructure.Dapper.Contrib;
-using Simple.IRepository.GM;
+﻿using Simple.Infrastructure.Dapper.Contrib;
+using Simple.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using Simple.Entity;
 
-
-namespace Simple.Repository.GM
+namespace Simple.Repository
 {
     public class CarRepository : BaseRepository<CarEntity>, ICarRepository
     {

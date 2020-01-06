@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Simple.Entity;
 using Simple.Infrastructure.Dapper.Contrib;
 
-namespace Simple.IRepository.SM
+namespace Simple.IRepository
 {
     public interface IUserRepository : IBaseRepository<UsersEntity>
     {

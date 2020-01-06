@@ -17,11 +17,27 @@ namespace Simple.Web.Areas.EzMap.Controllers
         {
             this.realTimeMapService = realTimeMapService;
         }
+        /// <summary>
+        /// 获取当前设备列表tree
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> QueryDeviceTree()
+        {
+            var treeNodes = await realTimeMapService.GetDeviceTreeByUser(LoginUser.UsersId);
+            return Json(treeNodes);
+        }
 
         public async Task<JsonResult> QueryDeviceList()
         {
-            var treeView = await realTimeMapService.GetDeviceTreeByUser(LoginUser.UsersId);
-            return Json(treeView);
+            //暂时先只查询车辆的
+            var devices = await realTimeMapService.GetCarExEntitiesByUser(LoginUser.UsersId);
+            return Json(devices);
+        }
+
+        public async Task<JsonResult> QueryLastLocatedData()
+        {
+            var locatedData = await realTimeMapService.GetLastLocatedByUser(LoginUser.UsersId);
+            return Json(locatedData);
         }
 
     }

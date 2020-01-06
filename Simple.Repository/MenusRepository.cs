@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 using Simple.Entity;
 using Simple.Infrastructure;
 using Simple.Infrastructure.Dapper.Contrib;
-using Simple.IRepository.SM;
+using Simple.IRepository;
 
-namespace Simple.Repository.SM
+namespace Simple.Repository
 {
-    public class UsersRepository : BaseRepository<UsersEntity>, IUserRepository
+    public class MenusRepository : BaseRepository<MenusEntity>, IMenusRepository
     {
-        public async Task<int> Add(UsersEntity entity)
+        public async Task<int> Add(MenusEntity entity)
         {
-            var id = await base.InsertAsync(entity);
             return 0;
         }
 
-        public async Task<List<UsersEntity>> GetAll()
+        public async Task<List<MenusEntity>> GetAll()
         {
             var result = await base.GetAllAsync();
             return result.ToList();

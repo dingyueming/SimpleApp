@@ -134,6 +134,7 @@ namespace Simple.Common.Cyhk
             _userPwd = userpwd;
             _mac = mac;
             string strCmdInfo = string.Empty;
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "Other/JsonFileFolder/CmdInfo.json", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 using (StreamReader sr = new StreamReader(fs, Encoding.GetEncoding("gb2312")))

@@ -5,8 +5,7 @@
  * @param {any} la 纬度
  * @returns {boolean} 是否有效
  */
-function checkLoLa(lo, la)
-{
+function checkLoLa(lo, la) {
     if (la === 0 && lo === 0 || la === 1 && lo === 1) return false;
     if (lo < -180 || la < -90 || lo > 180 || la > 90) return false;
     return true;
@@ -19,19 +18,41 @@ function checkLoLa(lo, la)
  */
 function getCarStateIcon(gpsData) {
     if (gpsData) {
-        var minute = Number((new Date().getTime() - JsonToDate(gpsData.GNSSTIME).getTime()) / (1000 * 60));
+        var minute = Number((new Date().getTime() - JsonToDate(gpsData.gnsstime).getTime()) / (1000 * 60));
         if (minute > 5) { //5分钟未上线判断为 离线
             return 'off.png';
         }
-        if (gpsData.LOCATE === 0) { //未定位
+        if (gpsData.locate === 0) { //未定位
             return "nogps.png";
         }
-        if (gpsData.SPEED < 3) { //小于3KM/h 判断为停车
+        if (gpsData.speed < 3) { //小于3KM/h 判断为停车
             return 'stop.png';
         }
         return 'run.png'; //行驶中
     }
     return 'off.png';
+}
+
+/**
+ * 获得车辆状态图标
+ * @param {any} gpsData 车辆gps数据信息
+ * @returns {string} 车辆图标
+ */
+function getCarTreeStateSkin(gpsData) {
+    if (gpsData) {
+        var minute = Number((new Date().getTime() - JsonToDate(gpsData.gnsstime).getTime()) / (1000 * 60));
+        if (minute > 5) { //5分钟未上线判断为 离线
+            return 'gray_car';
+        }
+        if (gpsData.locate === 0) { //未定位
+            return "white_car";
+        }
+        if (gpsData.speed < 3) { //小于3KM/h 判断为停车
+            return 'yellow_car';
+        }
+        return 'green_car'; //行驶中
+    }
+    return 'gray_car';
 }
 
 /**
@@ -48,7 +69,7 @@ function getPeopleStateIcon(gpsData) {
         if (gpsData.LOCATE === 0) { //未定位
             return "peopleNogps.png";
         }
-       
+
         return 'people.png'; //正常上线
     }
     return 'peopleOff.png';
@@ -207,3 +228,40 @@ function getPeopleStateIcon(gpsData) {
         gcj02towgs84: gcj02towgs84
     }
 }));
+/**
+ * 将JSON格式字符串日期转换为日期
+ * @param {string} json json日期字符串
+ * @return {date} 日期
+ */
+function JsonToDate(json) {
+    if (stringIsNullOrEmpty(json))
+        json = "1901/01/01 00:00:00";
+    if (isString(json))
+        json = json.replace(/-/g, "/").replace(/T/g, " ");
+    var date = new Date(json);
+    return date;
+}
+/**
+ * 判断字符串是否为空
+ * @param {string} str 目标字符串
+ */
+function stringIsNullOrEmpty(str) {
+    if (typeof (str) != "string") {
+        return str == null;
+    }
+
+    if (str == null || str === "") {
+        return true;
+    }
+    if (str.replace(/(^\s*)|(\s*$)/g, "").length === 0) {
+        return true;
+    }
+    return false;
+}
+/**
+*
+判断是否是字符串
+*/
+function isString(value) {
+    return value && typeof value === 'string';
+}

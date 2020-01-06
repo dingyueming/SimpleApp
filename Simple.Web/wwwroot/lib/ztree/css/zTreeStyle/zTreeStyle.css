@@ -165,3 +165,42 @@ ul.ztree.zTreeDragUL {margin:0; padding:0; position:absolute; width:auto; height
 	vertical-align: top;
 	*vertical-align: middle
 }
+
+.ztree li span.button.green_car_ico_docu {
+	margin-right: 2px;
+	background: url(img/diy/car-green.png) no-repeat scroll 0 0 transparent;
+	vertical-align: top;
+	*vertical-align: middle
+}
+.ztree li span.button.yellow_car_ico_docu {
+	margin-right: 2px;
+	background: url(img/diy/car-yellow.png) no-repeat scroll 0 0 transparent;
+	vertical-align: top;
+	*vertical-align: middle
+}
+.ztree li span.button.white_car_ico_docu {
+	margin-right: 2px;
+	background: url(img/diy/car-white.png) no-repeat scroll 0 0 transparent;
+	vertical-align: top;
+	*vertical-align: middle
+}
+.ztree li span.button.red_car_ico_docu {
+	margin-right: 2px;
+	background: url(img/diy/car-red.png) no-repeat scroll 0 0 transparent;
+	vertical-align: top;
+	*vertical-align: middle
+}
+
+.ztree li span.button.red_person_ico_docu {
+	margin-right: 2px;
+	background: url(img/diy/person-red.png) no-repeat scroll 0 0 transparent;
+	vertical-align: top;
+	*vertical-align: middle
+}
+
+.ztree li span.button.blue_phone_ico_docu {
+	margin-right: 2px;
+	background: url(img/diy/phone-blue.png) no-repeat scroll 0 0 transparent;
+	vertical-align: top;
+	*vertical-align: middle
+}

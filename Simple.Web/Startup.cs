@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Serialization;
 using Simple.Application;
 using Simple.Infrastructure;
 using Simple.Web.Other;
@@ -34,11 +35,16 @@ namespace Simple.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().AddJsonOptions(option =>
+            {
+                //option.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             #region SignalR
 
-            services.AddSignalR().AddJsonProtocol();
+            services.AddSignalR().AddJsonProtocol(option => { option.PayloadSerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss"; });
+            services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<GnssSocket>();
 
             #endregion
 

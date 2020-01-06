@@ -4,25 +4,25 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Version"] = "20191219";
 }
-@*@section style{*@
 <link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.css">
 <link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/mapDemopage/css/popup.css">
-<!--ztree-->
-@*<link rel="stylesheet" href="~/lib/ztree/css/demo.css" type="text/css">*@
-<link rel="stylesheet" href="~/lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
-@* } *@
-@*@section script{*@
+@section style{
+    <!--ztree-->
+    <link rel="stylesheet" href="~/lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+}
 <script src="http://39.104.61.84:9001/EzServerClient/lib/EzMapAPI.js"></script>
 <script src="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.js"></script>
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/plugins/ezMap/js/MapTools.js"></script>
-<!--ztree-->
-<script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.core.js"></script>
-<script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.exhide.js"></script>
-<script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.excheck.js"></script>
-<script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.exedit.js"></script>
-<script type="text/javascript" src="~/lib/ztree/demo/js/fuzzysearch.js"></script>
-@* } *@
+
+@section script{
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/plugins/ezMap/js/MapTools.js"></script>
+    <!--ztree-->
+    <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.core.js"></script>
+    <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.exhide.js"></script>
+    <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.excheck.js"></script>
+    <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.exedit.js"></script>
+    <script type="text/javascript" src="~/lib/ztree/demo/js/fuzzysearch.js"></script>
+}
 @*tree*@
 <!-- Main row -->
 <div class="row">
@@ -78,41 +78,84 @@
         </div>
     </div>
 </div>
-<div class="row" id="vmRealTime">
+<div class="row">
     <div class="col-md-12">
-        <div class="box">
-            <div class="box-header">
-                <h3 class="box-title">实时定位数据</h3>
-                <div class="box-tools pull-right">
+        <!-- Custom Tabs -->
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_1" data-toggle="tab">定位信息</a></li>
+                <li><a href="#tab_2" data-toggle="tab">报警信息</a></li>
+                <li><a href="#tab_3" data-toggle="tab">短报文</a></li>
+                <li class="pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
                         <i class="fa fa-minus"></i>
                     </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="vmRealTime" style="overflow:auto; height:200px;">
+                <div class="tab-pane active" id="tab_1">
+                    <table class="table table-condensed">
+                        <tr>
+                            <th>序号</th>
+                            <th>车牌号</th>
+                            <th>识别码</th>
+                            <th>SIM卡</th>
+                            <th>时间</th>
+                            <th>速度</th>
+                            <th>定位</th>
+                            <th>方向</th>
+                            <th>状态</th>
+                            <th>定位模式</th>
+                            <th>累计里程</th>
+                            <th>位置</th>
+                            <th>经度</th>
+                            <th>纬度</th>
+                        </tr>
+                        <tr v-for="(newtrack,index) in newtracks">
+                            <td>{{index+1}}</td>
+                            <td>{{newtrack.license}}</td>
+                            <td>{{newtrack.mac}}</td>
+                            <td>{{newtrack.sim}}</td>
+                            <td>{{newtrack.gnsstime}}</td>
+                            <td>{{newtrack.speed}}</td>
+                            <td>{{newtrack.locate_str}}</td>
+                            <td>{{newtrack.heading_str}}</td>
+                            <td>{{newtrack.status}}</td>
+                            <td>{{newtrack.locatemode_str}}</td>
+                            <td>{{newtrack.mileage}}</td>
+                            <td>{{newtrack.position}}</td>
+                            <td>{{newtrack.longitude}}</td>
+                            <td>{{newtrack.latitude}}</td>
+                        </tr>
+                    </table>
                 </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_2">
+                    The European languages are members of the same family. Their separate existence is a myth.
+                    For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
+                    in their grammar, their pronunciation and their most common words. Everyone realizes why a
+                    new common language would be desirable: one could refuse to pay expensive translators. To
+                    achieve this, it would be necessary to have uniform grammar, pronunciation and more common
+                    words. If several languages coalesce, the grammar of the resulting language is more simple
+                    and regular than that of the individual languages.
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_3">
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                    It has survived not only five centuries, but also the leap into electronic typesetting,
+                    remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+                    sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+                    like Aldus PageMaker including versions of Lorem Ipsum.
+                </div>
+                <!-- /.tab-pane -->
             </div>
-            <!-- /.box-header -->
-            <div class="box-body no-padding" style="overflow:auto; height:200px;">
-                <table class="table table-condensed">
-                    <tr>
-                        <th>序号</th>
-                        <th>设备编号</th>
-                        <th>设备名称</th>
-                        <th>设备状态</th>
-                        <th>采购日期</th>
-                        <th>设备管理员</th>
-                    </tr>
-                    <tr v-for="(facility,index) in facilities">
-                        <td>{{index+1}}</td>
-                        <td>{{facility.code}}</td>
-                        <td>{{facility.name}}</td>
-                        <td>{{facility.states}}</td>
-                        <td>{{facility.date}}</td>
-                        <td>{{facility.admin}}</td>
-                    </tr>
-                </table>
-            </div>
-            <!-- /.box-body -->
+            <!-- /.tab-content -->
         </div>
+        <!-- nav-tabs-custom -->
     </div>
+    <!-- /.col -->
 </div>
 <!-- /.row -->
 <!--Map-->
@@ -123,11 +166,9 @@
     function getDeviceList(callback) {
         $.ajax({
             type: 'post',
-            url: '@Url.Page("/CarStatus", "CarList", new { area="EmergencyCommand"})',
-            headers: { "RequestVerificationToken": GetRequestVerificationToken() },
-            data: {},
+            url: '@Url.Action("QueryDeviceList")',
             success: function (datas) {
-                carList = datas;
+                deviceList = datas;
                 //if (isFunction(callback))
                 callback();
             },
@@ -140,8 +181,7 @@
     function getLastTrackList(callback) {
         $.ajax({
             type: 'POST',
-            url: '@Url.Page("/CarStatus", "CarTrack", new { area="EmergencyCommand"})',
-            headers: { "RequestVerificationToken": GetRequestVerificationToken() },
+            url: '@Url.Action("QueryLastLocatedData")',
             success: function (datas) {
                 //if (isFunction(callback))
                 callback(datas);
@@ -159,32 +199,52 @@
     var map = new EzMap("map");
     // 添加地图控件 (级别控制条，也可以选择不添加)
     map.showStandMapControl();
+    //显示比例尺
+    map.showScaleControl();
     //设置地图级别
     map.zoomTo(5);
     //设置中心点
-    var centerCoord = new EzCoord(116, 40);
+    var centerCoord = new EzCoord(106.661876,26.609144);
     map.centerAtLatlng(centerCoord);
+    //监听marker点击
+    map.addMapEventListener(Ez.Event.MAP_CLICK, function(evt) {
+        var pixel = evt.pixel;
+        var marker = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+            if (feature instanceof EzMarker) {
+                return feature;
+            }
+        });
+        if (marker) {
+            //通过单击marker时打开popup
+            var car = getCarByCarID(marker.gpsData.carid);
+            if (car) {
+                var strHtml = getGpsInfoWinContent(getCarByCarID(marker.gpsData.carid).license, marker.gpsData);
+                marker.openInfoWindow(strHtml);
+            }
+        }
+    });
     //获取当前用户所要定位的设备
     getDeviceList(function () {
         //获取设备最后一次定位的数据
         getLastTrackList(function (lastTrackList) {
             if (Array.isArray(lastTrackList)) {
                 lastTrackList.forEach(function (lastTrackData, index, arr) {
-                    var device = getDeviceByMac(lastTrackData.MAC);
+                    var device = getCarByCarID(lastTrackData.carid);
                     if (device) {
                         device.lastTrackData = lastTrackData;
                         var icon = new EzIcon({
-                            src: '@Url.Content("~/plugins/ezMap/images/")'+getCarStateIcon(data),//item.iconImage
+                            src: '@Url.Content("~/plugins/ezMap/images/")'+getCarStateIcon(lastTrackData),//item.iconImage
                             anchor: [0.5, 1],
                             anchorXUnits: 'fraction',
                             anchorYUnits: 'fraction',
                             opacity: 1
                         });
                         //marker点
-                        var position = new EzCoord(lastTrackData.LONGITUDE, lastTrackData.LATITUDE);
+                        var position = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);
                         var marker = new EzMarker(position, icon);
                         map.addOverlay(marker);
                         device.marker = marker;
+                        device.marker.gpsData = lastTrackData;
                     }
                 });
             }
@@ -192,27 +252,117 @@
     });
     //更新设备位置
     function updateGpsData(lastTrackData) {
-        if (!checkLoLa(data.LONGITUDE, data.LATITUDE)) return;
-        var device = getDeviceByMac(data.MAC);
+        if (!checkLoLa(lastTrackData.longitude, lastTrackData.latitude)) return;
+        var device = getDeviceByMac(lastTrackData.mac);
         if (device) {
             device.lastTrackData = lastTrackData;
-            var newpos = new EzCoord(lastTrackData.LONGITUDE, lastTrackData.LATITUDE);
+            var newpos = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);
+            var icon = new EzIcon({
+                            src: '@Url.Content("~/plugins/ezMap/images/")'+getCarStateIcon(lastTrackData),//item.iconImage
+                            anchor: [0.5, 1],
+                            anchorXUnits: 'fraction',
+                            anchorYUnits: 'fraction',
+                            opacity: 1
+                        });
+            device.marker.setIcon(icon);
             device.marker.setPoint(newpos);
+
+            
+        //更新tree的icon
+        updateTreeNode(device, getCarTreeStateSkin(lastTrackData));
+
+        //更新实时定位数据
+        updateGpsTable(lastTrackData);
+        }
+    }
+    function updateTreeNode(device, iconSkin) {
+        var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
+        if (node) {
+            node.iconSkin =iconSkin;
+            treeObj.updateNode(node);
         }
     }
     //更新实时定位数据
     function updateGpsTable(lastTrackData) {
-
+        var list = vmRealTime.newtracks;
+        var isTableData = false;
+        for (var i = 0; i < list.length; i++) {
+            var track = list[i];
+            if (track.mac == lastTrackData.mac) {
+                isTableData = true;
+            }
+        }
+        if (!isTableData) {
+            var dev = getDeviceByMac(lastTrackData.mac);
+            if (dev) {
+                vmRealTime.newRow.license = dev.license;
+                vmRealTime.newRow.mac = dev.mac;
+                vmRealTime.newRow.sim = dev.sim;
+                vmRealTime.newRow.gnsstime = lastTrackData.gnsstime;
+                vmRealTime.newRow.speed = lastTrackData.speed;
+                vmRealTime.newRow.locate_str = lastTrackData.locatE_STR;
+                vmRealTime.newRow.heading_str = lastTrackData.headinG_STR;
+                vmRealTime.newRow.status = lastTrackData.status;
+                vmRealTime.newRow.locatemode_str = lastTrackData.locatemodE_STR;
+                vmRealTime.newRow.mileage = lastTrackData.mileage;
+                vmRealTime.newRow.position = lastTrackData.position;
+                vmRealTime.newRow.longitude = lastTrackData.longitude;
+                vmRealTime.newRow.latitude = lastTrackData.latitude;
+                vmRealTime.addRow();
+            }
+        } else {
+            for (var i = 0; i < list.length; i++) {
+                var track = list[i];
+                if (track.mac == lastTrackData.mac) {
+                    track.gnsstime = lastTrackData.gnsstime;
+                    track.speed = lastTrackData.speed;
+                    track.locate_str = lastTrackData.locatE_STR;
+                    track.heading_str = lastTrackData.headinG_STR;
+                    track.status = lastTrackData.status;
+                    track.locatemode_str = lastTrackData.locatemodE_STR;
+                    track.mileage = lastTrackData.mileage;
+                    track.position = lastTrackData.position;
+                    track.longitude = lastTrackData.longitude;
+                    track.latitude = lastTrackData.latitude;
+                    vmRealTime.$set(vmRealTime.newtracks, i, track);
+                }
+            }
+        }
     }
     //根据Mac获取设备
     function getDeviceByMac(mac) {
-        if (isArray(carList)) {
-            for (var i = 0; i < carList.length; i++) {
-                if (carList[i].MAC === mac) {
+        if (Array.isArray(deviceList)) {
+            for (var i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].mac === mac) {
                     return deviceList[i];
                 }
             }
         }
+    }
+    //根据carid获取车辆
+    function getCarByCarID(carid) {
+        if (Array.isArray(deviceList)) {
+            for (var i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].carid === carid) {
+                    return deviceList[i];
+                }
+            }
+        }
+    }
+    //marker的popup
+    function getGpsInfoWinContent(title, gpsData) {
+        //var html = $("#divPopup").html();
+            var tmpArr = [
+                "速度：" + gpsData.speed + "Km/h&nbsp;&nbsp;[" + gpsData.heading_str + "]",
+                "里程：" + gpsData.mileage_k + "Km",
+                "定位：" + gpsData.locate_str + " [" + gpsData.locatemode_str + "]",
+                "坐标：" + gpsData.longitude + "，" + gpsData.latitude,
+                "时间：" + gpsData.gnsstime,
+                "地点：" + gpsData.position
+            ];
+
+        return title;
     }
 </script>
 <!--Signal-->
@@ -221,15 +371,11 @@
         .withUrl("/mapHub")
         .configureLogging(signalR.LogLevel.Information)
         .build();
-    connection.start().catch(err => console.error(err.toString()));
-    connection.on("SendMessage", (user, message) => {
-        const encodedMsg = user + " 说：" + message;
-        const li = document.createElement("li");
-        li.textContent = encodedMsg;
-        document.getElementById("messagesList").appendChild(li);
-        document.getElementById('message').value = null;
+    connection.start().then(() => { connection.invoke("Login"); }).catch(err => console.error(err.toString()));
+    connection.on("ReceiveGpsData", function (data) {
+        console.log(data);
+        updateGpsData(data);
     });
-    //connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
 </script>
 <!--VUE-->
 <script>
@@ -238,21 +384,7 @@
         data: {
             checkAll: false,// 是否全选
             checkedRows: [],// 选中的行标，用于删除行
-            facilities: [
-                {
-                    code: "A2017-001",
-                    name: "3800充电器",
-                    states: "正常",
-                    date: "2017-01-21",
-                    admin: "andy"
-                },
-                {
-                    code: "A2017-002",
-                    name: "Lenovo Type-c转接器",
-                    states: "正常",
-                    date: "2017-01-21",
-                    admin: "zero"
-                }],// 表格数据
+            newtracks: [],// 表格数据
             newRow: {}// 新增的行数据，用于新增行
         },
         methods: {
@@ -260,7 +392,7 @@
 
             },
             addRow: function () {
-                this.facilities.push(this.newRow);//新行数据追加至表格数据数组中
+                this.newtracks.push(this.newRow);//新行数据追加至表格数据数组中
                 this.newRow = {};//新行数据置空
             }
         }
@@ -268,11 +400,11 @@
     var vmDeviceTree = new Vue({
         el: '#vmDeviceTree',
         data: {
-            deviceData:[],
+            deviceData: [],
         },
         methods: {
             queryDeviceData: function () {
-                axios.post('@Url.Action("QueryDeviceList")')
+                axios.post('@Url.Action("QueryDeviceTree")')
                     .then(function (response) {
                         this.deviceData = response.data; //debugger;
                         $.fn.zTree.init($("#treeDemo"), setting, deviceData);
@@ -308,8 +440,4 @@
             }
         }
     };
-    //$(function () {
-
-    //    vmDeviceTree.queryDeviceData();
-    //});
 </script>

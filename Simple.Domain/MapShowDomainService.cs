@@ -1,12 +1,13 @@
-﻿using Simple.Entity.GM;
-using Simple.IDomain;
-//using Simple.Infrastructure.InfrastructureModel.BootStrapTreeView;
-using Simple.IRepository.GM;
+﻿using Simple.IDomain;
+using Simple.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Simple.Infrastructure.InfrastructureModel.ZTree;
+using AutoMapper;
+using Simple.ExEntity.Map;
+using Simple.Entity;
 
 namespace Simple.Domain
 {
@@ -15,22 +16,30 @@ namespace Simple.Domain
     /// </summary>
     public class MapShowDomainService : IMapShowDomainService
     {
+        private readonly IViewAllTargetRepository viewAllTargetRepository;
+        private readonly ILastLocatedRepository lastLocatedRepository;
         private readonly ICarRepository carRepository;
+        private readonly IPersonRepository personRepository;
         private readonly IUnitRepository unitRepository;
-        public MapShowDomainService(ICarRepository carRepository, IUnitRepository unitRepository)
+        private readonly IMapper mapper;
+        public MapShowDomainService(IViewAllTargetRepository viewAllTargetRepository, ILastLocatedRepository lastLocatedRepository,
+            IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.viewAllTargetRepository = viewAllTargetRepository;
+            this.lastLocatedRepository = lastLocatedRepository;
+            this.personRepository = personRepository;
             this.carRepository = carRepository;
             this.unitRepository = unitRepository;
+            this.mapper = mapper;
         }
 
         public async Task<TreeNode[]> GetDeviceTreeByUser(int userId)
         {
             //获取所有单位
             var allUnits = await unitRepository.GetAllAsync();
-            //获取当前用户所拥有的设备车辆
-            var cars = await carRepository.GetCarEntitiesByUser(userId);
+            //获取当前用户所拥有的设备
+            var devices = await viewAllTargetRepository.GetDevicesByUser(userId);
             //组织tree
-            //var userGroup = users.GroupBy(x => x.UNITID).ToList();
             var listNode = new List<TreeNode>();
             foreach (var unit in allUnits)
             {
@@ -44,44 +53,60 @@ namespace Simple.Domain
                 };
                 listNode.Add(treeNode);
             }
-            foreach (var car in cars)
+            foreach (var device in devices)
             {
                 var treeNode = new TreeNode()
                 {
-                    name = car.LICENSE,
-                    id = $"user-{ car.CARID }",
-                    pId = $"unit-{car.UNITID}",
-                    iconSkin = "gray_car",
+                    name = device.LICENSE,
+                    pId = $"unit-{device.UNITID}",
+                    id = $"car-{ device.CARID }"
                 };
+                switch (device.TARGET_TYPE)
+                {
+                    case "车辆":
+                        treeNode.iconSkin = "gray_car";
+                        break;
+                    case "人员":
+                        treeNode.iconSkin = "red_person";
+                        break;
+                    case "对讲机":
+                        treeNode.iconSkin = "blue_phone";
+                        break;
+                    default:
+                        treeNode.iconSkin = "red_person";
+                        break;
+                }
                 listNode.Add(treeNode);
             }
-
-            //firstNode.nodes = GetUnitTreeViews(allUnits.ToList(), 1).ToArray();
-            //treeView.data = new TreeNode[] { firstNode };
             return listNode.ToArray();
         }
-        ///// <summary>
-        ///// 递归单位树
-        ///// </summary>
-        ///// <returns></returns>
-        //private List<TreeNode> GetUnitTreeViews(List<UnitEntity> allUnits, int parentId)
-        //{
-        //    var listTreeNode = new List<TreeNode>();
 
-        //    var children = allUnits.Where(x => x.PID == parentId).ToList();
-        //    if (children.Count > 0)
-        //    {
-        //        children.ForEach((x) =>
-        //        {
-        //            var nodeItme = new TreeNode
-        //            {
-        //                text = x.UNITNAME
-        //            };
-        //            listTreeNode.Add(nodeItme);
-        //            nodeItme.nodes = GetUnitTreeViews(allUnits, x.UNITID).ToArray();
-        //        });
-        //    }
-        //    return listTreeNode;
-        //}
+        public async Task<List<PersonExEntity>> GetPersonEntitiesByUser(int userId)
+        {
+            var persons = await personRepository.GetPersonEntitiesByUser(userId);
+            var personExEntities = mapper.Map<List<PersonExEntity>>(persons);
+            return personExEntities;
+        }
+
+        public async Task<List<CarExEntity>> GetCarEntitiesByUser(int userId)
+        {
+            var cars = await carRepository.GetCarEntitiesByUser(userId);
+            var carExEntiies = mapper.Map<List<CarExEntity>>(cars);
+            return carExEntiies;
+        }
+
+        public async Task<List<LastLocatedExEntity>> GetLastLocatedByUser(int userId)
+        {
+            var lastLocateds = await lastLocatedRepository.GetLastLocatedEntityByUser(userId);
+            var exEnties = mapper.Map<List<LastLocatedExEntity>>(lastLocateds);
+            return exEnties;
+        }
+
+        public async Task<List<ViewAllTargetExEntity>> GetAllDeviceByUser(int userId)
+        {
+            var viewAllTargetEntities = await viewAllTargetRepository.GetDevicesByUser(userId);
+            var exEntities = mapper.Map<List<ViewAllTargetExEntity>>(viewAllTargetEntities);
+            return exEntities;
+        }
     }
 }

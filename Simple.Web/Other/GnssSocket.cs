@@ -82,11 +82,11 @@ namespace Simple.Web.Other
             byte[] msgBytes = (byte[])fds.GetFieldValue("AdditionBytes");
             int messageIndex = 0;
 
-            #region 附加信息处理
-
-            #region 附加信息变量
             try
             {
+                #region 附加信息处理
+
+                #region 附加信息变量
                 string position = string.Empty;
                 short loadjust = 0, laadjust = 0;
                 ushort sensor1 = 0, sensor2 = 0, sensor3 = 0, sensor4 = 0;
@@ -185,20 +185,19 @@ namespace Simple.Web.Other
 
                 #endregion
 
-
-
                 data.UpdateData(heading, (int)status, (int)statusEx, (int)alarmStatus, (int)alarmStatusEx, locate,
                     locatemode, gnsstime, lo, la, altitude, speed, (int)mileage, haveoil, oil1, oil2,
                     oil3, oil4, sensor1, sensor2, sensor3, sensor4, position, loadjust, laadjust,
                     stoptime, tmp, areaid);
-
-                GpsDataUpdated(data);
+                if (new string[] { "1314010402", "1815030266" }.Contains(data.MAC))
+                {
+                    GpsDataUpdated(data);
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
-
         }
 
         private void TcpClient_InitCompleted(bool obj)

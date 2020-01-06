@@ -1,13 +1,13 @@
 ﻿using Simple.Entity;
-using Simple.Entity.GM;
 using Simple.Infrastructure.Dapper.Contrib;
+using Simple.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.IRepository.GM
+namespace Simple.Repository
 {
-    public interface IUnitRepository : IBaseRepository<UnitEntity>
+   public class UnitRepository : BaseRepository<UnitEntity>, IUnitRepository
     {
     }
 }

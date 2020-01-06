@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.Entity.SM
+namespace Simple.Entity
 {
     public class AuthEntity
     {

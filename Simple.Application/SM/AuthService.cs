@@ -22,7 +22,7 @@ namespace Simple.Application.SM
 
         public async Task<List<AuthExEntity>> GetAllUsers()
         {
-            return await _smDomainService.GetAllAuthUsers();
+            return null;
         }
     }
 }

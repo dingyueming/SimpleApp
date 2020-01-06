@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Autofac;
-using Simple.Repository.SM;
+using Simple.Repository;
 
 namespace Simple.Repository
 {

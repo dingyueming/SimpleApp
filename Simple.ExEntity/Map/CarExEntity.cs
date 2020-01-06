@@ -3,15 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.Entity.GM
+namespace Simple.ExEntity.Map
 {
-    [Table("UNIT")]
-    public class CarEntity
+    public class CarExEntity
     {
         /// <summary>
         /// 车辆ID号
         /// </summary>		
-        [Key]
         public int CARID { get; set; }
         /// <summary>
         /// 车牌号

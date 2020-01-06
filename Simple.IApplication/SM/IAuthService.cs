@@ -8,7 +8,7 @@ namespace Simple.IApplication.SM
 {
     public interface IUserService
     {
-        void Add();
+        Task<UsersExEntity> GetUserById(int userId);
 
         Task<List<UsersExEntity>> GetAllUsers();
     }
