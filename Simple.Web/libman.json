@@ -466,6 +466,26 @@
         "demo/cn/index.html",
         "demo/js/fuzzysearch.js"
       ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "qs@6.9.1",
+      "destination": "wwwroot/lib/qs/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "axios@0.19.0",
+      "destination": "wwwroot/lib/axios/"
+    },
+    {
+      "library": "@riophae/vue-treeselect@0.4.0",
+      "destination": "wwwroot/lib/vue-treeselect/",
+      "files": [
+        "dist/vue-treeselect.umd.js",
+        "dist/vue-treeselect.umd.min.js",
+        "dist/vue-treeselect.css",
+        "dist/vue-treeselect.min.css"
+      ]
     }
   ]
 }

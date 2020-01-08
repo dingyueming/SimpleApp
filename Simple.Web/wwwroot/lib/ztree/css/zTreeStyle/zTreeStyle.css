@@ -110,6 +110,13 @@ ul.ztree.zTreeDragUL {margin:0; padding:0; position:absolute; width:auto; height
 	*vertical-align: middle
 }
 
+.ztree li span.button.icon10_ico_docu {
+	margin-right: 2px;
+	background: url(img/diy/1_close.png) no-repeat scroll 0 0 transparent;
+	vertical-align: top;
+	*vertical-align: middle
+}
+
 .ztree li span.button.pIcon02_ico_open, .ztree li span.button.pIcon02_ico_close {
 	margin-right: 2px;
 	background: url(../../../../css/zTreeStyle/img/diy/2.png) no-repeat scroll 0 0 transparent;
@@ -119,7 +126,7 @@ ul.ztree.zTreeDragUL {margin:0; padding:0; position:absolute; width:auto; height
 
 .ztree li span.button.icon01_ico_docu {
 	margin-right: 2px;
-	background: url(../../../../css/zTreeStyle/img/diy/3.png) no-repeat scroll 0 0 transparent;
+	background: url(img/diy/3.png) no-repeat scroll 0 0 transparent;
 	vertical-align: top;
 	*vertical-align: middle
 }

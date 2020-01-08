@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Simple.ExEntity.Map;
+﻿using Simple.ExEntity.Map;
+using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
 using Simple.Infrastructure.InfrastructureModel.ZTree;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Simple.IDomain
 {
@@ -14,6 +13,8 @@ namespace Simple.IDomain
     {
         Task<TreeNode[]> GetDeviceTreeByUser(int userId);
 
+        Task<VueTreeSelectModel[]> GetVueDeviceTreeByUser(int userId);
+
         Task<List<CarExEntity>> GetCarEntitiesByUser(int userId);
 
         Task<List<PersonExEntity>> GetPersonEntitiesByUser(int userId);
@@ -21,6 +22,8 @@ namespace Simple.IDomain
         Task<List<LastLocatedExEntity>> GetLastLocatedByUser(int userId);
 
         Task<List<ViewAllTargetExEntity>> GetAllDeviceByUser(int userId);
+
+        Task<List<NewTrackExEntity>> GetNewTrackList(dynamic queryModel);
 
     }
 }

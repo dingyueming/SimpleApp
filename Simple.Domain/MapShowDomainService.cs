@@ -8,6 +8,8 @@ using Simple.Infrastructure.InfrastructureModel.ZTree;
 using AutoMapper;
 using Simple.ExEntity.Map;
 using Simple.Entity;
+using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
+using Simple.Infrastructure.Tools;
 
 namespace Simple.Domain
 {
@@ -16,15 +18,17 @@ namespace Simple.Domain
     /// </summary>
     public class MapShowDomainService : IMapShowDomainService
     {
+        private readonly INewtrackRepository newtrackRepository;
         private readonly IViewAllTargetRepository viewAllTargetRepository;
         private readonly ILastLocatedRepository lastLocatedRepository;
         private readonly ICarRepository carRepository;
         private readonly IPersonRepository personRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IMapper mapper;
-        public MapShowDomainService(IViewAllTargetRepository viewAllTargetRepository, ILastLocatedRepository lastLocatedRepository,
+        public MapShowDomainService(INewtrackRepository newtrackRepository, IViewAllTargetRepository viewAllTargetRepository, ILastLocatedRepository lastLocatedRepository,
             IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.newtrackRepository = newtrackRepository;
             this.viewAllTargetRepository = viewAllTargetRepository;
             this.lastLocatedRepository = lastLocatedRepository;
             this.personRepository = personRepository;
@@ -51,6 +55,12 @@ namespace Simple.Domain
                     isParent = true,
                     iconSkin = "pIcon01"
                 };
+                var flag = allUnits.Any(x => x.PID == unit.UNITID) || devices.Any(o => o.UNITID == unit.UNITID);
+                if (!flag)
+                {
+                    treeNode.isParent = false;
+                    treeNode.iconSkin = "icon10";
+                }
                 listNode.Add(treeNode);
             }
             foreach (var device in devices)
@@ -81,6 +91,14 @@ namespace Simple.Domain
             return listNode.ToArray();
         }
 
+        public async Task<VueTreeSelectModel[]> GetVueDeviceTreeByUser(int userId)
+        {
+            var allNodes = await GetDeviceTreeByUser(userId);
+            var node = allNodes.FirstOrDefault(x => x.pId == "unit-0");
+            var arrTreeSelectModel = TreeHelper.GetTreeSelectModels(allNodes.ToList(), node);
+            return arrTreeSelectModel.ToArray();
+        }
+
         public async Task<List<PersonExEntity>> GetPersonEntitiesByUser(int userId)
         {
             var persons = await personRepository.GetPersonEntitiesByUser(userId);
@@ -106,6 +124,13 @@ namespace Simple.Domain
         {
             var viewAllTargetEntities = await viewAllTargetRepository.GetDevicesByUser(userId);
             var exEntities = mapper.Map<List<ViewAllTargetExEntity>>(viewAllTargetEntities);
+            return exEntities;
+        }
+
+        public async Task<List<NewTrackExEntity>> GetNewTrackList(dynamic queryModel)
+        {
+            var entities = await newtrackRepository.GetNewtracksByDeviceId(queryModel);
+            var exEntities = mapper.Map<List<NewTrackExEntity>>(entities);
             return exEntities;
         }
     }
