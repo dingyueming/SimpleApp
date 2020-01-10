@@ -6,6 +6,7 @@ using Simple.Entity;
 using Simple.ExEntity;
 using Simple.ExEntity.SM;
 using System.Linq;
+using Simple.Infrastructure.InfrastructureModel.Paionation;
 
 namespace Simple.Domain
 {
@@ -34,8 +35,10 @@ namespace Simple.Domain
                 if (exEntityType != null)
                 {
                     CreateMap(entityType, exEntityType);
+                    CreateMap(exEntityType, entityType);
                 }
             }
+            CreateMap(typeof(Pagination<>), typeof(Pagination<>));
         }
     }
 }

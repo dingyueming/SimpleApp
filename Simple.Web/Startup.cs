@@ -37,7 +37,7 @@ namespace Simple.Web
 
             services.AddMvc().AddJsonOptions(option =>
             {
-                //option.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+                option.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             #region SignalR

@@ -61,6 +61,7 @@ namespace Simple.Entity
         /// 备注
         /// </summary>
         public int Remark { get; set; }
-
+        [Computed]
+        public UsersEntity User { get; set; }
     }
 }

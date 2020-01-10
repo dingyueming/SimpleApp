@@ -486,6 +486,28 @@
         "dist/vue-treeselect.css",
         "dist/vue-treeselect.min.css"
       ]
+    },
+    {
+      "library": "vue-tables-2@1.6.22",
+      "destination": "wwwroot/lib/vue-tables-2/",
+      "files": [
+        "dist/vue-tables-2.min.js",
+        "dist/vue-tables.js"
+      ]
     }
+  ,
+{
+  "library": "vue-easytable@1.7.2",
+  "destination": "wwwroot/lib/vue-easytable/",
+  "files": [
+    "umd/css/index.css",
+    "umd/font/fontello.eot",
+    "umd/font/fontello.svg",
+    "umd/font/fontello.ttf",
+    "umd/font/fontello.woff",
+    "umd/font/fontello.woff2",
+    "umd/js/index.js"
   ]
+}
+]
 }

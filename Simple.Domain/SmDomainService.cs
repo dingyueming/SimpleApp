@@ -10,6 +10,7 @@ using AutoMapper;
 using Simple.ExEntity.SM;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using Simple.Infrastructure.InfrastructureModel.Paionation;
 
 namespace Simple.Domain
 {
@@ -52,6 +53,30 @@ namespace Simple.Domain
             var userExEntities = mapper.Map<UsersExEntity>(userEntities);
             return userExEntities;
 
+        }
+
+        public async Task<Pagination<UsersExEntity>> GetUserPage(Pagination<UsersExEntity> param)
+        {
+            var pagination = await userRepository.GetUserPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<UsersExEntity>>(pagination);
+        }
+
+        public async Task<bool> AddUser(UsersExEntity exEntity)
+        {
+            var entity = mapper.Map<UsersEntity>(exEntity);
+            return await userRepository.InsertAsync(entity);
+        }
+
+        public async Task<bool> UpdateUser(UsersExEntity exEntity)
+        {
+            var entity = mapper.Map<UsersEntity>(exEntity);
+            return await userRepository.UpdateAsync(entity);
+        }
+
+        public async Task<bool> DeleteUser(UsersExEntity exEntity)
+        {
+            var entity = mapper.Map<UsersEntity>(exEntity);
+            return await userRepository.DeleteAsync(entity);
         }
 
         #endregion

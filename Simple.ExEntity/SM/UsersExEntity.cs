@@ -37,10 +37,24 @@ namespace Simple.ExEntity
         /// 数据状态
         /// </summary>
         public int Status { get; set; }
+        public string StatusStr
+        {
+            get
+            {
+                return Status == 0 ? "停用" : "启用";
+            }
+        }
         /// <summary>
         /// 创建人
         /// </summary>
         public int Creator { get; set; }
+        public string CreateStr
+        {
+            get
+            {
+                return User?.UsersName;
+            }
+        }
         /// <summary>
         /// 创建时间
         /// </summary>
@@ -57,5 +71,7 @@ namespace Simple.ExEntity
         /// 备注
         /// </summary>
         public int Remark { get; set; }
+
+        public UsersExEntity User { get; set; }
     }
 }

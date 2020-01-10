@@ -31,6 +31,14 @@
     <Content Include="wwwroot\bower_components\bootstrap\grunt\configBridge.json" />
     <Content Include="wwwroot\bower_components\bootstrap\package-lock.json" />
     <Content Include="wwwroot\bower_components\bootstrap\package.json" />
+    <Content Include="wwwroot\bower_components\datatables.net-bs\.bower.json" />
+    <Content Include="wwwroot\bower_components\datatables.net-bs\bower.json" />
+    <Content Include="wwwroot\bower_components\datatables.net-bs\css\dataTables.bootstrap.css" />
+    <Content Include="wwwroot\bower_components\datatables.net-bs\css\dataTables.bootstrap.min.css" />
+    <Content Include="wwwroot\bower_components\datatables.net-bs\License.txt" />
+    <Content Include="wwwroot\bower_components\datatables.net\.bower.json" />
+    <Content Include="wwwroot\bower_components\datatables.net\bower.json" />
+    <Content Include="wwwroot\bower_components\datatables.net\License.txt" />
     <Content Include="wwwroot\bower_components\font-awesome\.bower.json" />
     <Content Include="wwwroot\bower_components\font-awesome\bower.json" />
     <Content Include="wwwroot\bower_components\font-awesome\css\font-awesome.css" />
@@ -790,6 +798,12 @@
     <None Include="wwwroot\bower_components\bootstrap\nuget\MyGet.ps1" />
     <None Include="wwwroot\bower_components\bootstrap\package.js" />
     <None Include="wwwroot\bower_components\bootstrap\README.md" />
+    <None Include="wwwroot\bower_components\datatables.net-bs\js\dataTables.bootstrap.js" />
+    <None Include="wwwroot\bower_components\datatables.net-bs\js\dataTables.bootstrap.min.js" />
+    <None Include="wwwroot\bower_components\datatables.net-bs\Readme.md" />
+    <None Include="wwwroot\bower_components\datatables.net\js\jquery.dataTables.js" />
+    <None Include="wwwroot\bower_components\datatables.net\js\jquery.dataTables.min.js" />
+    <None Include="wwwroot\bower_components\datatables.net\Readme.md" />
     <None Include="wwwroot\bower_components\font-awesome\.npmignore" />
     <None Include="wwwroot\bower_components\font-awesome\css\font-awesome.css.map" />
     <None Include="wwwroot\bower_components\font-awesome\fonts\fontawesome-webfont.svg" />
@@ -2076,6 +2090,8 @@
     <Folder Include="Areas\DM\Data\" />
     <Folder Include="Areas\DM\Models\" />
     <Folder Include="Areas\EzMap\Data\" />
+    <Folder Include="Areas\SM\Data\" />
+    <Folder Include="Areas\SM\Models\" />
   </ItemGroup>
 
   <ItemGroup>

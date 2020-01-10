@@ -334,10 +334,10 @@ public partial class OracleAdapter
     {
         var keyFirst = keyProperties.First();
         var keyName = keyFirst.Name;
-        var cmd = $"BEGIN INSERT INTO {tableName} ({columnList}) VALUES ({parameterList}) RETURNING {keyName} INTO :ID; END;";//$"BEGIN INSERT INTO {tableName} ({columnList}) VALUES ({parameterList}) RETURNING ID INTO :ID; END;";
+        var cmd = $"BEGIN INSERT INTO {tableName} ({columnList}) VALUES ({parameterList}) RETURNING {keyName} INTO :{keyName}; END;";//$"BEGIN INSERT INTO {tableName} ({columnList}) VALUES ({parameterList}) RETURNING ID INTO :ID; END;";
 
         var multi = await connection.QueryMultipleAsync(cmd, entityToInsert, transaction, commandTimeout);
-        var idKey = multi.Command.Parameters["ID"] as IDataParameter;
+        var idKey = multi.Command.Parameters[keyName] as IDataParameter;
         if (keyFirst.PropertyType == typeof(int) || keyFirst.PropertyType == typeof(long))
         {
             return (int)idKey.Value;
