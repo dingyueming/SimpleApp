@@ -11,11 +11,11 @@ namespace Simple.Repository
 {
     public class UsersRepository : BaseRepository<UsersEntity>, IUserRepository
     {
-        public async Task<Pagination<UsersEntity>> GetUserPage(int pageSize, int pageIndex, string orderby, string where)
+        public async Task<Pagination<UsersEntity>> GetUserPage(int pageSize, int pageIndex, string where, string orderby)
         {
             var pagination = new Pagination<UsersEntity>();
             string totalSql = $"select count(1) from tb_users where 1=1";
-            var sql = "select a.*,b.* from tb_users a left join tb_users b on a.creator=b.usersid where 1=1";
+            var sql = "select a.*,b.* from tb_users a left join tb_users b on a.creator=b.usersid where 1=1 ";
             if (!string.IsNullOrEmpty(where))
             {
                 sql += where;
@@ -23,7 +23,7 @@ namespace Simple.Repository
             }
             if (!string.IsNullOrEmpty(orderby))
             {
-                sql += orderby;
+                sql += $" order by {orderby}";
             }
             var list = await Connection.QueryAsync<UsersEntity, UsersEntity, UsersEntity>(sql, (a, b) =>
             {

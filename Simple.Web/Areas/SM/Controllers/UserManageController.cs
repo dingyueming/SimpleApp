@@ -4,6 +4,7 @@ using Simple.IApplication.SM;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Simple.Web.Areas.SM.Controllers
@@ -22,7 +23,7 @@ namespace Simple.Web.Areas.SM.Controllers
             return Json(data);
         }
 
-        public async Task<bool> OperateData(UsersExEntity exEntity)
+        public async Task<bool> Add(UsersExEntity exEntity)
         {
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
@@ -30,12 +31,23 @@ namespace Simple.Web.Areas.SM.Controllers
             exEntity.CreateTime = DateTime.Now;
             return await userService.AddUser(exEntity);
         }
-        [HttpPut]
-        public async Task<bool> Put(UsersExEntity exEntity)
+        public async Task<bool> Update(UsersExEntity exEntity)
         {
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             return await userService.UpdateUser(exEntity);
         }
+        public async Task<bool> Delete(UsersExEntity exEntity)
+        {
+            exEntity.Modifier = LoginUser.UsersId;
+            exEntity.ModifyTime = DateTime.Now;
+            return await userService.DeleteUser(new List<UsersExEntity>() { exEntity });
+        }
+        public async Task<bool> BatchDelete(List<UsersExEntity> exEntities)
+        {
+            exEntities.ForEach(x => { x.Modifier = LoginUser.UsersId; x.ModifyTime = DateTime.Now; });
+            return await userService.DeleteUser(exEntities);
+        }
+
     }
 }

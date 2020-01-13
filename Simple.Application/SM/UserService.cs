@@ -21,9 +21,9 @@ namespace Simple.Application.SM
             return await smDomainService.AddUser(exEntity);
         }
 
-        public async Task<bool> DeleteUser(UsersExEntity exEntity)
+        public async Task<bool> DeleteUser(List<UsersExEntity> exEntities)
         {
-            return await smDomainService.DeleteUser(exEntity);
+            return await smDomainService.DeleteUser(exEntities);
         }
 
         public async Task<List<UsersExEntity>> GetAllUsers()

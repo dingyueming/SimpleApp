@@ -5,7 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="box" id="vmBox">
-    <button type="button" class="btn btn-success" style="margin:10px;" data-toggle="modal" onclick="vm.row = [];" data-target="#myModal">新增</button>
+    <button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;" data-toggle="modal" onclick="vm.pageMode = 'add';vm.row = []; " data-target="#myModal">新增</button>
+    <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
     <v-table is-vertical-resize
              :vertical-resize-offset='60'
              is-horizontal-resize
@@ -18,12 +19,17 @@
              :table-data="tableConfig.tableData"
              row-hover-color="#eee"
              row-click-color="#edf7ff"
+             :select-all="selectALL"
+             :select-change="selectChange"
+             :select-group-change="selectGroupChange"
              v-on:sort-change="sortChange"
              :paging-index="(pageIndex-1)*pageSize"></v-table>
-    <div class="mt20 mb20 bold"></div>
-    <v-pagination v-on:page-change="pageChange" v-on:page-size-change="pageSizeChange" :total="total" :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next', 'sizer', 'jumper']"></v-pagination>
+    <div style="margin-top:5px;">
+        <v-pagination v-on:page-change="pageChange" v-on:page-size-change="pageSizeChange" :page-size-option="[15,20,30]" :total="total" :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next', 'sizer', 'jumper']"></v-pagination>
+    </div>
+
     <!-- 模态框（Modal） -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -108,6 +114,7 @@
         methods: {
             update() {
                 vm.row = this.rowData;
+                vm.pageMode = "edit";
                 $('#myModal').modal({backdrop: 'static', keyboard: false});
                 // 参数根据业务场景随意构造
                 let params = { type: 'edit', index: this.index, rowData: this.rowData };
@@ -115,7 +122,9 @@
             },
 
             deleteRow() {
-
+                vm.row = this.rowData;
+                vm.pageMode = "delete";
+                vm.operateData(vm.row);
                 // 参数根据业务场景随意构造
                 let params = { type: 'delete', index: this.index };
                 this.$emit('on-custom-comp', params);
@@ -126,7 +135,8 @@
     var vm = new Vue({
         el: "#vmBox",
         data: {
-            total:0,
+            pageMode: 'add',
+            total: 0,
             pageIndex: 1,
             pageSize: 15,
             tableConfig: {
@@ -134,19 +144,20 @@
                 tableData: [
                 ],
                 columns: [
+                    {width: 60, titleAlign: 'center',columnAlign:'center',type: 'selection'},
                     {
                         field: 'custome', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center',
                         formatter: function (rowData, index, pagingIndex) {
                             var currentIndex = index + pagingIndex;
                             return '<span style="color:red;font-weight: bold;">' + (currentIndex + 1) + '</span>';
-                        }, isFrozen: true
+                        }, isFrozen: false
                     },
                     { field: 'usersName', title: '用户名', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'realName', title: '真实姓名', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'telephone', title: '电话', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'address', title: '地址', width: 280, titleAlign: 'center', columnAlign: 'left', isResize: true },
                     { field: 'email', title: '邮箱', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'statusStr', title: '数据状态', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'statusStr', title: '数据状态', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'createTime', title: '创建时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'createStr', title: '创建人', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'remark', title: '备注', width: 150, titleAlign: 'center', columnAlign: 'left', isResize: true },
@@ -157,10 +168,11 @@
                 ],
             },
             row: {},
+            selectedRows:[],
         },
         methods: {
             getTableData() {
-                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize };
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize ,orderBy:' a.usersId desc'};
                 axios.post('@Url.Action("QueryUsers")', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
                     vm.tableConfig.tableData = pagination.data;
@@ -198,13 +210,54 @@
                     });
                 }
             },
+            selectALL(selection){
+                console.log('select-aLL', selection);
+                this.selectedRows = selection;
+            },
+            selectChange(selection,rowData){
+                console.log('select-change', selection, rowData);
+                this.selectedRows = selection;
+            },
+            selectGroupChange(selection){
+                console.log('select-group-change',selection);
+            },
             operateData() {
-                axios.post('@Url.Action("AddUser")', Qs.stringify(this.row)).then(function (response) {
-                    var flag = response.data;
-                    console.log(flag);
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                var url = '';
+                switch (this.pageMode) {
+                    case "edit":
+                        url = '@Url.Action("Update")';
+                        break;
+                    case "delete":
+                        url = '@Url.Action("Delete")';
+                        if (!confirm('确认删除吗')) {
+                            url = undefined;
+                        }
+                        break;
+                    default:
+                        url = '@Url.Action("Add")';
+                        break;
+                }
+                if (url) {
+                    axios.post(url, Qs.stringify(this.row)).then(function (response) {
+                        var flag = response.data;
+                        if (flag) {
+                            $('#myModal').modal('hide');
+                            vm.getTableData();
+                        }
+                        console.log(flag);
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }                
+            },
+            deleteSelect() {
+                if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
+                    if (confirm('确认删除吗')) {
+
+                    }
+                }
+                console.log(this.selectedRows);
+                this.getTableData();
             }
         },
         created() {

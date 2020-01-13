@@ -1,8 +1,270 @@
 ﻿
 @{
     ViewData["Title"] = "Index";
+    ViewData["Version"] = "20200113";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<div class="box" id="vmBox">
+    <button type="button" class="btn btn-success" style="margin:10px;" data-toggle="modal" onclick="vm.pageMode = 'add';vm.row = []; " data-target="#myModal">新增</button>
+    <button type="button" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
+    <v-table is-vertical-resize
+             :vertical-resize-offset='60'
+             is-horizontal-resize
+             style="width:100%"
+             :multiple-sort="false"
+             :min-height="350"
+             even-bg-color="#f2f2f2"
+             :title-rows="tableConfig.titleRows"
+             :columns="tableConfig.columns"
+             :table-data="tableConfig.tableData"
+             row-hover-color="#eee"
+             row-click-color="#edf7ff"
+             :select-all="selectALL"
+             :select-change="selectChange"
+             :select-group-change="selectGroupChange"
+             v-on:sort-change="sortChange"
+             :paging-index="(pageIndex-1)*pageSize"></v-table>
+    <div style="margin-top:5px;">
+        <v-pagination v-on:page-change="pageChange" v-on:page-size-change="pageSizeChange" :page-size-option="[15,20,30]" :total="total" :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next', 'sizer', 'jumper']"></v-pagination>
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">菜单管理</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="usersName">用户名</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" v-model="row.usersName" id="usersName" type="text" placeholder="用户名" />
+                            </div>
+                            <label class="col-sm-2 control-label" for="password">密码</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="password" v-model="row.password" type="password" placeholder="密码" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="ds_host">真实姓名</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="realName" v-model="row.realName" type="text" placeholder="真实姓名" />
+                            </div>
+                            <label class="col-sm-2 control-label" for="telephone">电话</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="telephone" v-model="row.telephone" type="text" placeholder="电话" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="address" class="col-sm-2 control-label">地址</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="address" v-model="row.address" type="text" placeholder="地址" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm-2 control-label">邮箱</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="email" v-model="row.email" type="text" placeholder="邮箱" />
+                            </div>
+                            <label for="status" class="col-sm-2 control-label">使用状态</label>
+                            <div class="col-sm-4">
+                                <select id="status" v-model="row.status" class="form-control">
+                                    <option value="1">启用</option>
+                                    <option value="0">停用</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="remark" class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="remark" v-model="row.remark" placeholder="备注"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" v-on:click="operateData">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+<script>
+    // 自定义列组件
+    Vue.component('table-operation', {
+        template: `<span>
+        <a href="" v-on:click.stop.prevent="update(rowData,index)">编辑</a>&nbsp;
+        <a href="" v-on:click.stop.prevent="deleteRow(rowData,index)">删除</a>
+        </span>`,
+        props: {
+            rowData: {
+                type: Object
+            },
+            field: {
+                type: String
+            },
+            index: {
+                type: Number
+            }
+        },
+        methods: {
+            update() {
+                vm.row = this.rowData;
+                vm.pageMode = "edit";
+                $('#myModal').modal({backdrop: 'static', keyboard: false});
+                // 参数根据业务场景随意构造
+                let params = { type: 'edit', index: this.index, rowData: this.rowData };
+                this.$emit('on-custom-comp', params);
+            },
+
+            deleteRow() {
+                vm.row = this.rowData;
+                vm.pageMode = "delete";
+                vm.operateData(vm.row);
+                // 参数根据业务场景随意构造
+                let params = { type: 'delete', index: this.index };
+                this.$emit('on-custom-comp', params);
+
+            }
+        }
+    });
+    var vm = new Vue({
+        el: "#vmBox",
+        data: {
+            pageMode: 'add',
+            total: 0,
+            pageIndex: 1,
+            pageSize: 15,
+            tableConfig: {
+                multipleSort: false,
+                tableData: [
+                ],
+                columns: [
+                    {width: 60, titleAlign: 'center',columnAlign:'center',type: 'selection'},
+                    {
+                        field: 'custome', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center',
+                        formatter: function (rowData, index, pagingIndex) {
+                            var currentIndex = index + pagingIndex;
+                            return '<span style="color:red;font-weight: bold;">' + (currentIndex + 1) + '</span>';
+                        }, isFrozen: false
+                    },
+                    { field: 'usersName', title: '用户名', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'realName', title: '真实姓名', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'telephone', title: '电话', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'address', title: '地址', width: 280, titleAlign: 'center', columnAlign: 'left', isResize: true },
+                    { field: 'email', title: '邮箱', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'statusStr', title: '数据状态', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'createTime', title: '创建时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'createStr', title: '创建人', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'remark', title: '备注', width: 150, titleAlign: 'center', columnAlign: 'left', isResize: true },
+                    { field: 'custome-adv', title: '操作', width: 100, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
+                ],
+                titleRows: [
+
+                ],
+            },
+            row: {},
+            selectedRows:[],
+        },
+        methods: {
+            getTableData() {
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize ,orderBy:' a.usersId desc'};
+                axios.post('@Url.Action("QueryUsers")', Qs.stringify(search)).then(function (response) {
+                    var pagination = response.data;
+                    vm.tableConfig.tableData = pagination.data;
+                    vm.total = pagination.total;
+                    console.log(vm.tableConfig.tableData);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            pageChange(pageIndex) {
+                this.pageIndex = pageIndex;
+                this.getTableData();
+                console.log(pageIndex)
+            },
+            pageSizeChange(pageSize) {
+
+                this.pageIndex = 1;
+                this.pageSize = pageSize;
+                this.getTableData();
+            },
+            sortChange(params) {
+                if (params.height.length > 0) {
+                    this.tableConfig.tableData.sort(function (a, b) {
+
+                        if (params.height === 'asc') {
+
+                            return a.height - b.height;
+                        } else if (params.height === 'desc') {
+
+                            return b.height - a.height;
+                        } else {
+
+                            return 0;
+                        }
+                    });
+                }
+            },
+            selectALL(selection){
+                console.log('select-aLL', selection);
+                this.selectedRows = selection;
+            },
+            selectChange(selection,rowData){
+                console.log('select-change', selection, rowData);
+                this.selectedRows = selection;
+            },
+            selectGroupChange(selection){
+                console.log('select-group-change',selection);
+            },
+            operateData() {
+                var url = '';
+                switch (this.pageMode) {
+                    case "edit":
+                        url = '@Url.Action("Update")';
+                        break;
+                    case "delete":
+                        url = '@Url.Action("Delete")';
+                        if (!confirm('确认删除吗')) {
+                            url = undefined;
+                        }
+                        break;
+                    default:
+                        url = '@Url.Action("Add")';
+                        break;
+                }
+                if (url) {
+                    axios.post(url, Qs.stringify(this.row)).then(function (response) {
+                        var flag = response.data;
+                        if (flag) {
+                            $('#myModal').modal('hide');
+                            vm.getTableData();
+                        }
+                        console.log(flag);
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }
+            },
+            deleteSelect() {
+                if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
+                    if (confirm('确认删除吗')) {
+
+                    }
+                }
+                console.log(this.selectedRows);
+                this.getTableData();
+            }
+        },
+        created() {
+            this.getTableData();
+        },
+    });
+</script>
+
 

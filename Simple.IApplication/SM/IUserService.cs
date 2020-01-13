@@ -18,7 +18,7 @@ namespace Simple.IApplication.SM
         Task<Pagination<UsersExEntity>> GetUserPage(Pagination<UsersExEntity> param);
 
         Task<bool> AddUser(UsersExEntity exEntity);
-        Task<bool> DeleteUser(UsersExEntity exEntity);
+        Task<bool> DeleteUser(List<UsersExEntity> exEntities);
         Task<bool> UpdateUser(UsersExEntity exEntity);
     }
 }

@@ -70,7 +70,7 @@ namespace Simple.ExEntity
         /// <summary>
         /// 备注
         /// </summary>
-        public int Remark { get; set; }
+        public string Remark { get; set; }
 
         public UsersExEntity User { get; set; }
     }

@@ -73,10 +73,10 @@ namespace Simple.Domain
             return await userRepository.UpdateAsync(entity);
         }
 
-        public async Task<bool> DeleteUser(UsersExEntity exEntity)
+        public async Task<bool> DeleteUser(List<UsersExEntity> exEntities)
         {
-            var entity = mapper.Map<UsersEntity>(exEntity);
-            return await userRepository.DeleteAsync(entity);
+            var entities = mapper.Map<List<UsersEntity>>(exEntities);
+            return await userRepository.DeleteAsync(entities);
         }
 
         #endregion

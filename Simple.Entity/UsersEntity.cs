@@ -60,7 +60,7 @@ namespace Simple.Entity
         /// <summary>
         /// 备注
         /// </summary>
-        public int Remark { get; set; }
+        public string Remark { get; set; }
         [Computed]
         public UsersEntity User { get; set; }
     }
