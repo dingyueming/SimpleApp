@@ -24,16 +24,13 @@ namespace Simple.Domain
         private readonly IMapper mapper;
         private readonly IUserRepository userRepository;
         private readonly IMenusRepository menusRepository;
-        private readonly IAuthRepository authRepository;
         private readonly IConfiguration configuration;
-        public SmDomainService(IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository
-            , IAuthRepository authRepository)
+        public SmDomainService(IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository)
         {
             this.mapper = mapper;
             this.userRepository = userRepository;
             this.menusRepository = menusRepository;
             this.configuration = configuration;
-            this.authRepository = authRepository;
         }
 
         #endregion
@@ -81,8 +78,6 @@ namespace Simple.Domain
 
         #endregion
 
-
-
         #region 菜单管理
 
         public async Task<List<MenusExEntity>> GetAllMenus()
@@ -96,6 +91,30 @@ namespace Simple.Domain
                   x.MenusUrl = localUrl + x.MenusUrl;
               });
             return exList.Where(x => x.ParentId == 0).ToList();
+        }
+
+        public async Task<Pagination<MenusExEntity>> GetMenuPage(Pagination<MenusExEntity> param)
+        {
+            var pagination = await menusRepository.GetMenuPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<MenusExEntity>>(pagination);
+        }
+
+        public async Task<bool> AddMenu(MenusExEntity exEntity)
+        {
+            var entity = mapper.Map<MenusEntity>(exEntity);
+            return await menusRepository.InsertAsync(entity);
+        }
+
+        public async Task<bool> DeleteMenu(List<MenusExEntity> exEntities)
+        {
+            var entities = mapper.Map<List<MenusEntity>>(exEntities);
+            return await menusRepository.DeleteAsync(entities);
+        }
+
+        public async Task<bool> UpdateMenu(MenusExEntity exEntity)
+        {
+            var entity = mapper.Map<MenusEntity>(exEntity);
+            return await menusRepository.UpdateAsync(entity);
         }
 
 

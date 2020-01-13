@@ -46,7 +46,7 @@ namespace Simple.Web.Controllers
         /// 查询所有在用的菜单
         /// </summary>
         /// <returns></returns>
-        public async Task<JsonResult> QueryMenus()
+        public async Task<JsonResult> QueryMenusByUser()
         {
             var menus = await menusService.GetAllMenus();
             return Json(menus);

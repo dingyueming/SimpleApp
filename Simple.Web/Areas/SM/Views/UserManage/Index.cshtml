@@ -253,11 +253,19 @@
             deleteSelect() {
                 if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
                     if (confirm('确认删除吗')) {
-
+                        axios.post('@Url.Action("BatchDelete")', Qs.stringify({ exEntities: this.selectedRows }).then(function (response) {
+                            var flag = response.data;
+                            if (flag) {
+                                $('#myModal').modal('hide');
+                                vm.getTableData();
+                            }
+                            console.log(flag);
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
                     }
                 }
                 console.log(this.selectedRows);
-                this.getTableData();
             }
         },
         created() {

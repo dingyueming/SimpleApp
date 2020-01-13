@@ -315,7 +315,7 @@ desired effect
             },
             methods: {
                 QueryMenus: function (param) {
-                    axios.post('@Url.Action("QueryMenus")', {}).then(function (response) {
+                    axios.post('@Url.Action("QueryMenusByUser")', {}).then(function (response) {
                         response.data.forEach(function (menu, index) {
                             var arrUrl = [];
                             menu.childMenus.forEach(function (childMenu, index) {

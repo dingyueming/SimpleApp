@@ -22,6 +22,10 @@ namespace Simple.Entity
         /// </summary>
         public string MenusName { get; set; }
         /// <summary>
+        /// 菜单别名
+        /// </summary>
+        public string SubTitle { get; set; }
+        /// <summary>
         /// 菜单图标
         /// </summary>
         public string MenusIcon { get; set; }
@@ -56,6 +60,12 @@ namespace Simple.Entity
         /// <summary>
         /// 备注
         /// </summary>
-        public int Remark { get; set; }
+        public string Remark { get; set; }
+
+        /// <summary>
+        /// 创建人实体
+        /// </summary>
+        [Computed]
+        public UsersEntity User { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "菜单管理";
     ViewData["Version"] = "20200113";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -28,7 +28,6 @@
     <div style="margin-top:5px;">
         <v-pagination v-on:page-change="pageChange" v-on:page-size-change="pageSizeChange" :page-size-option="[15,20,30]" :total="total" :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next', 'sizer', 'jumper']"></v-pagination>
     </div>
-
     <!-- 模态框（Modal） -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -40,37 +39,40 @@
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="usersName">用户名</label>
+                            <label class="col-sm-2 control-label" for="menusName">菜单名</label>
                             <div class="col-sm-4">
-                                <input class="form-control" v-model="row.usersName" id="usersName" type="text" placeholder="用户名" />
+                                <input class="form-control" v-model="row.menusName" id="menusName" type="text" placeholder="菜单名" />
                             </div>
-                            <label class="col-sm-2 control-label" for="password">密码</label>
+                            <label class="col-sm-2 control-label" for="menusUrl">地址</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="password" v-model="row.password" type="password" placeholder="密码" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="ds_host">真实姓名</label>
-                            <div class="col-sm-4">
-                                <input class="form-control" id="realName" v-model="row.realName" type="text" placeholder="真实姓名" />
-                            </div>
-                            <label class="col-sm-2 control-label" for="telephone">电话</label>
-                            <div class="col-sm-4">
-                                <input class="form-control" id="telephone" v-model="row.telephone" type="text" placeholder="电话" />
+                                <input class="form-control" id="menusUrl" v-model="row.menusUrl" type="text" placeholder="地址" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="address" class="col-sm-2 control-label">地址</label>
+                            <label class="col-sm-2 control-label" for="subTitle">菜单别名</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="subTitle" v-model="row.subTitle" type="text" placeholder="菜单别名" />
+                            </div>
+                            <label class="col-sm-2 control-label" for="menusIcon">图标</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="menusIcon" v-model="row.menusIcon" type="text" placeholder="图标" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="parentId" class="col-sm-2 control-label">上级菜单</label>
                             <div class="col-sm-10">
-                                <input class="form-control" id="address" v-model="row.address" type="text" placeholder="地址" />
+                                <select id="parentId" v-model="row.parentId" class="form-control">
+                                    <option value="0">&nbsp;&nbsp;</option>
+                                    <option v-for="(item,index) in parentMenus" :value="item.menusId">{{item.menusName}}</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="email" class="col-sm-2 control-label">邮箱</label>
+                            <label for="orderIndex" class="col-sm-2 control-label">排序</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="email" v-model="row.email" type="text" placeholder="邮箱" />
+                                <input class="form-control" id="orderIndex" v-model="row.orderIndex" type="text" placeholder="排序" />
                             </div>
-                            <label for="status" class="col-sm-2 control-label">使用状态</label>
+                            <label for="status" class="col-sm-2 control-label">数据状态</label>
                             <div class="col-sm-4">
                                 <select id="status" v-model="row.status" class="form-control">
                                     <option value="1">启用</option>
@@ -153,14 +155,19 @@
                             return '<span style="color:red;font-weight: bold;">' + (currentIndex + 1) + '</span>';
                         }, isFrozen: false
                     },
-                    { field: 'usersName', title: '用户名', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'realName', title: '真实姓名', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'telephone', title: '电话', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'address', title: '地址', width: 280, titleAlign: 'center', columnAlign: 'left', isResize: true },
-                    { field: 'email', title: '邮箱', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'menusName', title: '菜单名', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'menusUrl', title: '地址', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'subTitle', title: '菜单别名', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'menusIcon', title: '图标', width: 100, titleAlign: 'center', columnAlign: 'left', isResize: true },
+                    //{ field: 'email', title: '上级菜单', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'orderIndex', title: '排序', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'statusStr', title: '数据状态', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'createTime', title: '创建时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'createStr', title: '创建人', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    {
+                        field: 'user.usersName', title: '创建人', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
+                            return rowData.user.usersName;
+                        }
+                    },
                     { field: 'remark', title: '备注', width: 150, titleAlign: 'center', columnAlign: 'left', isResize: true },
                     { field: 'custome-adv', title: '操作', width: 100, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
                 ],
@@ -169,12 +176,13 @@
                 ],
             },
             row: {},
+            parentMenus:  [],
             selectedRows:[],
         },
         methods: {
             getTableData() {
-                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize ,orderBy:' a.usersId desc'};
-                axios.post('@Url.Action("QueryUsers")', Qs.stringify(search)).then(function (response) {
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize ,orderBy:' a.menusId desc'};
+                axios.post('@Url.Action("QueryMenus")', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
                     vm.tableConfig.tableData = pagination.data;
                     vm.total = pagination.total;
@@ -189,7 +197,6 @@
                 console.log(pageIndex)
             },
             pageSizeChange(pageSize) {
-
                 this.pageIndex = 1;
                 this.pageSize = pageSize;
                 this.getTableData();
@@ -254,16 +261,36 @@
             deleteSelect() {
                 if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
                     if (confirm('确认删除吗')) {
-
+                        axios.post('@Url.Action("BatchDelete")', Qs.stringify({ exEntities: this.selectedRows })
+                        ).then(function (response) {//this.selectedRows
+                            var flag = response.data;
+                            if (flag) {
+                                $('#myModal').modal('hide');
+                                vm.getTableData();
+                            }
+                            console.log(flag);
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
                     }
                 }
                 console.log(this.selectedRows);
-                this.getTableData();
+            },
+            queryFirstMeuns() {
+                axios.post('@Url.Action("QueryFirstMenus")').then(response=> {
+                    this.parentMenus = response.data;
+                    console.log(response.data);
+                }).catch(function (error) {
+                    console.log(error);
+                });
             }
         },
         created() {
             this.getTableData();
         },
+        mounted() {
+            this.queryFirstMeuns();
+        }
     });
 </script>
 
