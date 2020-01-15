@@ -2098,6 +2098,6 @@
     <TypeScriptCompile Include="wwwroot\bower_components\moment\moment.d.ts" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties host_1json__JsonSchema="http://json.schemastore.org/jsinspectrc" appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

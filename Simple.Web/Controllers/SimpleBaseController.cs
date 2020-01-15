@@ -43,7 +43,7 @@ namespace Simple.Web.Controllers
             }
         }
         /// <summary>
-        /// 查询所有在用的菜单
+        /// 查询用户所拥有的菜单
         /// </summary>
         /// <returns></returns>
         public async Task<JsonResult> QueryMenusByUser()
@@ -51,6 +51,17 @@ namespace Simple.Web.Controllers
             var menus = await menusService.GetAllMenus();
             return Json(menus);
         }
+
+        /// <summary>
+        /// 查询所有在用的菜单
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> QueryAllMenus()
+        {
+            var menus = await menusService.GetAllMenus();
+            return Json(menus);
+        }
+
         public async Task GetAuth()
         {
             var auth = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);

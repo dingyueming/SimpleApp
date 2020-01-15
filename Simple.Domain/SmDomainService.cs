@@ -21,12 +21,17 @@ namespace Simple.Domain
     {
         #region 构造函数
 
-        private readonly IMapper mapper;
+        private readonly IRoleMenuRepository roleMenuRepository;
         private readonly IUserRepository userRepository;
         private readonly IMenusRepository menusRepository;
+        private readonly IRolesRepository rolesRepository;
         private readonly IConfiguration configuration;
-        public SmDomainService(IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository)
+        private readonly IMapper mapper;
+
+        public SmDomainService(IRoleMenuRepository roleMenuRepository, IRolesRepository rolesRepository, IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository)
         {
+            this.roleMenuRepository = roleMenuRepository;
+            this.rolesRepository = rolesRepository;
             this.mapper = mapper;
             this.userRepository = userRepository;
             this.menusRepository = menusRepository;
@@ -117,6 +122,46 @@ namespace Simple.Domain
             return await menusRepository.UpdateAsync(entity);
         }
 
+        public async Task<List<MenusExEntity>> GetMenusByRole(decimal rolesId)
+        {
+            var entities = await roleMenuRepository.GetRoleMenuEntitiesByRole(rolesId);
+            var listMenus = entities.Where(o => o.Menu != null).Select(x => x.Menu).ToList();
+            return mapper.Map<List<MenusExEntity>>(listMenus);
+        }
+
+        #endregion
+
+        #region 角色管理
+
+        public async Task<Pagination<RolesExEntity>> GetRolePage(Pagination<RolesExEntity> param)
+        {
+            var pagination = await rolesRepository.GetRolePage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<RolesExEntity>>(pagination);
+        }
+
+        public async Task<bool> AddRole(RolesExEntity exEntity)
+        {
+            var entity = mapper.Map<RolesEntity>(exEntity);
+            return await rolesRepository.InsertAsync(entity);
+        }
+
+        public async Task<bool> DeleteRole(List<RolesExEntity> exEntities)
+        {
+            var entities = mapper.Map<List<RolesEntity>>(exEntities);
+            return await rolesRepository.DeleteAsync(entities);
+        }
+
+        public async Task<bool> UpdateRole(RolesExEntity exEntity)
+        {
+            var entity = mapper.Map<RolesEntity>(exEntity);
+            return await rolesRepository.UpdateAsync(entity);
+        }
+
+        public async Task<bool> UpdateRolesMenu(List<RoleMenuExEntity> roleMenuExEntities)
+        {
+            var entities = mapper.Map<List<RoleMenuEntity>>(roleMenuExEntities);
+            return await roleMenuRepository.UpdateRolesMenu(entities);
+        }
 
         #endregion
     }

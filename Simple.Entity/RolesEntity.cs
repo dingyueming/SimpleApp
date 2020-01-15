@@ -42,6 +42,11 @@ namespace Simple.Entity
         /// 备注
         /// </summary>
         public virtual string Remark { get; set; }
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        [Computed]
+        public UsersEntity User { get; set; }
         #endregion
     }
 }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.Entity
+namespace Simple.ExEntity.SM
 {
     public class RoleMenuExEntity
     {

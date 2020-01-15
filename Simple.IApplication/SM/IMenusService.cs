@@ -9,10 +9,12 @@ namespace Simple.IApplication.SM
 {
     public interface IMenusService
     {
-        Task<List<MenusExEntity>> GetAllMenus();
-        Task<Pagination<MenusExEntity>> GetMenuPage(Pagination<MenusExEntity> param);
         Task<bool> AddMenu(MenusExEntity exEntity);
         Task<bool> DeleteMenu(List<MenusExEntity> exEntities);
         Task<bool> UpdateMenu(MenusExEntity exEntity);
+        Task<Pagination<MenusExEntity>> GetMenuPage(Pagination<MenusExEntity> param);
+        Task<List<MenusExEntity>> GetAllMenus();
+        //Task<List<MenusExEntity>> GetMenusByUser();
+        Task<List<MenusExEntity>> GetMenusByRole(decimal rolesId);
     }
 }

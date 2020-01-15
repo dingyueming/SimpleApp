@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.Entity
+namespace Simple.ExEntity.SM
 {
     public class RolesExEntity
     {
@@ -40,6 +40,17 @@ namespace Simple.Entity
         /// 备注
         /// </summary>
         public virtual string Remark { get; set; }
+        /// <summary>
+        /// 用户
+        /// </summary>
+        public UsersExEntity User { get; set; }
+        public string StatusStr
+        {
+            get
+            {
+                return Status == 0 ? "停用" : "启用";
+            }
+        }
         #endregion
     }
 }

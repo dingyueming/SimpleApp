@@ -34,6 +34,11 @@ namespace Simple.Entity
         /// 备注
         /// </summary>
         public virtual string Remark { get; set; }
+        /// <summary>
+        /// 菜单实体
+        /// </summary>
+        [Computed]
+        public MenusEntity Menu { get; set; }
         #endregion
     }
 }

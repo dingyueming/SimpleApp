@@ -34,6 +34,18 @@ namespace Simple.IDomain
         Task<bool> AddMenu(MenusExEntity exEntity);
         Task<bool> DeleteMenu(List<MenusExEntity> exEntities);
         Task<bool> UpdateMenu(MenusExEntity exEntity);
+        Task<List<MenusExEntity>> GetMenusByRole(decimal rolesId);
+
+        #endregion
+
+        #region 角色管理
+
+        Task<Pagination<RolesExEntity>> GetRolePage(Pagination<RolesExEntity> param);
+        Task<bool> AddRole(RolesExEntity exEntity);
+        Task<bool> DeleteRole(List<RolesExEntity> exEntities);
+        Task<bool> UpdateRole(RolesExEntity exEntity);
+
+        Task<bool> UpdateRolesMenu(List<RoleMenuExEntity> roleMenuExEntities);
 
         #endregion
     }

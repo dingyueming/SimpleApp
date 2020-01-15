@@ -43,5 +43,9 @@ namespace Simple.Application.SM
             return await smDomainService.GetMenuPage(param);
         }
 
+        public async Task<List<MenusExEntity>> GetMenusByRole(decimal rolesId)
+        {
+            return await smDomainService.GetMenusByRole(rolesId);
+        }
     }
 }
