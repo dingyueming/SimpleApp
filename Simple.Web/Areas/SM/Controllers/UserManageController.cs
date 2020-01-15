@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Simple.ExEntity;
+using Simple.ExEntity.SM;
 using Simple.IApplication.SM;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
@@ -13,8 +14,10 @@ namespace Simple.Web.Areas.SM.Controllers
     public class UserManageController : SimpleBaseController
     {
         private readonly IUserService userService;
-        public UserManageController(IUserService userService, IServiceProvider serviceProvider) : base(serviceProvider)
+        private readonly IRolesService rolesService;
+        public UserManageController(IRolesService rolesService, IUserService userService, IServiceProvider serviceProvider) : base(serviceProvider)
         {
+            this.rolesService = rolesService;
             this.userService = userService;
         }
         public async Task<JsonResult> QueryUsers(Pagination<UsersExEntity> pagination)
@@ -22,7 +25,6 @@ namespace Simple.Web.Areas.SM.Controllers
             var data = await userService.GetUserPage(pagination);
             return Json(data);
         }
-
         public async Task<bool> Add(UsersExEntity exEntity)
         {
             exEntity.Modifier = LoginUser.UsersId;
@@ -47,6 +49,17 @@ namespace Simple.Web.Areas.SM.Controllers
         {
             exEntities.ForEach(x => { x.Modifier = LoginUser.UsersId; x.ModifyTime = DateTime.Now; });
             return await userService.DeleteUser(exEntities);
+        }
+        public async Task<JsonResult> QueryAllRoles()
+        {
+            var list = await rolesService.GetAllRoles();
+            return Json(list);
+        }
+        public async Task<bool> SaveUsersRole(UserRoleExEntity userRoleExEntity)
+        {
+            userRoleExEntity.Createtime = DateTime.Now;
+            userRoleExEntity.Creator = LoginUser.UsersId;
+            return await userService.UpdateUsersRole(userRoleExEntity);
         }
 
     }

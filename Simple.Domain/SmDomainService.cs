@@ -21,6 +21,7 @@ namespace Simple.Domain
     {
         #region 构造函数
 
+        private readonly IUsersRoleRepository usersRoleRepository;
         private readonly IRoleMenuRepository roleMenuRepository;
         private readonly IUserRepository userRepository;
         private readonly IMenusRepository menusRepository;
@@ -28,8 +29,9 @@ namespace Simple.Domain
         private readonly IConfiguration configuration;
         private readonly IMapper mapper;
 
-        public SmDomainService(IRoleMenuRepository roleMenuRepository, IRolesRepository rolesRepository, IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository)
+        public SmDomainService(IUsersRoleRepository usersRoleRepository, IRoleMenuRepository roleMenuRepository, IRolesRepository rolesRepository, IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository)
         {
+            this.usersRoleRepository = usersRoleRepository;
             this.roleMenuRepository = roleMenuRepository;
             this.rolesRepository = rolesRepository;
             this.mapper = mapper;
@@ -81,6 +83,12 @@ namespace Simple.Domain
             return await userRepository.DeleteAsync(entities);
         }
 
+        public async Task<bool> UpdateUsersRole(UserRoleExEntity userRoleExEntity)
+        {
+            var entity = mapper.Map<UserRoleEntity>(userRoleExEntity);
+            return await usersRoleRepository.UpdateUsersRole(entity);
+        }
+
         #endregion
 
         #region 菜单管理
@@ -129,9 +137,29 @@ namespace Simple.Domain
             return mapper.Map<List<MenusExEntity>>(listMenus);
         }
 
+        public async Task<List<MenusExEntity>> GetMenusByUser(int usersId)
+        {
+            var menuEntities = await menusRepository.GetMenusByUser(usersId);
+            var exList = mapper.Map<List<MenusExEntity>>(menuEntities).ToList();
+            exList.ForEach(x =>
+            {
+                x.ChildMenus = exList.Where(o => o.ParentId == x.MenusId).ToList().OrderBy(o => o.OrderIndex).ToList();
+                var localUrl = configuration["localUrl"];
+                x.MenusUrl = localUrl + x.MenusUrl;
+            });
+            return exList.Where(x => x.ParentId == 0).ToList();
+        }
+
         #endregion
 
         #region 角色管理
+
+        public async Task<List<RolesExEntity>> GetAllRoles()
+        {
+            var rolesEntities = await rolesRepository.GetAllAsync();
+            var roleExEntities = mapper.Map<List<RolesExEntity>>(rolesEntities);
+            return roleExEntities;
+        }
 
         public async Task<Pagination<RolesExEntity>> GetRolePage(Pagination<RolesExEntity> param)
         {

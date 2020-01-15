@@ -11,5 +11,7 @@ namespace Simple.IRepository
     public interface IMenusRepository : IBaseRepository<MenusEntity>
     {
         Task<Pagination<MenusEntity>> GetMenuPage(int pageSize, int pageIndex, string where, string orderby);
+
+        Task<List<MenusEntity>> GetMenusByUser(int usersId);
     }
 }

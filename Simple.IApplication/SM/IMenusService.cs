@@ -14,7 +14,7 @@ namespace Simple.IApplication.SM
         Task<bool> UpdateMenu(MenusExEntity exEntity);
         Task<Pagination<MenusExEntity>> GetMenuPage(Pagination<MenusExEntity> param);
         Task<List<MenusExEntity>> GetAllMenus();
-        //Task<List<MenusExEntity>> GetMenusByUser();
+        Task<List<MenusExEntity>> GetMenusByUser(int usersId);
         Task<List<MenusExEntity>> GetMenusByRole(decimal rolesId);
     }
 }

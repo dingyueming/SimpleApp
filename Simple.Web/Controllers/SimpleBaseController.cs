@@ -48,7 +48,7 @@ namespace Simple.Web.Controllers
         /// <returns></returns>
         public async Task<JsonResult> QueryMenusByUser()
         {
-            var menus = await menusService.GetAllMenus();
+            var menus = await menusService.GetMenusByUser(LoginUser.UsersId);
             return Json(menus);
         }
 

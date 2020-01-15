@@ -21,6 +21,8 @@ namespace Simple.IDomain
         Task<bool> DeleteUser(List<UsersExEntity> exEntities);
         Task<bool> UpdateUser(UsersExEntity exEntity);
 
+        Task<bool> UpdateUsersRole(UserRoleExEntity userRoleExEntity);
+
         #endregion
 
         #region 菜单管理
@@ -35,7 +37,7 @@ namespace Simple.IDomain
         Task<bool> DeleteMenu(List<MenusExEntity> exEntities);
         Task<bool> UpdateMenu(MenusExEntity exEntity);
         Task<List<MenusExEntity>> GetMenusByRole(decimal rolesId);
-
+        Task<List<MenusExEntity>> GetMenusByUser(int usersId);
         #endregion
 
         #region 角色管理
@@ -44,9 +46,8 @@ namespace Simple.IDomain
         Task<bool> AddRole(RolesExEntity exEntity);
         Task<bool> DeleteRole(List<RolesExEntity> exEntities);
         Task<bool> UpdateRole(RolesExEntity exEntity);
-
         Task<bool> UpdateRolesMenu(List<RoleMenuExEntity> roleMenuExEntities);
-
+        Task<List<RolesExEntity>> GetAllRoles();
         #endregion
     }
 }

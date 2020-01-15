@@ -4,12 +4,7 @@
     ViewData["Version"] = "20200114";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@section style{
-    <link rel="stylesheet" href="~/lib/element-ui/theme-chalk/index.css">
-}
-@section script{
-    <script src="~/lib/element-ui/index.js"></script>
-}
+
 <div class="box" id="vmBox">
     <button type="button" class="btn btn-success" style="margin:10px;" data-toggle="modal" onclick="vm.pageMode = 'add';vm.row = []; " data-target="#myModal">新增</button>
     <button type="button" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
@@ -84,7 +79,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">角色名</label>
                             <div class="col-sm-10">
-                                <label class="col-sm-3 control-label"> {{editRoleModel.rolesname}}</label>
+                                <label class="col-sm-3 control-label"> {{row.rolesname}}</label>
                             </div>
                         </div>
                         <div class="form-group">
@@ -140,16 +135,16 @@
                 this.$emit('on-custom-comp', params);
             },
             assignMenu() {
-                vm.editRoleModel = this.rowData;
+                vm.row = this.rowData;
                 //查询当前角色拥有的菜单并使其选中
                 axios.post('@Url.Action("QueryRolesMenu")', Qs.stringify({ rolesId: this.rowData.rolesid })).then(response => {
                     var theRolesMenu = response.data;//console.log(response.data);
-                    vm.$refs.tree.setCheckedNodes(theRolesMenu)
+                    vm.$refs.tree.setCheckedNodes(theRolesMenu);
+                    //打开模态窗口
+                    $('#menuModal').modal({ backdrop: 'static' });
                 }).catch(function (error) {
                     console.log(error);
                 });
-                //打开模态窗口
-                $('#menuModal').modal({ backdrop: 'static' });
             }
         }
     });
@@ -197,7 +192,6 @@
                 label: 'menusName',
                 children: 'childMenus'
             },
-            editRoleModel:{},
         },
         methods: {
             getTableData() {
@@ -311,7 +305,7 @@
             saveRolesMenu() {
                 var checkedNodes = this.$refs.tree.getCheckedNodes();
                 if (checkedNodes.length > 0) {
-                    axios.post('@Url.Action("SaveRolesMenu")', Qs.stringify({ menus: checkedNodes, rolesId: this.editRoleModel.rolesid })).then(response => {
+                    axios.post('@Url.Action("SaveRolesMenu")', Qs.stringify({ menus: checkedNodes, rolesId: this.row.rolesid })).then(response => {
                         if (response.data) {
                             $('#menuModal').modal('hide');
                         }

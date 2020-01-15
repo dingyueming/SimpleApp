@@ -63,5 +63,7 @@ namespace Simple.Entity
         public string Remark { get; set; }
         [Computed]
         public UsersEntity User { get; set; }
+        [Computed]
+        public RolesEntity Role { get; set; }
     }
 }

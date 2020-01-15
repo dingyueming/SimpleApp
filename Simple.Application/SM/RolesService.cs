@@ -43,5 +43,9 @@ namespace Simple.Application.SM
             return await smDomainService.UpdateRolesMenu(roleMenuExEntities);
         }
 
+        public async Task<List<RolesExEntity>> GetAllRoles()
+        {
+            return await smDomainService.GetAllRoles();
+        }
     }
 }

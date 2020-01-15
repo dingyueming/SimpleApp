@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Simple.ExEntity.SM;
+using System;
 using System.Security.Principal;
 
 namespace Simple.ExEntity
@@ -73,5 +74,13 @@ namespace Simple.ExEntity
         public string Remark { get; set; }
 
         public UsersExEntity User { get; set; }
+        public RolesExEntity Role { get; set; }
+        public decimal Rolesid
+        {
+            get
+            {
+                return Role == null ? 0 : Role.Rolesid;
+            }
+        }
     }
 }

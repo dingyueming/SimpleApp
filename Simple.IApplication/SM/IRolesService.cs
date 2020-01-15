@@ -11,8 +11,7 @@ namespace Simple.IApplication.SM
         Task<bool> AddRole(RolesExEntity exEntity);
         Task<bool> DeleteRole(List<RolesExEntity> exEntities);
         Task<bool> UpdateRole(RolesExEntity exEntity);
-
-
         Task<bool> UpdateRolesMenu(List<RoleMenuExEntity> roleMenuExEntities);
+        Task<List<RolesExEntity>> GetAllRoles();
     }
 }

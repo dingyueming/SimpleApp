@@ -3,6 +3,7 @@ using Simple.Entity;
 using Simple.Infrastructure.Dapper.Contrib;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.IRepository;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,6 +33,13 @@ namespace Simple.Repository
             pagination.Data = list.AsList().Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             pagination.Total = await Connection.QuerySingleAsync<int>(totalSql);
             return pagination;
+        }
+
+        public async Task<List<MenusEntity>> GetMenusByUser(int usersId)
+        {
+            var sql = "select m.* from tb_menus m  join tb_rolemenu rm on m.menusid=rm.menusid WHERE RM.ROLESID=(select ur.rolesid from tb_usersrole ur where ur.usersid=:userId)";
+            var listMenus = await Connection.QueryAsync<MenusEntity>(sql, new { userId = usersId });
+            return listMenus.AsList();
         }
     }
 }

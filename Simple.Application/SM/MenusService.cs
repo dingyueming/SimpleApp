@@ -38,6 +38,11 @@ namespace Simple.Application.SM
             return await smDomainService.GetAllMenus();
         }
 
+        public async Task<List<MenusExEntity>> GetMenusByUser(int usersId)
+        {
+            return await smDomainService.GetMenusByUser(usersId);
+        }
+
         public async Task<Pagination<MenusExEntity>> GetMenuPage(Pagination<MenusExEntity> param)
         {
             return await smDomainService.GetMenuPage(param);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Simple.ExEntity;
+using Simple.ExEntity.SM;
 using Simple.IApplication.SM;
 using Simple.IDomain;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
@@ -45,6 +46,11 @@ namespace Simple.Application.SM
         public async Task<bool> UpdateUser(UsersExEntity exEntity)
         {
             return await smDomainService.UpdateUser(exEntity);
+        }
+
+        public async Task<bool> UpdateUsersRole(UserRoleExEntity userRoleExEntity)
+        {
+            return await smDomainService.UpdateUsersRole(userRoleExEntity);
         }
     }
 }
