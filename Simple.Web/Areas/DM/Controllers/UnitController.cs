@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Simple.ExEntity.DM;
+using Simple.IApplication.DM;
+using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
 
 namespace Simple.Web.Areas.DM.Controllers
@@ -11,83 +14,39 @@ namespace Simple.Web.Areas.DM.Controllers
     [Area("DM")]
     public class UnitController : SimpleBaseController
     {
-        public UnitController(IServiceProvider serviceProvider) : base(serviceProvider)
+        private readonly IUnitService unitService;
+        public UnitController(IUnitService unitService, IServiceProvider serviceProvider) : base(serviceProvider)
         {
+            this.unitService = unitService;
+        }
+        public async Task<JsonResult> Query(Pagination<UnitExEntity> pagination)
+        {
+            var data = await unitService.GetPage(pagination);
+            return Json(data);
         }
 
-        // GET: Unit/Details/5
-        public ActionResult Details(int id)
+        public async Task<bool> Add(UnitExEntity exEntity)
         {
-            return View();
+            return await unitService.Add(exEntity);
         }
-
-        // GET: Unit/Create
-        public ActionResult Create()
+        public async Task<bool> Update(UnitExEntity exEntity)
         {
-            return View();
+            exEntity.RECDATE = DateTime.Now;
+            exEntity.RECMAN = (uint)LoginUser.UsersId;
+            return await unitService.Update(exEntity);
         }
-
-        // POST: Unit/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<bool> Delete(UnitExEntity exEntity)
         {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return await unitService.Delete(new List<UnitExEntity>() { exEntity });
         }
-
-        // GET: Unit/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<bool> BatchDelete(List<UnitExEntity> exEntities)
         {
-            return View();
+            return await unitService.Delete(exEntities);
         }
-
-        // POST: Unit/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<JsonResult> QueryUnitTree()
         {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Unit/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Unit/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var trees = await unitService.GetUnitTree();
+            return Json(trees);
         }
     }
 }

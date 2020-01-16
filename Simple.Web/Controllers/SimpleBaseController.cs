@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Serialization;
 using Simple.ExEntity;
 using Simple.IApplication.SM;
 
@@ -70,5 +71,14 @@ namespace Simple.Web.Controllers
                 var aa = auth.Principal.Identity;
             }
         }
+
+        #region 重载Json方法
+
+        internal JsonResult FirstJson(object data)
+        {
+            return Json(data, new Newtonsoft.Json.JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() });
+        }
+
+        #endregion
     }
 }

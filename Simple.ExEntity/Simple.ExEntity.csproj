@@ -9,8 +9,4 @@
     <ProjectReference Include="..\Simple.Infrastructure\Simple.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DM\" />
-  </ItemGroup>
-
 </Project>

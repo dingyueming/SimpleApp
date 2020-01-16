@@ -13,5 +13,7 @@ namespace Simple.Infrastructure.InfrastructureModel.VueTreeSelect
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public VueTreeSelectModel[] children { get; set; }
+
+        public string Tag { get; set; }
     }
 }
