@@ -15,7 +15,7 @@ namespace Simple.Infrastructure.Dapper.Contrib
         Task<bool> UpdateAsync(IEnumerable<T> list);
         Task<bool> DeleteAsync(T info);
         Task<bool> DeleteAsync(IEnumerable<T> list);
-        Task<bool> DeleteAsync(object id);
+        Task<bool> DeleteAsync(int id);
         Task<bool> DeleteAllAsync();
         /// <summary>
         /// dapper通用分页方法

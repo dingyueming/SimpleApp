@@ -36,7 +36,7 @@ namespace Simple.Domain
 
         public async Task<bool> DeleteUnit(List<UnitExEntity> exEntities)
         {
-            var entities = mapper.Map<List<UnitExEntity>>(exEntities);
+            var entities = mapper.Map<List<UnitEntity>>(exEntities);
             return await unitRepository.DeleteAsync(entities);
         }
 
@@ -86,7 +86,7 @@ namespace Simple.Domain
                     return null;
                 }
             }
-           
+
             return list;
         }
 

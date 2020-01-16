@@ -124,7 +124,7 @@ namespace Simple.Infrastructure.Dapper.Contrib
         /// </summary>
         /// <param name="id">对象的ID</param>
         /// <returns></returns>
-        public virtual async Task<bool> DeleteAsync(object id)
+        public virtual async Task<bool> DeleteAsync(int id)
         {
             using (IDbConnection dbConnection = Connection)
             {
