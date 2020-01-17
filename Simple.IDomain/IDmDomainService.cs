@@ -17,6 +17,16 @@ namespace Simple.IDomain
         Task<bool> UpdateUnit(UnitExEntity exEntity);
         Task<Pagination<UnitExEntity>> GetUnitPage(Pagination<UnitExEntity> param);
         Task<VueTreeSelectModel[]> GetUnitTree();
+
+        #endregion
+
+        #region 车辆管理
+
+        Task<bool> AddCar(CarExEntity exEntity);
+        Task<bool> DeleteCar(List<CarExEntity> exEntities);
+        Task<bool> UpdateCar(CarExEntity exEntity);
+        Task<Pagination<CarExEntity>> GetCarPage(Pagination<CarExEntity> param);
+
         #endregion
 
     }

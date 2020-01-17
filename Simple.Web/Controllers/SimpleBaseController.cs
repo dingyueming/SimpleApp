@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
 using Simple.ExEntity;
+using Simple.IApplication.DM;
 using Simple.IApplication.SM;
 
 namespace Simple.Web.Controllers
@@ -17,9 +18,11 @@ namespace Simple.Web.Controllers
     public class SimpleBaseController : Controller
     {
         private readonly IMenusService menusService;
+        private readonly IUnitService unitService;
         public SimpleBaseController(IServiceProvider serviceProvider)
         {
             this.menusService = (IMenusService)serviceProvider.GetService(typeof(IMenusService));
+            this.unitService = (IUnitService)serviceProvider.GetService(typeof(IUnitService));
         }
 
         public virtual IActionResult Index()
@@ -62,7 +65,11 @@ namespace Simple.Web.Controllers
             var menus = await menusService.GetAllMenus();
             return Json(menus);
         }
-
+        public async Task<JsonResult> QueryUnitTree()
+        {
+            var trees = await unitService.GetUnitTree();
+            return Json(trees);
+        }
         public async Task GetAuth()
         {
             var auth = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);

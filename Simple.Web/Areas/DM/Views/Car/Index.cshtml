@@ -5,5 +5,312 @@
     ViewData["Version"] = "20200106";
 }
 
-<h2>Index</h2>
+@section style{
+    <!--vue-treeselect-->
+    <link rel="stylesheet" href="~/lib/vue-treeselect/dist/vue-treeselect.min.css">
+}
+@section script{
+    <!--vue-treeselect-->
+    <script src="~/lib/vue-treeselect/dist/vue-treeselect.umd.min.js"></script>
+}
+<div class="box" id="vmBox">
+    <table style="margin-left:5px;">
+        <tr>
+            <th>车牌号:</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <input type="text" class="form-control" v-model="searchWhere.unitname">
+                </div>
+            </td>
+            <td>
+                <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
+                <button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;" data-toggle="modal" onclick="vm.pageMode = 'add';vm.row = []; " data-target="#myModal">新增</button>
+                <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
+            </td>
+        </tr>
+    </table>
+    <v-table is-vertical-resize
+             :vertical-resize-offset='60'
+             is-horizontal-resize
+             style="width:100%"
+             :multiple-sort="false"
+             :min-height="350"
+             even-bg-color="#f2f2f2"
+             :title-rows="tableConfig.titleRows"
+             :columns="tableConfig.columns"
+             :table-data="tableConfig.tableData"
+             row-hover-color="#eee"
+             row-click-color="#edf7ff"
+             :select-all="selectALL"
+             :select-change="selectChange"
+             :select-group-change="selectGroupChange"
+             v-on:sort-change="sortChange"
+             :paging-index="(pageIndex-1)*pageSize"></v-table>
+    <div style="margin-top:5px;">
+        <v-pagination v-on:page-change="pageChange" v-on:page-size-change="pageSizeChange" :page-size-option="[15,20,30]" :total="total" :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next', 'sizer', 'jumper']"></v-pagination>
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">车辆管理</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="license">车牌号</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" v-model="row.license" id="license" type="text" placeholder="车牌号" />
+                            </div>
+                            <label class="col-sm-2 control-label" for="mac">识别码</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="mac" v-model="row.mac" type="text" placeholder="识别码" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="sim">SIM卡号</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="sim" v-model="row.sim" type="text" placeholder="SIM卡号" />
+                            </div>
+                            <label class="col-sm-2 control-label" for="engineno">发动机号</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="engineno" v-model="row.engineno" type="text" placeholder="发动机号" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="chassisno">车架号</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="chassisno" v-model="row.chassisno" type="text" placeholder="车架号" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="status" class="col-sm-2 control-label">所属单位</label>
+                            <div class="col-sm-10">
+                                <treeselect v-model="row.unitid" :multiple="false" v-on:select="treeSelect" :options="options" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardesc" class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="cardesc" v-model="row.cardesc" placeholder="备注"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" v-on:click="operateData">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+<script>
+    // VUE-TREESELECT
+    Vue.component('treeselect', VueTreeselect.Treeselect);
+    // 自定义列组件
+    Vue.component('table-operation', {
+        template: `<span>
+        <a href="" v-on:click.stop.prevent="update(rowData,index)">编辑</a>&nbsp;
+        <a href="" v-on:click.stop.prevent="deleteRow(rowData,index)">删除</a>
+        </span>`,
+        props: {
+            rowData: {
+                type: Object
+            },
+            field: {
+                type: String
+            },
+            index: {
+                type: Number
+            }
+        },
+        methods: {
+            update() {
+                vm.row = this.rowData;
+                vm.pageMode = "edit";
+                $('#myModal').modal({backdrop: 'static'});
+                // 参数根据业务场景随意构造
+                let params = { type: 'edit', index: this.index, rowData: this.rowData };
+                this.$emit('on-custom-comp', params);
+            },
+
+            deleteRow() {
+                vm.row = this.rowData;
+                vm.pageMode = "delete";
+                vm.operateData(vm.row);
+                // 参数根据业务场景随意构造
+                let params = { type: 'delete', index: this.index };
+                this.$emit('on-custom-comp', params);
+
+            },
+        }
+    });
+    var vm = new Vue({
+        el: "#vmBox",
+        data: {
+            pageMode: 'add',
+            total: 0,
+            pageIndex: 1,
+            pageSize: 15,
+            tableConfig: {
+                multipleSort: false,
+                tableData: [
+                ],
+                columns: [
+                    { width: 60, titleAlign: 'center', columnAlign: 'center', type: 'selection' },
+                    {
+                        field: 'custome', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center',
+                        formatter: function (rowData, index, pagingIndex) {
+                            var currentIndex = index + pagingIndex;
+                            return '<span style="color:red;font-weight: bold;">' + (currentIndex + 1) + '</span>';
+                        }, isFrozen: false
+                    },
+                    {
+                        field: 'parentUnit.unitname', title: '单位', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
+                            if (rowData.unit != null) {
+                                return rowData.unit.unitname;
+                            }
+                            return "";
+                        }
+                    },
+                    { field: 'license', title: '车牌号', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'mac', title: '识别码', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'engineno', title: '发动机号', width: 180, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'chassisno', title: '车架号', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'custome-adv', title: '操作', width: 200, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
+                ],
+                titleRows: [
+
+                ],
+            },
+            row: {},
+            selectedRows: [],
+            options: [],
+            searchWhere: { unitname: '', },
+        },
+        methods: {
+            getTableData() {
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: ' and a.license like \'%' + this.searchWhere.unitname + '%\'', orderBy: ' a.carid desc' };
+                axios.post('@Url.Action("Query")', Qs.stringify(search)).then(function (response) {
+                    var pagination = response.data;
+                    vm.tableConfig.tableData = pagination.data;
+                    vm.total = pagination.total;
+                    console.log(vm.tableConfig.tableData);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            pageChange(pageIndex) {
+                this.pageIndex = pageIndex;
+                this.getTableData();
+                console.log(pageIndex)
+            },
+            pageSizeChange(pageSize) {
+                this.pageIndex = 1;
+                this.pageSize = pageSize;
+                this.getTableData();
+            },
+            sortChange(params) {
+                if (params.height.length > 0) {
+                    this.tableConfig.tableData.sort(function (a, b) {
+
+                        if (params.height === 'asc') {
+
+                            return a.height - b.height;
+                        } else if (params.height === 'desc') {
+
+                            return b.height - a.height;
+                        } else {
+
+                            return 0;
+                        }
+                    });
+                }
+            },
+            selectALL(selection){
+                console.log('select-aLL', selection);
+                this.selectedRows = selection;
+            },
+            selectChange(selection,rowData){
+                console.log('select-change', selection, rowData);
+                this.selectedRows = selection;
+            },
+            selectGroupChange(selection){
+                console.log('select-group-change',selection);
+            },
+            operateData() {
+                var url = '';
+                switch (this.pageMode) {
+                    case "edit":
+                        url = '@Url.Action("Update")';
+                        break;
+                    case "delete":
+                        url = '@Url.Action("Delete")';
+                        if (!confirm('确认删除吗')) {
+                            url = undefined;
+                        }
+                        break;
+                    default:
+                        url = '@Url.Action("Add")';
+                        break;
+                }
+                if (url) {
+                    if (this.row.parentUnit != null) {
+                        this.row.p_ORG_CODE = this.row.parentUnit.orG_CODE;
+                    }
+                    axios.post(url, Qs.stringify(this.row)).then(function (response) {
+                        var flag = response.data;
+                        if (flag) {
+                            $('#myModal').modal('hide');
+                            vm.getTableData();
+                        }
+                        console.log(flag);
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }
+            },
+            deleteSelect() {
+                if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
+                    if (confirm('确认删除吗')) {
+                        axios.post('@Url.Action("BatchDelete")', Qs.stringify({ exEntities: this.selectedRows })).then(function (response) {
+                            var flag = response.data;
+                            if (flag) {
+                                $('#myModal').modal('hide');
+                                vm.getTableData();
+                            }
+                            console.log(flag);
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                    }
+                }
+                console.log(this.selectedRows);
+            },
+            select() {
+                this.pageIndex = 1;
+                this.getTableData();
+            },
+            treeSelect(node) {
+                //this.row.p_ORG_CODE = node.tag;
+            },
+            queryUnitTree() {
+                axios.post('@Url.Action("QueryUnitTree")', {}).then(function (response) {
+                    vm.options = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+        },
+        created() {
+            this.getTableData();
+            this.queryUnitTree();
+        },
+    });
+</script>
 

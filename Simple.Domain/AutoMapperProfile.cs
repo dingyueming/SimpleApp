@@ -31,8 +31,8 @@ namespace Simple.Domain
             foreach (var entityType in entityTypes)
             {
                 var exTypeName = entityType.Name.Replace("Entity", "") + "ExEntity";
-                var exEntityType = exEntityTypes.FirstOrDefault(x => x.Name == exTypeName);
-                if (exEntityType != null)
+                var listExEntityType = exEntityTypes.Where(x => x.Name == exTypeName).ToList();
+                foreach (var exEntityType in listExEntityType)
                 {
                     CreateMap(entityType, exEntityType);
                     CreateMap(exEntityType, entityType);

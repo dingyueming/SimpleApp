@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using Simple.Entity;
+using Simple.Infrastructure.InfrastructureModel.Paionation;
+using System.Linq;
 
 namespace Simple.Repository
 {
@@ -16,6 +18,30 @@ namespace Simple.Repository
             var sql = "SELECT C.* FROM CARS C JOIN AUTH_LIMITS A ON C.CARID=A.CARID WHERE A.USERID=:USERID";
             var users = await base.Connection.QueryAsync<CarEntity>(sql, new { USERID = userId });
             return users.AsList();
+        }
+
+        public async Task<Pagination<CarEntity>> GetPage(int pageSize, int pageIndex, string where, string orderby)
+        {
+            var pagination = new Pagination<CarEntity>();
+            string totalSql = $"select count(1) from cars a where 1=1 ";
+            var sql = "select a.*,b.* from cars a left join unit b on a.unitid=b.unitid where 1=1 ";
+            if (!string.IsNullOrEmpty(where))
+            {
+                sql += where;
+                totalSql += where;
+            }
+            if (!string.IsNullOrEmpty(orderby))
+            {
+                sql += $" order by {orderby}";
+            }
+            var list = await Connection.QueryAsync<CarEntity, UnitEntity, CarEntity>(sql, (a, b) =>
+            {
+                a.Unit = b;
+                return a;
+            }, splitOn: "UnitId");
+            pagination.Data = list.AsList().Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            pagination.Total = await Connection.QuerySingleAsync<int>(totalSql);
+            return pagination;
         }
     }
 }

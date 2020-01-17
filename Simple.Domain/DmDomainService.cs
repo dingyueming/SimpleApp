@@ -18,10 +18,12 @@ namespace Simple.Domain
     public class DmDomainService : IDmDomainService
     {
         #region 构造函数
+        private readonly ICarRepository carRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IMapper mapper;
-        public DmDomainService(IUnitRepository unitRepository, IMapper mapper)
+        public DmDomainService(ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.carRepository = carRepository;
             this.unitRepository = unitRepository;
             this.mapper = mapper;
         }
@@ -58,6 +60,35 @@ namespace Simple.Domain
             return treeSelectModels.ToArray();
         }
         #endregion
+
+        #region 车辆管理
+
+        public async Task<bool> AddCar(CarExEntity exEntity)
+        {
+            var entity = mapper.Map<CarEntity>(exEntity);
+            return await carRepository.InsertAsync(entity);
+        }
+
+        public async Task<bool> DeleteCar(List<CarExEntity> exEntities)
+        {
+            var entities = mapper.Map<List<CarEntity>>(exEntities);
+            return await carRepository.DeleteAsync(entities);
+        }
+
+        public async Task<bool> UpdateCar(CarExEntity exEntity)
+        {
+            var entity = mapper.Map<CarEntity>(exEntity);
+            return await carRepository.UpdateAsync(entity);
+        }
+
+        public async Task<Pagination<CarExEntity>> GetCarPage(Pagination<CarExEntity> param)
+        {
+            var pagination = await carRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<CarExEntity>>(pagination);
+        }
+
+        #endregion
+
         #region 递归单位tree
 
         public static List<VueTreeSelectModel> GetUnitTreeSelectModels(List<UnitEntity> allNodes, UnitEntity node)

@@ -43,10 +43,5 @@ namespace Simple.Web.Areas.DM.Controllers
         {
             return await unitService.Delete(exEntities);
         }
-        public async Task<JsonResult> QueryUnitTree()
-        {
-            var trees = await unitService.GetUnitTree();
-            return Json(trees);
-        }
     }
 }

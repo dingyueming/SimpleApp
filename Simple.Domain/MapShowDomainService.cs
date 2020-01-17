@@ -1,13 +1,11 @@
 ﻿using Simple.IDomain;
 using Simple.IRepository;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Simple.Infrastructure.InfrastructureModel.ZTree;
 using AutoMapper;
 using Simple.ExEntity.Map;
-using Simple.Entity;
 using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
 using Simple.Infrastructure.Tools;
 
