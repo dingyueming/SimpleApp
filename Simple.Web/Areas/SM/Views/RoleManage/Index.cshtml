@@ -304,7 +304,13 @@
             },
             saveRolesMenu() {
                 var checkedNodes = this.$refs.tree.getCheckedNodes();
+                var halfCheckNodes = this.$refs.tree.getHalfCheckedNodes();
                 if (checkedNodes.length > 0) {
+                    if (halfCheckNodes.length > 0) {
+                        halfCheckNodes.forEach((x,index,arr) => {
+                            checkedNodes.push(x);
+                        });
+                    }
                     axios.post('@Url.Action("SaveRolesMenu")', Qs.stringify({ menus: checkedNodes, rolesId: this.row.rolesid })).then(response => {
                         if (response.data) {
                             $('#menuModal').modal('hide');
