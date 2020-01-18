@@ -29,5 +29,14 @@ namespace Simple.IDomain
 
         #endregion
 
+        #region 人员对讲机管理
+
+        Task<bool> AddPerson(PersonExEntity exEntity);
+        Task<bool> DeletePerson(List<PersonExEntity> exEntities);
+        Task<bool> UpdatePerson(PersonExEntity exEntity);
+        Task<Pagination<PersonExEntity>> GetPersonPage(Pagination<PersonExEntity> param);
+
+        #endregion
+
     }
 }

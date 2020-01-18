@@ -171,7 +171,7 @@
                         }, isFrozen: false
                     },
                     {
-                        field: 'parentUnit.unitname', title: '单位', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
+                        field: 'unit.unitname', title: '单位', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
                             if (rowData.unit != null) {
                                 return rowData.unit.unitname;
                             }
@@ -260,9 +260,6 @@
                         break;
                 }
                 if (url) {
-                    if (this.row.parentUnit != null) {
-                        this.row.p_ORG_CODE = this.row.parentUnit.orG_CODE;
-                    }
                     axios.post(url, Qs.stringify(this.row)).then(function (response) {
                         var flag = response.data;
                         if (flag) {

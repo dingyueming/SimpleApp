@@ -1,17 +1,11 @@
-﻿using Dapper.Contrib.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.Entity
+namespace Simple.ExEntity.DM
 {
-    /// <summary>
-    /// 单位信息
-    /// </summary>
-    [Table("PERSONS")]
-    public class PersonEntity
+    public class PersonExEntity
     {
-        [Key]
         public int ID { get; set; }
         /// <summary>
         /// 名称
@@ -30,13 +24,12 @@ namespace Simple.Entity
         /// </summary>
         public string REMARK { get; set; }
         /// <summary>
-        /// 单位id
+        /// 单位ID
         /// </summary>
-        public int UnitId { get; set; }
+        public virtual int Unitid { get; set; }
         /// <summary>
         /// 单位实体
         /// </summary>
-        [Computed]
-        public UnitEntity Unit { get; set; }
+        public UnitExEntity Unit { get; set; }
     }
 }

@@ -18,11 +18,13 @@ namespace Simple.Domain
     public class DmDomainService : IDmDomainService
     {
         #region 构造函数
+        private readonly IPersonRepository personRepository;
         private readonly ICarRepository carRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IMapper mapper;
-        public DmDomainService(ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
+        public DmDomainService(IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.personRepository = personRepository;
             this.carRepository = carRepository;
             this.unitRepository = unitRepository;
             this.mapper = mapper;
@@ -85,6 +87,34 @@ namespace Simple.Domain
         {
             var pagination = await carRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
             return mapper.Map<Pagination<CarExEntity>>(pagination);
+        }
+
+        #endregion
+
+        #region 人员对讲机管理
+
+        public async Task<bool> AddPerson(PersonExEntity exEntity)
+        {
+            var entity = mapper.Map<PersonEntity>(exEntity);
+            return await personRepository.InsertAsync(entity);
+        }
+
+        public async Task<bool> DeletePerson(List<PersonExEntity> exEntities)
+        {
+            var entities = mapper.Map<List<PersonEntity>>(exEntities);
+            return await personRepository.DeleteAsync(entities);
+        }
+
+        public async Task<bool> UpdatePerson(PersonExEntity exEntity)
+        {
+            var entity = mapper.Map<PersonEntity>(exEntity);
+            return await personRepository.UpdateAsync(entity);
+        }
+
+        public async Task<Pagination<PersonExEntity>> GetPersonPage(Pagination<PersonExEntity> param)
+        {
+            var pagination = await personRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<PersonExEntity>>(pagination);
         }
 
         #endregion
