@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Simple.IApplication.MapShow;
 using Simple.IApplication.SM;
 using Simple.Web.Controllers;
@@ -13,10 +14,19 @@ namespace Simple.Web.Areas.EzMap.Controllers
     public class RealtimeMapController : SimpleBaseController
     {
         private IRealTimeMapService realTimeMapService;
-        public RealtimeMapController(IRealTimeMapService realTimeMapService, IServiceProvider serviceProvider) : base(serviceProvider)
+        private IConfiguration configuration;
+        public RealtimeMapController(IConfiguration configuration, IRealTimeMapService realTimeMapService, IServiceProvider serviceProvider) : base(serviceProvider)
         {
+            this.configuration = configuration;
             this.realTimeMapService = realTimeMapService;
         }
+
+        public override IActionResult Index()
+        {
+            ViewBag.SignalrUrl = configuration["SignalrUrl"];
+            return base.Index();
+        }
+
         /// <summary>
         /// 获取当前设备列表tree
         /// </summary>

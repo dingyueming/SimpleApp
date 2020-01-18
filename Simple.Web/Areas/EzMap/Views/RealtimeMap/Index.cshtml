@@ -267,7 +267,7 @@
             device.marker.setIcon(icon);
             device.marker.setPoint(newpos);
 
-            
+
         //更新tree的icon
         updateTreeNode(device, getCarTreeStateSkin(lastTrackData));
 
@@ -368,7 +368,7 @@
 <!--Signal-->
 <script>
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/mapHub")
+        .withUrl("@ViewBag.SignalrUrl")
         .configureLogging(signalR.LogLevel.Information)
         .build();
     connection.start().then(() => { connection.invoke("Login"); }).catch(err => console.error(err.toString()));
