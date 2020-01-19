@@ -127,6 +127,38 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
     </div>
+
+    <!--分配菜单-->
+    <div class="modal fade" id="deviceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">设备分配</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-10">
+                                <label class="col-sm-3 control-label"> {{row.usersName}}</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="remark" class="col-sm-2 control-label">设备列表</label>
+                            <div class="col-sm-10">
+                                <el-tree :data="nodes" :default-checked-keys="defaultCheckedNodes" node-key="id" ref="tree" v-on:check-change="handleCheckChange" show-checkbox></el-tree>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" v-on:click="saveUsersDevice">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 </div>
 <script>
     // 自定义列组件
@@ -135,6 +167,7 @@
         <a href="" v-on:click.stop.prevent="update(rowData,index)">编辑</a>&nbsp;
         <a href="" v-on:click.stop.prevent="deleteRow(rowData,index)">删除</a>
         <a href="" v-on:click.stop.prevent="AssignRole(rowData,index)">分配角色</a>
+        <a href="" v-on:click.stop.prevent="AssignDevice(rowData,index)">分配设备</a>
         </span>`,
         props: {
             rowData: {
@@ -170,6 +203,21 @@
             AssignRole() {
                 vm.row = this.rowData;
                 $('#roleModal').modal({ backdrop: 'static' });
+            },
+
+            AssignDevice() {
+                vm.row = this.rowData;
+                vm.$refs.tree.setCheckedKeys([]);
+                vm.defaultCheckedNodes = [];
+                //查询当前用户所拥有的设备并使其选中
+                axios.post('@Url.Action("QueryUsersDevice")', Qs.stringify({ userId: this.rowData.usersId })).then(response => {
+                    console.log(response.data);
+                    vm.defaultCheckedNodes = response.data;
+                    //打开模态窗口
+                    $('#deviceModal').modal({ backdrop: 'static' });
+                }).catch(function (error) {
+                    console.log(error);
+                });
             }
         }
     });
@@ -210,7 +258,9 @@
             },
             row: {},
             selectedRows: [],
-            allRoles:[],
+            allRoles: [],
+            nodes: [],
+            defaultCheckedNodes:[],
         },
         methods: {
             getTableData() {
@@ -325,11 +375,37 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
+            },
+
+            handleCheckChange(data, checked, indeterminate) {
+                console.log(data, checked, indeterminate);
+
+            },
+            queryDevices() {
+                axios.post('@Url.Action("QueryDevices")', {}).then(response=> {
+                    console.log(response.data);
+                    vm.nodes = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            saveUsersDevice() {
+                var checkedNodes = this.$refs.tree.getCheckedNodes();
+                if (checkedNodes.length > 0) {
+                    axios.post('@Url.Action("SaveUsersDevice")', Qs.stringify({ nodes: checkedNodes, userId: this.row.usersId })).then(response => {
+                        if (response.data) {
+                            $('#deviceModal').modal('hide');
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }
             }
         },
         created() {
             this.getTableData();
             this.queryAllRoles();
+            this.queryDevices();
         },
     });
 </script>

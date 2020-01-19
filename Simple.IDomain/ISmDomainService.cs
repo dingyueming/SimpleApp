@@ -20,7 +20,6 @@ namespace Simple.IDomain
         Task<bool> AddUser(UsersExEntity exEntity);
         Task<bool> DeleteUser(List<UsersExEntity> exEntities);
         Task<bool> UpdateUser(UsersExEntity exEntity);
-
         Task<bool> UpdateUsersRole(UserRoleExEntity userRoleExEntity);
 
         #endregion

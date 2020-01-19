@@ -1,11 +1,10 @@
 ﻿using Simple.ExEntity.DM;
 using Simple.IApplication.DM;
 using Simple.IDomain;
+using Simple.Infrastructure.InfrastructureModel.Element;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Simple.Application.DM
@@ -40,6 +39,11 @@ namespace Simple.Application.DM
         public async Task<VueTreeSelectModel[]> GetUnitTree()
         {
             return await dmDomainService.GetUnitTree();
+        }
+
+        public async Task<ElementTreeModel[]> GetUnitAndDeviceTree()
+        {
+            return await dmDomainService.GetUnitAndDeviceTree();
         }
     }
 }

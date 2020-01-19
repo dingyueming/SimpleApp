@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.Entity.Map
+namespace Simple.Entity
 {
     public class ViewAllTargetEntity
     {

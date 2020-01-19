@@ -2,6 +2,7 @@
 using Simple.Entity;
 using Simple.ExEntity.DM;
 using Simple.IDomain;
+using Simple.Infrastructure.InfrastructureModel.Element;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
 using Simple.Infrastructure.InfrastructureModel.ZTree;
@@ -18,12 +19,17 @@ namespace Simple.Domain
     public class DmDomainService : IDmDomainService
     {
         #region 构造函数
+        private readonly IAuthLimitRepository authLimitRepository;
         private readonly IPersonRepository personRepository;
         private readonly ICarRepository carRepository;
         private readonly IUnitRepository unitRepository;
+        private readonly IViewAllTargetRepository viewAllTargetRepository;
         private readonly IMapper mapper;
-        public DmDomainService(IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
+        public DmDomainService(IAuthLimitRepository authLimitRepository, IViewAllTargetRepository viewAllTargetRepository,
+            IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.authLimitRepository = authLimitRepository;
+            this.viewAllTargetRepository = viewAllTargetRepository;
             this.personRepository = personRepository;
             this.carRepository = carRepository;
             this.unitRepository = unitRepository;
@@ -60,6 +66,13 @@ namespace Simple.Domain
             var allUnits = await unitRepository.GetAllAsync();
             var treeSelectModels = GetUnitTreeSelectModels(allUnits.ToList(), null);
             return treeSelectModels.ToArray();
+        }
+        public async Task<ElementTreeModel[]> GetUnitAndDeviceTree()
+        {
+            var allUnits = await unitRepository.GetAllAsync();
+            var allDevices = await viewAllTargetRepository.GetAllDevice();
+            var elementModels = GetUnitTreeModels(allUnits.ToList(), null, allDevices);
+            return elementModels.ToArray();
         }
         #endregion
 
@@ -119,6 +132,40 @@ namespace Simple.Domain
 
         #endregion
 
+        #region 设备分配
+
+        public async Task<string[]> GetDeviceIdsByUser(int userId)
+        {
+            var list = new List<string>();
+            var devices = await viewAllTargetRepository.GetDevicesByUser(userId);
+            var deviceIds = devices.Select(x => x.CARID).ToList();
+            devices.ForEach((x) =>
+            {
+                list.Add("device" + x.CARID);
+            });
+            return list.ToArray();
+        }
+
+        public async Task<bool> UpdateAuthLimits(List<ElementTreeModel> nodes, int userId)
+        {
+            var entities = new List<AuthLimitsEntity>();
+            foreach (var item in nodes)
+            {
+                if (item.id.Contains("device"))
+                {
+                    entities.Add(new AuthLimitsEntity()
+                    {
+                        UserId = userId,
+                        IsSendad = 1,
+                        CarId = int.Parse(item.id.Replace("device", ""))
+                    });
+                }
+            }
+            return await authLimitRepository.UpdateAuthLimits(entities, userId);
+        }
+
+        #endregion
+
         #region 递归单位tree
 
         public static List<VueTreeSelectModel> GetUnitTreeSelectModels(List<UnitEntity> allNodes, UnitEntity node)
@@ -140,6 +187,46 @@ namespace Simple.Domain
                     {
                         var nodeChildren = GetUnitTreeSelectModels(allNodes, x);
                         list.Add(new VueTreeSelectModel() { id = x.UNITID.ToString(), label = x.UNITNAME, Tag = x.ORG_CODE, children = nodeChildren?.ToArray() });
+                    });
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return list;
+        }
+        public static List<ElementTreeModel> GetUnitTreeModels(List<UnitEntity> allNodes, UnitEntity node, List<ViewAllTargetEntity> allDevice)
+        {
+            var list = new List<ElementTreeModel>();
+            if (node == null)
+            {
+                var unit = allNodes.FirstOrDefault(x => x.PID == 0);
+                var nodeChildren = GetUnitTreeModels(allNodes, unit, allDevice);
+                if (nodeChildren != null && nodeChildren.Count > 0)
+                {
+                    var firstNode = new ElementTreeModel() { id = "unit" + unit.UNITID.ToString(), label = unit.UNITNAME, children = nodeChildren?.ToArray() };
+                    list.Add(firstNode);
+                }
+            }
+            else
+            {
+                var nodes = allNodes.Where(x => x.PID == node.UNITID).ToList();
+                var devices = allDevice.Where(x => x.UNITID == node.UNITID).ToList();
+                if (nodes.Count > 0 || devices.Count > 0)
+                {
+                    nodes.ForEach((x) =>
+                    {
+                        var nodeChildren = GetUnitTreeModels(allNodes, x, allDevice);
+                        if (nodeChildren != null && nodeChildren.Count > 0)
+                        {
+                            list.Add(new ElementTreeModel() { id = "unit" + x.UNITID.ToString(), label = x.UNITNAME, children = nodeChildren?.ToArray() });
+                        }
+                    });
+                    devices.ForEach((x) =>
+                    {
+                        list.Add(new ElementTreeModel() { id = "device" + x.CARID.ToString(), label = x.LICENSE, children = null });
                     });
                 }
                 else

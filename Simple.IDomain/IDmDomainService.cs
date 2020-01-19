@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Simple.Infrastructure.InfrastructureModel.Element;
 
 namespace Simple.IDomain
 {
@@ -17,6 +18,8 @@ namespace Simple.IDomain
         Task<bool> UpdateUnit(UnitExEntity exEntity);
         Task<Pagination<UnitExEntity>> GetUnitPage(Pagination<UnitExEntity> param);
         Task<VueTreeSelectModel[]> GetUnitTree();
+        Task<ElementTreeModel[]> GetUnitAndDeviceTree();
+
 
         #endregion
 
@@ -36,6 +39,12 @@ namespace Simple.IDomain
         Task<bool> UpdatePerson(PersonExEntity exEntity);
         Task<Pagination<PersonExEntity>> GetPersonPage(Pagination<PersonExEntity> param);
 
+        #endregion
+
+        #region 设备分配
+
+        Task<string[]> GetDeviceIdsByUser(int userId);
+        Task<bool> UpdateAuthLimits(List<ElementTreeModel> nodes, int userId);
         #endregion
 
     }

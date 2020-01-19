@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using Simple.Entity.Map;
+using Simple.Entity;
 using Simple.Infrastructure.Dapper.Contrib;
 using Simple.IRepository;
 using System;
@@ -15,6 +15,13 @@ namespace Simple.Repository
         {
             var sql = "select v.* from view_all_target v join auth_limits a on v.carid=a.carid where a.userid=:userid";
             var devices = await Connection.QueryAsync<ViewAllTargetEntity>(sql, new { userid = userId });
+            return devices.AsList();
+        }
+
+        public async Task<List<ViewAllTargetEntity>> GetAllDevice()
+        {
+            var sql = "select v.* from view_all_target v";
+            var devices = await Connection.QueryAsync<ViewAllTargetEntity>(sql);
             return devices.AsList();
         }
     }

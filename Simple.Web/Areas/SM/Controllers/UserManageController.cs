@@ -2,11 +2,14 @@
 using Simple.ExEntity;
 using Simple.ExEntity.SM;
 using Simple.IApplication.SM;
+using Simple.IApplication.DM;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
+using Simple.Infrastructure.InfrastructureModel.Element;
 using Simple.Web.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Simple.IDomain;
 
 namespace Simple.Web.Areas.SM.Controllers
 {
@@ -15,8 +18,12 @@ namespace Simple.Web.Areas.SM.Controllers
     {
         private readonly IUserService userService;
         private readonly IRolesService rolesService;
-        public UserManageController(IRolesService rolesService, IUserService userService, IServiceProvider serviceProvider) : base(serviceProvider)
+        private readonly IUnitService unitService;
+        private readonly IDmDomainService dmDomainService;
+        public UserManageController(IDmDomainService dmDomainService, IUnitService unitService, IRolesService rolesService, IUserService userService, IServiceProvider serviceProvider) : base(serviceProvider)
         {
+            this.dmDomainService = dmDomainService;
+            this.unitService = unitService;
             this.rolesService = rolesService;
             this.userService = userService;
         }
@@ -61,6 +68,19 @@ namespace Simple.Web.Areas.SM.Controllers
             userRoleExEntity.Creator = LoginUser.UsersId;
             return await userService.UpdateUsersRole(userRoleExEntity);
         }
-
+        public async Task<JsonResult> QueryDevices()
+        {
+            var list = await unitService.GetUnitAndDeviceTree();
+            return Json(list);
+        }
+        public async Task<JsonResult> QueryUsersDevice(int userId)
+        {
+            var list = await dmDomainService.GetDeviceIdsByUser(userId);
+            return Json(list);
+        }
+        public async Task<bool> SaveUsersDevice(List<ElementTreeModel> nodes, int userId)
+        {
+            return await dmDomainService.UpdateAuthLimits(nodes, userId);
+        }
     }
 }
