@@ -56,7 +56,6 @@ namespace Simple.Domain
             var userEntities = await userRepository.FindByIDAsync(userId);
             var userExEntities = mapper.Map<UsersExEntity>(userEntities);
             return userExEntities;
-
         }
 
         public async Task<Pagination<UsersExEntity>> GetUserPage(Pagination<UsersExEntity> param)
@@ -67,12 +66,24 @@ namespace Simple.Domain
 
         public async Task<bool> AddUser(UsersExEntity exEntity)
         {
+            //数据校验
+            var entities = await userRepository.GetUsersEntityByUserName(exEntity.UsersName);
+            if (entities.Count > 0)
+            {
+                throw new Exception("重复的用户名！");
+            }
             var entity = mapper.Map<UsersEntity>(exEntity);
             return await userRepository.InsertAsync(entity);
         }
 
         public async Task<bool> UpdateUser(UsersExEntity exEntity)
         {
+            //数据校验
+            var entities = await userRepository.GetUsersEntityByUserName(exEntity.UsersName);
+            if (entities.Count > 0)
+            {
+                throw new Exception("重复的用户名！");
+            }
             var entity = mapper.Map<UsersEntity>(exEntity);
             return await userRepository.UpdateAsync(entity);
         }

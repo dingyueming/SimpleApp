@@ -37,25 +37,25 @@
                     <h4 class="modal-title" id="myModalLabel">菜单管理</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form">
+                    <form class="form-horizontal" id="myForm" role="form">
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="menusName">菜单名</label>
                             <div class="col-sm-4">
-                                <input class="form-control" v-model="row.menusName" id="menusName" type="text" placeholder="菜单名" />
+                                <input class="form-control" v-model="row.menusName" name="menusName" id="menusName" type="text" placeholder="菜单名" />
                             </div>
                             <label class="col-sm-2 control-label" for="menusUrl">地址</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="menusUrl" v-model="row.menusUrl" type="text" placeholder="地址" />
+                                <input class="form-control" id="menusUrl" v-model="row.menusUrl" name="menusUrl" type="text" placeholder="地址" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="subTitle">菜单别名</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="subTitle" v-model="row.subTitle" type="text" placeholder="菜单别名" />
+                                <input class="form-control" id="subTitle" v-model="row.subTitle" name="subTitle" type="text" placeholder="菜单别名" />
                             </div>
                             <label class="col-sm-2 control-label" for="menusIcon">图标</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="menusIcon" v-model="row.menusIcon" type="text" placeholder="图标" />
+                                <input class="form-control" id="menusIcon" v-model="row.menusIcon" name="menusIcon" type="text" placeholder="图标" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -70,7 +70,7 @@
                         <div class="form-group">
                             <label for="orderIndex" class="col-sm-2 control-label">排序</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="orderIndex" v-model="row.orderIndex" type="text" placeholder="排序" />
+                                <input class="form-control" id="orderIndex" name="orderIndex" v-model="row.orderIndex" type="text" placeholder="排序" />
                             </div>
                             <label for="status" class="col-sm-2 control-label">数据状态</label>
                             <div class="col-sm-4">
@@ -83,7 +83,7 @@
                         <div class="form-group">
                             <label for="remark" class="col-sm-2 control-label">备注</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" id="remark" v-model="row.remark" placeholder="备注"></textarea>
+                                <textarea class="form-control" id="remark" name="remark" v-model="row.remark" placeholder="备注"></textarea>
                             </div>
                         </div>
                     </form>
@@ -283,6 +283,46 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
+            },
+            validataForm() {
+                //表单验证
+                $('#myForm').bootstrapValidator({
+                    message: 'This value is not valid',
+                    //feedbackIcons: {
+                    //    valid: 'glyphicon glyphicon-ok',
+                    //    invalid: 'glyphicon glyphicon-remove',
+                    //    validating: 'glyphicon glyphicon-refresh'
+                    //},
+                    fields: {
+                        menusName: {
+                            validators: {
+                                notEmpty: {
+                                    message: '菜单名不能位空'
+                                }
+                            }
+                        },
+                        orderIndex: {
+                            validators: {
+                                notEmpty: {
+                                    message: '排序不能位空'
+                                },
+                                numeric: {
+                                    message: '只能填写数字'
+                                }
+                            }
+                        },
+                        menusUrl: {
+                            validators: {
+                                notEmpty: {
+                                    message: '地址不能位空，父级菜单用#代替'
+                                },
+                                url: {
+                                    message: '菜单地址格式不正确'
+                                }
+                            }
+                        }
+                    }
+                });
             }
         },
         created() {
@@ -290,6 +330,7 @@
         },
         mounted() {
             this.queryFirstMeuns();
+            this.validataForm();
         }
     });
 </script>

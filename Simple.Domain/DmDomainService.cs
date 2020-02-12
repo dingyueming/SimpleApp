@@ -81,6 +81,23 @@ namespace Simple.Domain
         public async Task<bool> AddCar(CarExEntity exEntity)
         {
             var entity = mapper.Map<CarEntity>(exEntity);
+            //数据校验
+            var valdataEntity = await carRepository.GetCarEntityForValdata(entity);
+            if (valdataEntity != null)
+            {
+                if (valdataEntity.SIM == entity.SIM)
+                {
+                    throw new Exception("SIM卡号重复");
+                }
+                if (valdataEntity.LICENSE == entity.LICENSE)
+                {
+                    throw new Exception("车牌号重复");
+                }
+                if (valdataEntity.MAC == entity.MAC)
+                {
+                    throw new Exception("识别码重复");
+                }
+            }
             return await carRepository.InsertAsync(entity);
         }
 
@@ -93,6 +110,23 @@ namespace Simple.Domain
         public async Task<bool> UpdateCar(CarExEntity exEntity)
         {
             var entity = mapper.Map<CarEntity>(exEntity);
+            //数据校验
+            var valdataEntity = await carRepository.GetCarEntityForValdata(entity);
+            if (valdataEntity != null)
+            {
+                if (valdataEntity.SIM == entity.SIM)
+                {
+                    throw new Exception("SIM卡号重复");
+                }
+                if (valdataEntity.LICENSE == entity.LICENSE)
+                {
+                    throw new Exception("车牌号重复");
+                }
+                if (valdataEntity.MAC == entity.MAC)
+                {
+                    throw new Exception("识别码重复");
+                }
+            }
             return await carRepository.UpdateAsync(entity);
         }
 

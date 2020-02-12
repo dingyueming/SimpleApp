@@ -37,37 +37,37 @@
                     <h4 class="modal-title" id="myModalLabel">用户管理</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form">
+                    <form class="form-horizontal" id="myForm" role="form">
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="usersName">用户名</label>
                             <div class="col-sm-4">
-                                <input class="form-control" v-model="row.usersName" id="usersName" type="text" placeholder="用户名" />
+                                <input class="form-control" v-model="row.usersName" name="usersName" id="usersName" type="text" placeholder="用户名" />
                             </div>
                             <label class="col-sm-2 control-label" for="password">密码</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="password" v-model="row.password" type="password" placeholder="密码" />
+                                <input class="form-control" id="password" name="password" v-model="row.password" type="password" placeholder="密码" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="ds_host">真实姓名</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="realName" v-model="row.realName" type="text" placeholder="真实姓名" />
+                                <input class="form-control" id="realName" name="realName" v-model="row.realName" type="text" placeholder="真实姓名" />
                             </div>
                             <label class="col-sm-2 control-label" for="telephone">电话</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="telephone" v-model="row.telephone" type="text" placeholder="电话" />
+                                <input class="form-control" id="telephone" name="telephone" v-model="row.telephone" type="text" placeholder="电话" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="address" class="col-sm-2 control-label">地址</label>
                             <div class="col-sm-10">
-                                <input class="form-control" id="address" v-model="row.address" type="text" placeholder="地址" />
+                                <input class="form-control" id="address" name="address" v-model="row.address" type="text" placeholder="地址" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="email" class="col-sm-2 control-label">邮箱</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="email" v-model="row.email" type="text" placeholder="邮箱" />
+                                <input class="form-control" id="email" name="email" v-model="row.email" type="text" placeholder="邮箱" />
                             </div>
                             <label for="status" class="col-sm-2 control-label">使用状态</label>
                             <div class="col-sm-4">
@@ -80,7 +80,7 @@
                         <div class="form-group">
                             <label for="remark" class="col-sm-2 control-label">备注</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" id="remark" v-model="row.remark" placeholder="备注"></textarea>
+                                <textarea class="form-control" name="remark" id="remark" v-model="row.remark" placeholder="备注"></textarea>
                             </div>
                         </div>
                     </form>
@@ -400,12 +400,64 @@
                         console.log(error);
                     });
                 }
+            },
+            validataForm() {
+                //表单验证
+                $('#myForm').bootstrapValidator({
+                    message: 'This value is not valid',
+                    //feedbackIcons: {
+                    //    valid: 'glyphicon glyphicon-ok',
+                    //    invalid: 'glyphicon glyphicon-remove',
+                    //    validating: 'glyphicon glyphicon-refresh'
+                    //},
+                    fields: {
+                        usersName: {
+                            validators: {
+                                notEmpty: {
+                                    message: '用户名不能位空'
+                                },
+                                stringLength: {
+                                    min: 3,
+                                    max: 30,
+                                    message: '用户名必须大于3，小于30个字'
+                                }
+                            }
+                        },
+                        password: {
+                            validators: {
+                                notEmpty: {
+                                    message: '密码不能位空'
+                                },
+                                stringLength: {
+                                    min: 5,
+                                    max: 30,
+                                    message: '密码必须大于6，小于30个字'
+                                },
+                                different: {
+                                    field: 'usersName',
+                                    message: '用户名和密码不能相同'
+                                }
+                            }
+                        },
+                        email: {
+                            validators: {
+                                notEmpty: {
+                                    message: '邮箱不能位空'
+                                },
+                                emailAddress: {
+                                    message: '邮箱地址格式有误'
+                                }
+                            }
+                        },
+                    }
+                });
             }
         },
         created() {
             this.getTableData();
             this.queryAllRoles();
             this.queryDevices();
+            this.validataForm();
         },
     });
 </script>

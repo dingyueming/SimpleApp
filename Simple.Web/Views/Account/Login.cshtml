@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Admin | Login</title>
+    <title>Gnss | Login</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.7 -->
@@ -30,19 +30,22 @@
 <body class="hold-transition login-page">
     <div class="login-box" id="app">
         <div class="login-logo">
-            <a href="#"><b>Admin</b></a>
+            <a href="#"><b>GNSS</b></a>
         </div>
         <!-- /.login-logo -->
         <div class="login-box-body">
             <p class="login-box-msg">Sign in to start your session</p>
             <form id="loginForm" class="form-signin" action="@Url.Action("Login")" method="post">
                 <div class="form-group has-feedback">
-                    <input type="text" class="form-control" name="username" id="username" placeholder="UserName">
+                    <input type="text" class="form-control" name="username" id="username" placeholder="用户名">
                     <span class="fa fa-male form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
-                    <input type="password" class="form-control" name="password" placeholder="Password">
+                    <input type="password" class="form-control" name="password" placeholder="密码">
                     <span class="fa fa-lock form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <div class="verify-wrap" id="verify-wrap"></div>
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
@@ -54,7 +57,7 @@
                     </div>
                     <!-- /.col -->
                     <div class="col-xs-4">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                        <button type="submit" id="btn_submit" class="btn btn-primary btn-block btn-flat">登陆</button>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -77,17 +80,22 @@
     <!--Bootstrap-validator-->
     <link rel="stylesheet" href="~/plugins/bootstrap-Validator/bootstrapValidator.css" />
     <script type="text/javascript" src="~/plugins/bootstrap-Validator/bootstrapValidator.js"></script>
+    <!--滑动验证-->
+    <script src="~/dist/js/jq-slideVerify.js"></script>
     <script>
-        var app = new Vue({
-            el: '#app',
-            data: {
-
-            },
-            methods: {
-
-            }
-        });
         $(function () {
+            var SlideVerifyPlug = window.slideVerifyPlug;
+            var slideVerify = new SlideVerifyPlug('#verify-wrap', {
+                wrapWidth: '320',//设置 容器的宽度 ,不设置的话，会设置成100%，需要自己在外层包层div,设置宽度，这是为了适应方便点；
+                initText: '请拖动滑块',  //设置  初始的 显示文字
+                sucessText: '验证通过',//设置 验证通过 显示的文字
+                getSuccessState: function (res) {
+                    //当验证完成的时候 会 返回 res 值 true，
+                    if (res) {
+                        $('#btn_submit').prop('disabled', false); //启
+                    }
+                }
+            });
             //Icheck插件
             $('input').iCheck({
                 checkboxClass: 'icheckbox_square-blue',
@@ -100,11 +108,11 @@
             //表单验证
             $('#loginForm').bootstrapValidator({
                 message: 'This value is not valid',
-                feedbackIcons: {
-                    //valid: 'glyphicon glyphicon-ok',
-                    //invalid: 'glyphicon glyphicon-remove',
-                    //validating: 'glyphicon glyphicon-refresh'
-                },
+                //feedbackIcons: {
+                //    valid: 'glyphicon glyphicon-ok',
+                //    invalid: 'glyphicon glyphicon-remove',
+                //    validating: 'glyphicon glyphicon-refresh'
+                //},
                 fields: {
                     username: {
                         message: '用户名无效',

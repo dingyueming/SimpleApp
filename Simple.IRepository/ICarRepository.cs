@@ -13,5 +13,7 @@ namespace Simple.IRepository
         Task<List<CarEntity>> GetCarEntitiesByUser(int userId);
 
         Task<Pagination<CarEntity>> GetPage(int pageSize, int pageIndex, string where, string orderby);
+
+        Task<CarEntity> GetCarEntityForValdata(CarEntity car);
     }
 }

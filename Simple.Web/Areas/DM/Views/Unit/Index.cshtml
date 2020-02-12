@@ -59,7 +59,7 @@
                     <h4 class="modal-title" id="myModalLabel">单位管理</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form">
+                    <form class="form-horizontal" role="form" id="myForm">
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="unitname">单位名称</label>
                             <div class="col-sm-4">
@@ -83,7 +83,7 @@
                         <div class="form-group">
                             <label for="status" class="col-sm-2 control-label">所属单位</label>
                             <div class="col-sm-10">
-                                <treeselect v-model="row.pid" :multiple="false" v-on:select="treeSelect" :options="options" />
+                                <treeselect v-model="row.pid" name="pUnitId" :multiple="false" v-on:select="treeSelect" :options="options" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -300,10 +300,38 @@
                     console.log(error);
                 });
             },
+            validataForm() {
+                //表单验证
+                $('#myForm').bootstrapValidator({
+                    message: 'This value is not valid',
+                    //feedbackIcons: {
+                    //    valid: 'glyphicon glyphicon-ok',
+                    //    invalid: 'glyphicon glyphicon-remove',
+                    //    validating: 'glyphicon glyphicon-refresh'
+                    //},
+                    fields: {
+                        unitname: {
+                            validators: {
+                                notEmpty: {
+                                    message: '单位名称不能位空'
+                                }
+                            }
+                        },
+                        pUnitId: {
+                            validators: {
+                                notEmpty: {
+                                    message: '所属单位不能位空'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         },
         created() {
             this.getTableData();
             this.queryUnitTree();
+            this.validataForm();
         },
     });
 </script>

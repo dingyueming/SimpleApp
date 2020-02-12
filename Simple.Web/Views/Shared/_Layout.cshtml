@@ -33,6 +33,9 @@ scratch. This page gets reditorid of all links and provides the needed markup on
     <link rel="stylesheet" href="~/lib/vue-easytable/umd/css/index.css">
     <!--element-ui-->
     <link rel="stylesheet" href="~/lib/element-ui/theme-chalk/index.css">
+    <!--Bootstrap-validator-->
+    <link rel="stylesheet" href="~/plugins/bootstrap-Validator/bootstrapValidator.css" />
+    <script type="text/javascript" src="~/plugins/bootstrap-Validator/bootstrapValidator.js"></script>
     @RenderSection("style", false)
     <!-- REQUIRED JS SCRIPTS -->
     <!-- jQuery 3 -->
@@ -138,7 +141,7 @@ desired effect
                                         <a href="#" class="btn btn-default btn-flat">个人资料</a>
                                     </div>
                                     <div class="pull-right">
-                                        <a href="/Account/Logout" class="btn btn-default btn-flat">退出</a>
+                                        <a href="@Url.Action("Logout","Account")" class="btn btn-default btn-flat">退出</a>
                                     </div>
                                 </li>
                             </ul>

@@ -6,6 +6,7 @@ using Dapper;
 using Simple.IRepository;
 using Simple.Infrastructure.Tools;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Simple.Repository
 {
@@ -34,6 +35,13 @@ namespace Simple.Repository
             pagination.Data = list.AsList().Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             pagination.Total = await Connection.QuerySingleAsync<int>(totalSql);
             return pagination;
+        }
+
+        public async Task<List<UsersEntity>> GetUsersEntityByUserName(string userName)
+        {
+            var sql = $"select * from tb_users where usersname like %{userName.Trim()}%";
+            var entities = await Connection.QueryAsync<UsersEntity>(sql);
+            return entities.AsList();
         }
     }
 }
