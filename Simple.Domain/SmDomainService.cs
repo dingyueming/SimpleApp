@@ -80,7 +80,7 @@ namespace Simple.Domain
         {
             //数据校验
             var entities = await userRepository.GetUsersEntityByUserName(exEntity.UsersName);
-            if (entities.Count > 0)
+            if (entities.Count > 2)
             {
                 throw new Exception("重复的用户名！");
             }

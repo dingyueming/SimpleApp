@@ -42,5 +42,25 @@ namespace Simple.Repository
             pagination.Total = await Connection.QuerySingleAsync<int>(totalSql);
             return pagination;
         }
+
+        public async Task<PersonEntity> GetPersonEntityForValdata(PersonEntity person)
+        {
+            var sqlWhere = string.Empty;
+            if (person.ID != 0)
+            {
+                sqlWhere = "and t.id !=" + person.ID;
+            }
+            string sql;
+            if (!string.IsNullOrWhiteSpace(person.POLICE_CODE))
+            {
+                sql = $"select * from persons t where 1=1 {sqlWhere} and (t.terminal_code='{person.TERMINAL_CODE}' or t.police_code='{person.POLICE_CODE}')";
+            }
+            else
+            {
+                sql = $"select * from persons t where 1=1 {sqlWhere} and t.terminal_code='{person.TERMINAL_CODE}'";
+            }
+            return await Connection.QuerySingleOrDefaultAsync<PersonEntity>(sql);
+        }
+
     }
 }

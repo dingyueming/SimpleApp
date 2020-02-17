@@ -35,7 +35,10 @@ namespace Simple.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddMvc().AddJsonOptions(option =>
+            services.AddMvc(options =>
+            {
+                //options.Filters.Add<ActionFilterAttribute>()
+            }).AddJsonOptions(option =>
             {
                 option.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

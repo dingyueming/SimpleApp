@@ -46,6 +46,7 @@
                 </div>
                 <div class="form-group has-feedback">
                     <div class="verify-wrap" id="verify-wrap"></div>
+                    <input type="hidden" name="verify" id="verify"/>
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
@@ -92,7 +93,10 @@
                 getSuccessState: function (res) {
                     //当验证完成的时候 会 返回 res 值 true，
                     if (res) {
-                        $('#btn_submit').prop('disabled', false); //启
+                        $("input[name='verify']").val("123").change(); 
+                        //$('#btn_submit').prop('disabled', false); //启
+                    } else {
+                        $('#verify').val(null); 
                     }
                 }
             });
@@ -107,6 +111,7 @@
             });
             //表单验证
             $('#loginForm').bootstrapValidator({
+                excluded:[":disabled"],
                 message: 'This value is not valid',
                 //feedbackIcons: {
                 //    valid: 'glyphicon glyphicon-ok',
@@ -143,6 +148,14 @@
                             }
                         }
                     },
+                    verify: {
+                        trigger:"change",
+                        validators: {
+                            notEmpty: {
+                                message: '请进行滑动验证'
+                            }
+                        }
+                    }
                 }
             });
         });

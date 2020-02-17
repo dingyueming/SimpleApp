@@ -39,7 +39,7 @@ namespace Simple.Repository
 
         public async Task<List<UsersEntity>> GetUsersEntityByUserName(string userName)
         {
-            var sql = $"select * from tb_users where usersname like %{userName.Trim()}%";
+            var sql = $"select * from tb_users where usersname like '%{userName.Trim()}%'";
             var entities = await Connection.QueryAsync<UsersEntity>(sql);
             return entities.AsList();
         }

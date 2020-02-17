@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Simple.ExEntity.DM;
 using Simple.IApplication.DM;
+using Simple.Infrastructure.ControllerFilter;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
 
@@ -24,14 +25,17 @@ namespace Simple.Web.Areas.DM.Controllers
             return Json(data);
         }
 
+        [SimpleActionFilter]
         public async Task<bool> Add(PersonExEntity exEntity)
         {
             return await personService.Add(exEntity);
         }
+        [SimpleActionFilter]
         public async Task<bool> Update(PersonExEntity exEntity)
         {
             return await personService.Update(exEntity);
         }
+        [SimpleActionFilter]
         public async Task<bool> Delete(PersonExEntity exEntity)
         {
             return await personService.Delete(new List<PersonExEntity>() { exEntity });

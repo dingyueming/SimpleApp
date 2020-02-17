@@ -135,7 +135,7 @@ namespace Simple.Common.Cyhk
             _mac = mac;
             string strCmdInfo = string.Empty;
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "Other/JsonFileFolder/CmdInfo.json", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "Other/JsonFiles/CmdInfo.json", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 using (StreamReader sr = new StreamReader(fs, Encoding.GetEncoding("gb2312")))
                 {
@@ -145,7 +145,7 @@ namespace Simple.Common.Cyhk
             Command.cmdInfoList = JsonConvert.DeserializeObject<List<DICT_CMD>>(strCmdInfo);
 
             string strCmdStatus = string.Empty;
-            using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "Other/JsonFileFolder/CmdStatus.json", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "Other/JsonFiles/CmdStatus.json", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 using (StreamReader sr = new StreamReader(fs, Encoding.GetEncoding("gb2312")))
                 {

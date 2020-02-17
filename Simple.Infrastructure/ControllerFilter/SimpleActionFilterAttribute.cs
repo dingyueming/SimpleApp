@@ -7,25 +7,26 @@ using Simple.Infrastructure.InfrastructureModel;
 
 namespace Simple.Infrastructure.ControllerFilter
 {
-    public class ActionFilterAttribute : Attribute, IActionFilter
+    public class SimpleActionFilterAttribute : Attribute, IActionFilter
     {
         /// <summary>
         /// 提示消息
         /// </summary>
-        public string Message { get; set; }
+        public string Message { get; set; } = "";
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            //等Controller的Action方法执行完后，通过更改ActionExecutedContext类的Result属性，来替换Action方法返回的Json对象
+            //等Controll er的Action方法执行完后，通过更改ActionExecutedContext类的Result属性，来替换Action方法返回的Json对象
             //判断是否为正常执行结束,如果不为空为异常执行结束.
             if (context.Exception == null)
             {
                 //返回JsonResult结果信息
-                context.Result = new JsonResult(new CommonResult { ResultId = context.Result is EmptyResult ? null : ((ContentResult)(context.Result)).Content, IsSuccess = true, Message = Message });
+                context.Result = new JsonResult(new CommonResult { ResultId = context.Result is null ? null : context.Result, IsSuccess = true, Message = Message });
             }
             else
             {
                 //返回JsonResult结果信息
-                context.Result = new JsonResult(new CommonResult { ResultId = context.Result is EmptyResult ? null : ((ContentResult)(context.Result)).Content, IsSuccess = true, Message = context.Exception.Message });
+                context.Result = new JsonResult(new CommonResult { ResultId = context.Result is null ? null : context.Result, IsSuccess = false, Message = context.Exception.Message });
+                context.Exception = null;
             }
         }
 

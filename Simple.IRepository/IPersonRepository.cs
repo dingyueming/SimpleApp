@@ -12,5 +12,6 @@ namespace Simple.IRepository
     {
         Task<List<PersonEntity>> GetPersonEntitiesByUser(int userId);
         Task<Pagination<PersonEntity>> GetPage(int pageSize, int pageIndex, string where, string orderby);
+        Task<PersonEntity> GetPersonEntityForValdata(PersonEntity person);
     }
 }

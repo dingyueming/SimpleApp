@@ -143,6 +143,19 @@ namespace Simple.Domain
         public async Task<bool> AddPerson(PersonExEntity exEntity)
         {
             var entity = mapper.Map<PersonEntity>(exEntity);
+            //数据校验
+            var valdataEntity = await personRepository.GetPersonEntityForValdata(entity);
+            if (valdataEntity != null)
+            {
+                if (valdataEntity.POLICE_CODE == entity.POLICE_CODE && exEntity.POLICE_CODE.Trim() != null)
+                {
+                    throw new Exception("警号重复");
+                }
+                if (valdataEntity.TERMINAL_CODE == entity.TERMINAL_CODE)
+                {
+                    throw new Exception("设备号重复");
+                }
+            }
             return await personRepository.InsertAsync(entity);
         }
 
@@ -155,6 +168,19 @@ namespace Simple.Domain
         public async Task<bool> UpdatePerson(PersonExEntity exEntity)
         {
             var entity = mapper.Map<PersonEntity>(exEntity);
+            //数据校验
+            var valdataEntity = await personRepository.GetPersonEntityForValdata(entity);
+            if (valdataEntity != null)
+            {
+                if (valdataEntity.POLICE_CODE == entity.POLICE_CODE && exEntity.POLICE_CODE.Trim() != null)
+                {
+                    throw new Exception("警号重复");
+                }
+                if (valdataEntity.TERMINAL_CODE == entity.TERMINAL_CODE)
+                {
+                    throw new Exception("设备号重复");
+                }
+            }
             return await personRepository.UpdateAsync(entity);
         }
 
