@@ -81,7 +81,7 @@ namespace Simple.Web.Controllers
 
         #region 重载Json方法
 
-        internal JsonResult FirstJson(object data)
+        internal JsonResult FormerJson(object data)
         {
             return Json(data, new Newtonsoft.Json.JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() });
         }

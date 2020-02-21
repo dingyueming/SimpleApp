@@ -31,7 +31,7 @@ namespace Simple.Infrastructure.Dapper.Contrib
         /// <summary>
         /// 数据库连接
         /// </summary>
-        protected IDbConnection Connection
+        public IDbConnection Connection
         {
             get
             {
@@ -40,7 +40,10 @@ namespace Simple.Infrastructure.Dapper.Contrib
                 return connection;
             }
         }
-
+        public IDbConnection GetDbConnection()
+        {
+            return Connection;
+        }
         /// <summary>
         /// 返回数据库所有的对象集合
         /// </summary>

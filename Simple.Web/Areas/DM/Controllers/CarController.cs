@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Simple.ExEntity.DM;
 using Simple.IApplication.DM;
+using Simple.Infrastructure.ControllerFilter;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
 
@@ -14,8 +15,10 @@ namespace Simple.Web.Areas.DM.Controllers
     public class CarController : SimpleBaseController
     {
         private readonly ICarService carService;
-        public CarController(ICarService carService, IServiceProvider serviceProvider) : base(serviceProvider)
+        private readonly IAreaAlarmService areaAlarmService;
+        public CarController(IAreaAlarmService areaAlarmService, ICarService carService, IServiceProvider serviceProvider) : base(serviceProvider)
         {
+            this.areaAlarmService = areaAlarmService;
             this.carService = carService;
         }
         public async Task<JsonResult> Query(Pagination<CarExEntity> pagination)
@@ -41,6 +44,16 @@ namespace Simple.Web.Areas.DM.Controllers
         public async Task<bool> BatchDelete(List<CarExEntity> exEntities)
         {
             return await carService.Delete(exEntities);
+        }
+        public async Task<JsonResult> QueryAlarmArea()
+        {
+            var list = await areaAlarmService.GetAllAras();
+            return FormerJson(list);
+        }
+        [SimpleActionFilter]
+        public async Task SaveCarArea(CarAreaExEntity exEntity)
+        {
+            await areaAlarmService.AddCarArea(exEntity);
         }
     }
 }

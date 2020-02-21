@@ -135,6 +135,22 @@ namespace Simple.Infrastructure.Dapper.Contrib
                 return await dbConnection.ExecuteAsync(query, parameters) > 0;
             }
         }
+        /// <summary>
+        /// 根据指定对象的ID,从数据库中删除指定对象
+        /// </summary>
+        /// <param name="ids">对象的ID</param>
+        /// <returns></returns>
+        public virtual async Task<bool> DeleteAsync(int[] ids)
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                string query = string.Format("DELETE FROM {0} WHERE {1} in :ids", TableName, PrimaryKey.Name);
+                var parameters = new DynamicParameters();
+                parameters.Add(":ids", ids);
+
+                return await dbConnection.ExecuteAsync(query, parameters) > 0;
+            }
+        }
 
         /// <summary>
         /// 从数据库中删除所有对象

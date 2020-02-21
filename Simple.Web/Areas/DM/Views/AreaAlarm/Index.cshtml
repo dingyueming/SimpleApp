@@ -1,0 +1,315 @@
+﻿
+@{
+    ViewData["Title"] = "区域报警设置";
+    ViewData["Version"] = "20200218";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.css">
+<link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/mapDemopage/css/popup.css">
+<script src="http://39.104.61.84:9001/EzServerClient/lib/EzMapAPI.js"></script>
+<script src="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.js"></script>
+<div class="box" id="vmBox">
+    <table style="margin-left:5px;">
+        <tr>
+            <th>区域名称:</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <input type="text" class="form-control" v-model="searchWhere.areaname">
+                </div>
+            </td>
+            <td>
+                <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
+                <button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;" data-remote="@Url.Action("AddOrEdit")" data-toggle="modal" onclick="vm.pageMode = 'add';vm.row = []; " data-target="#myModal">新增</button>
+                <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
+            </td>
+        </tr>
+    </table>
+    <v-table is-vertical-resize
+             :vertical-resize-offset='60'
+             is-horizontal-resize
+             style="width:100%"
+             :multiple-sort="false"
+             :min-height="350"
+             even-bg-color="#f2f2f2"
+             :title-rows="tableConfig.titleRows"
+             :columns="tableConfig.columns"
+             :table-data="tableConfig.tableData"
+             row-hover-color="#eee"
+             row-click-color="#edf7ff"
+             :select-all="selectALL"
+             :select-change="selectChange"
+             :select-group-change="selectGroupChange"
+             v-on:sort-change="sortChange"
+             :paging-index="(pageIndex-1)*pageSize"></v-table>
+    <div style="margin-top:5px;">
+        <v-pagination v-on:page-change="pageChange" v-on:page-size-change="pageSizeChange" :page-size-option="[15,20,30]" :total="total" :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next', 'sizer', 'jumper']"></v-pagination>
+    </div>
+    <!--模态窗口-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content"></div>
+        </div>
+    </div>
+    <!--模态窗口-->
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">区域绑定车辆列表</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="height:400px;">
+                        <table class="table table-condensed">
+                            <tr>
+                                <th>序号</th>
+                                <th>车牌号</th>
+                                <th>MAC</th>
+                                <th>单位</th>
+                            </tr>
+                            <tr v-for="(item,index) in row.Devices">
+                                <td>{{index+1}}</td>
+                                <td>{{item.LICENSE}}</td>
+                                <td>{{item.MAC}}</td>
+                                <td>{{item.UNITNAME}}</td>
+                                <td><a href="javascript:void();" v-on:click="removeBind(item.CARID)">解除绑定</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // 自定义列组件
+    Vue.component('table-operation', {
+        template: `<span>
+        <a href="" v-on:click.stop.prevent="viewDevice(rowData,index)">查看绑定车辆</a>&nbsp;&nbsp;
+        <a href="" v-on:click.stop.prevent="view(rowData,index)">查看报警区域</a>&nbsp;&nbsp;
+        <a href="" v-on:click.stop.prevent="deleteRow(rowData,index)">删除</a>
+        </span>`,
+        props: {
+            rowData: {
+                type: Object
+            },
+            field: {
+                type: String
+            },
+            index: {
+                type: Number
+            }
+        },
+        methods: {
+            view() {
+                vm.row = this.rowData;
+                vm.pageMode = "view";
+                $('#myModal').modal({
+                    remote: "@Url.Action("AddOrEdit")?r="+Math.random(),
+                    backdrop: 'static'
+                });
+
+                // 参数根据业务场景随意构造
+                let params = { type: 'edit', index: this.index, rowData: this.rowData };
+                this.$emit('on-custom-comp', params);
+            },
+            viewDevice() {
+                vm.row = this.rowData;
+                $('#myModal2').modal();
+                // 参数根据业务场景随意构造
+                let params = { type: 'edit', index: this.index, rowData: this.rowData };
+                this.$emit('on-custom-comp', params);
+            },
+            deleteRow() {
+                vm.row = this.rowData;
+                vm.selectedRows.push(vm.row);
+                vm.deleteSelect();
+                // 参数根据业务场景随意构造
+                let params = { type: 'delete', index: this.index };
+                this.$emit('on-custom-comp', params);
+
+            },
+        }
+    });
+    var vm = new Vue({
+        el: "#vmBox",
+        data: {
+            pageMode: "",
+            total: 0,
+            pageIndex: 1,
+            pageSize: 15,
+            tableConfig: {
+                multipleSort: false,
+                tableData: [
+                ],
+                columns: [
+                    { width: 60, titleAlign: 'center', columnAlign: 'center', type: 'selection' },
+                    {
+                        field: 'custome', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center',
+                        formatter: function (rowData, index, pagingIndex) {
+                            var currentIndex = index + pagingIndex;
+                            return '<span style="color:red;font-weight: bold;">' + (currentIndex + 1) + '</span>';
+                        }, isFrozen: false
+                    },
+                    { field: 'AREANAME', title: '区域名称', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'Count', title: '区域绑定设备数', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'custome-adv', title: '操作', width: 200, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
+                ],
+                titleRows: [
+
+                ],
+            },
+            row: {},
+            selectedRows: [],
+            options: [],
+            searchWhere: { areaname: '', },
+            map: {
+                points: [],
+            },
+        },
+        methods: {
+            getTableData() {
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: ' and a.areaname like \'%' + this.searchWhere.areaname + '%\'', orderBy: ' a.areaid desc' };
+                axios.post('@Url.Action("Query")', Qs.stringify(search)).then(function (response) {
+                    var pagination = response.data;
+                    vm.tableConfig.tableData = pagination.Data;
+                    vm.total = pagination.Total;
+                    console.log(vm.tableConfig.tableData);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            pageChange(pageIndex) {
+                this.pageIndex = pageIndex;
+                this.getTableData();
+                console.log(pageIndex)
+            },
+            pageSizeChange(pageSize) {
+                this.pageIndex = 1;
+                this.pageSize = pageSize;
+                this.getTableData();
+            },
+            sortChange(params) {
+
+            },
+            selectALL(selection){
+                console.log('select-aLL', selection);
+                this.selectedRows = selection;
+            },
+            selectChange(selection,rowData){
+                console.log('select-change', selection, rowData);
+                this.selectedRows = selection;
+            },
+            selectGroupChange(selection){
+                console.log('select-group-change',selection);
+            },
+            deleteSelect() {
+                if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
+                    if (confirm('确认删除吗')) {
+                        axios.post('@Url.Action("BatchDelete")', Qs.stringify({ exEntities: this.selectedRows })).then(function (response) {
+                            var commonResult = response.data;
+                            if (commonResult.isSuccess) {
+                                $('#myModal').modal('hide');
+                                vm.getTableData();
+                                this.selectedRows = [];
+                            } else {
+                                alert(commonResult.message);
+                            }
+                        }).catch(function (error) {
+                            console.log(commonResult.message);
+                        });
+                    }
+                }
+                console.log(this.selectedRows);
+            },
+            select() {
+                this.pageIndex = 1;
+                this.getTableData();
+            },
+            saveAreaAlarm() {
+                var areaName = $("#areaName").val();
+                if ($.trim(areaName) == "" || vm.map.points.length == 0) {
+                    alert("确定已经输入区域名称以及在地图上画好区域");
+                    return;
+                }
+                var model = { areaName: areaName };
+                 switch ($("#drawtype").val()) {
+                    case "drawRect":
+                        model.areatype = 0;
+                        break;
+                    case "drawCircle":
+                        model.areatype = 2;
+                        break;
+                    default:
+                        model.areatype = 1;
+                        break;
+                }
+                axios.post('@Url.Action("add")', Qs.stringify({ exEntitiy: model, points: vm.map.points })).then(function (response) {
+                    var commonResult = response.data;
+                    if (commonResult.isSuccess) {
+                        $('#myModal').modal('hide');
+                        vm.getTableData();
+                    }else {
+                        alert(commonResult.message);
+                    }
+                }).catch(function (error) {
+                    console.log(commonResult.message);
+                });
+            },
+            removeBind(carId) {
+                alert(carId);
+            }
+        },
+        created() {
+            this.getTableData();
+        },
+        mounted() {
+            $('#myModal').on('shown.bs.modal', function (e) {
+                var map = new EzMap('map');
+                var drawbtn = document.getElementById("drawbtn");
+                if (vm.pageMode == "view") {
+                    $("#divAdd").hide();
+                    $(".btn-primary").hide();
+                    $("#divView").append("<label>区域名称:" + vm.row.AREANAME + "</label>")
+                    var coord = [];
+                    var areaDetails = vm.row.AreaDetailsOrderBy;
+                    if (Array.isArray(areaDetails)) {
+                        for (var i = 0; i < areaDetails.length; i++) {
+                            //var c = new EzCoord(parseFloat(areaDetails[i].LONGTITUDE / 1000000), parseFloat(areaDetails[i].LATITUDE / 1000000));
+                            coord.push(areaDetails[i].LONGTITUDE / 1000000);
+                            coord.push(areaDetails[i].LATITUDE / 1000000);
+                        }
+                    }
+                    var feature;
+                    ///区域类型 0 矩形1 多边形 2 圆形3线路,4点
+                    if (vm.row.AREATYPE == 0) {
+                        feature = new Rectangle(coord.join(), undefined)
+                    } else if (vm.row.AREATYPE == 1) {
+                        feature = new Polygon(coord.join(), undefined)
+                    } else {
+                        feature = new Circle(coord.join(), 100, undefined);
+                    }
+                    map.addOverlay(feature);
+                    map.centerAndZoom(feature.getCenter(), 12)
+                } else {
+                    $("#divView").hide();
+                    drawbtn.addEventListener("click", function () {
+                        var selectElement = document.getElementById("drawtype");
+                        var type = selectElement[selectElement.selectedIndex].value;
+                        map.changeDragMode(type, function (/** feature为Ez.g.*要素类 */feature) {
+                            /** 一般鼠标右键结束绘制,回调参数为动态绘制的要素,可以在回调中进行余下操作,例如，增加绘制要素到地图上. */
+                            vm.map.points = feature.getPoints();
+                            map.addOverlay(feature);
+                        });
+                    });
+                    var drawbtn = document.getElementById("clearbtn");
+                    drawbtn.addEventListener("click", function () {
+                        map.clear();
+                        vm.map.points = [];
+                    });
+                }
+            });
+        }
+    });
+</script>
+

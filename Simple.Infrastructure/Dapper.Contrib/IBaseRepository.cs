@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -7,6 +8,7 @@ namespace Simple.Infrastructure.Dapper.Contrib
 {
     public interface IBaseRepository<T> where T : class
     {
+        IDbConnection GetDbConnection();
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> FindByIDAsync(object id);
         Task<bool> InsertAsync(T info);
@@ -16,6 +18,7 @@ namespace Simple.Infrastructure.Dapper.Contrib
         Task<bool> DeleteAsync(T info);
         Task<bool> DeleteAsync(IEnumerable<T> list);
         Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteAsync(int[] ids);
         Task<bool> DeleteAllAsync();
         /// <summary>
         /// dapper通用分页方法
@@ -29,6 +32,6 @@ namespace Simple.Infrastructure.Dapper.Contrib
         /// <param name="pageSize">当前页显示条数</param>
         /// <param name="total">结果集总数</param>
         /// <returns></returns>
-       IEnumerable<T> GetPageList(string files, string tableName, string where, string orderby, int pageIndex, int pageSize, out int total);
+        IEnumerable<T> GetPageList(string files, string tableName, string where, string orderby, int pageIndex, int pageSize, out int total);
     }
 }

@@ -108,6 +108,55 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
     </div>
+
+    <!--分配报警区域 -->
+    <div class="modal fade" id="alarmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">报警区域分配</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">车辆</label>
+                            <div class="col-sm-10">
+                                <label class="col-sm-3 control-label"> {{row.license}}</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="remark" class="col-sm-2 control-label">报警类型</label>
+                            <div class="col-sm-4">
+                                <select id="status" v-model="carArea.alarmtype" class="form-control">
+                                    <option value="0">入区报警</option>
+                                    <option value="1">出区报警</option>
+                                    <option value="2">出入报警</option>
+                                </select>
+                            </div>
+                            <label for="remark" class="col-sm-2 control-label">区域状态</label>
+                            <div class="col-sm-4">
+                                <select id="status" v-model="carArea.status" class="form-control">
+                                    <option value="1">启用</option>
+                                    <option value="0">停用</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="remark" class="col-sm-2 control-label">报警区域</label>
+                            <div class="col-sm-10">
+                                <treeselect v-model="carArea.areaid" name="areaid" :multiple="false" :normalizer="normalizer" :options="alarmAreaOptions" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" v-on:click="saveCarArea">绑定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 </div>
 <script>
     // VUE-TREESELECT
@@ -115,6 +164,7 @@
     // 自定义列组件
     Vue.component('table-operation', {
         template: `<span>
+        <a href="" v-on:click.stop.prevent="setAlarmArea(rowData,index)">设置报警区域</a>&nbsp;
         <a href="" v-on:click.stop.prevent="update(rowData,index)">编辑</a>&nbsp;
         <a href="" v-on:click.stop.prevent="deleteRow(rowData,index)">删除</a>
         </span>`,
@@ -130,15 +180,22 @@
             }
         },
         methods: {
-            update() {
+            setAlarmArea() {
                 vm.row = this.rowData;
                 vm.pageMode = "edit";
-                $('#myModal').modal({backdrop: 'static'});
+                $('#alarmModal').modal();
                 // 参数根据业务场景随意构造
                 let params = { type: 'edit', index: this.index, rowData: this.rowData };
                 this.$emit('on-custom-comp', params);
             },
-
+            update() {
+                vm.row = this.rowData;
+                vm.pageMode = "edit";
+                $('#myModal').modal();
+                // 参数根据业务场景随意构造
+                let params = { type: 'edit', index: this.index, rowData: this.rowData };
+                this.$emit('on-custom-comp', params);
+            },
             deleteRow() {
                 vm.row = this.rowData;
                 vm.pageMode = "delete";
@@ -192,8 +249,16 @@
             selectedRows: [],
             options: [],
             searchWhere: { unitname: '', },
+            alarmAreaOptions: [],
+            carArea: { alarmtype: 2, status: 1,areaid: null },
         },
         methods: {
+            normalizer(node) {
+                return {
+                    id: node.AREAID,
+                    label: node.AREANAME,
+                }
+            },
             getTableData() {
                 var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: ' and a.license like \'%' + this.searchWhere.unitname + '%\'', orderBy: ' a.carid desc' };
                 axios.post('@Url.Action("Query")', Qs.stringify(search)).then(function (response) {
@@ -303,6 +368,34 @@
                     console.log(error);
                 });
             },
+            queryAlarmArea() {
+                axios.post('@Url.Action("QueryAlarmArea")', {}).then(function (response) {
+                    vm.alarmAreaOptions = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            saveCarArea() {
+                debugger;
+                if (this.carArea.areaid == null) {
+                    alert("请选择报警区域");
+                    return;
+                }
+                this.carArea.carid = this.row.carid;
+                axios.post('@Url.Action("SaveCarArea")', Qs.stringify(this.carArea)).then(function (response) {
+                    var commonResult = response.data;
+                    if (commonResult.isSuccess) {
+                        $('#alarmModal').modal('hide');
+                        vm.getTableData();
+                    } else {
+                        alert(commonResult.message);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+                //重置一下
+                this.carArea = { alarmtype: 2, status: 1, areaid: null };
+            },
             validataForm() {
                 //表单验证
                 $('#myForm').bootstrapValidator({
@@ -341,6 +434,7 @@
         created() {
             this.getTableData();
             this.queryUnitTree();
+            this.queryAlarmArea();
             this.validataForm();
         },
     });

@@ -315,37 +315,42 @@ desired effect
 </body>
 </html>
 <script type="text/javascript">
-        var vmMenu = new Vue({
-            el: '#vmMenu',
-            data: {
-                menus: [],
-            },
-            methods: {
-                QueryMenus: function (param) {
-                    axios.post('@Url.Action("QueryMenusByUser")', {}).then(function (response) {
-                        response.data.forEach(function (menu, index) {
-                            var arrUrl = [];
-                            if (menu.childMenus != null) {
-                                menu.childMenus.forEach(function (childMenu, index) {
-                                    if (childMenu.menusUrl == param) {
-                                        childMenu.isActive = true;
-                                    }
-                                    arrUrl.push(childMenu.menusUrl);
-                                });
-                            }
-                            menu.isActive = arrUrl.indexOf(param) > -1;
-                            vmMenu.menus.push(menu);
-                        });
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                },
-                SetIconClass(param) {
-                    return param;
-                }
-            },
-            mounted: function () {
-                this.QueryMenus(window.location.href);
-            }
+    $(function () {
+        $('body').on('hidden.bs.modal', '.modal', function () {
+            $(this).removeData('bs.modal');
         });
+    });
+    var vmMenu = new Vue({
+        el: '#vmMenu',
+        data: {
+            menus: [],
+        },
+        methods: {
+            QueryMenus: function (param) {
+                axios.post('@Url.Action("QueryMenusByUser")', {}).then(function (response) {
+                    response.data.forEach(function (menu, index) {
+                        var arrUrl = [];
+                        if (menu.childMenus != null) {
+                            menu.childMenus.forEach(function (childMenu, index) {
+                                if (childMenu.menusUrl == param) {
+                                    childMenu.isActive = true;
+                                }
+                                arrUrl.push(childMenu.menusUrl);
+                            });
+                        }
+                        menu.isActive = arrUrl.indexOf(param) > -1;
+                        vmMenu.menus.push(menu);
+                    });
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            SetIconClass(param) {
+                return param;
+            }
+        },
+        mounted: function () {
+            this.QueryMenus(window.location.href);
+        }
+    });
 </script>
