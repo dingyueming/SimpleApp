@@ -14,5 +14,6 @@ namespace Simple.IDomain
         Task<bool> DeleteAreaAlarm(List<AreaExEntity> exEntities);
         Task<List<AreaExEntity>> GetAllAras();
         Task AddCarArea(CarAreaExEntity exEntity);
+        Task DeleteCarArea(CarAreaExEntity exEntity);
     }
 }

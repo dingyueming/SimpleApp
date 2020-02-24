@@ -239,6 +239,18 @@
                     { field: 'mac', title: '识别码', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'engineno', title: '发动机号', width: 180, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'chassisno', title: '车架号', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { 
+                        field: 'area', title: '报警区域', width: 150, titleAlign: 'center', columnAlign: 'left', isResize: true, formatter: function (rowData, index, pagingIndex) {
+                            if (rowData.areas.length > 0) {
+                                var html = "";
+                                for (var i = 0; i < rowData.areas.length; i++) {
+                                    html += '<span style="color:red;font-weight: normal;"><' + rowData.areas[i].areaname + '> </span>';
+                                }
+                                return html;
+                            }
+                            return "";
+                        }
+                    },
                     { field: 'custome-adv', title: '操作', width: 200, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
                 ],
                 titleRows: [
@@ -376,7 +388,6 @@
                 });
             },
             saveCarArea() {
-                debugger;
                 if (this.carArea.areaid == null) {
                     alert("请选择报警区域");
                     return;

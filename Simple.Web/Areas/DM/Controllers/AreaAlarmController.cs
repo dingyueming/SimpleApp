@@ -56,5 +56,12 @@ namespace Simple.Web.Areas.DM.Controllers
         {
             await areaAlarmService.DeleteAreaAlarm(exEntities);
         }
+
+        [SimpleActionFilter]
+        public async Task RemoveBind(int carId)
+        {
+            var exCarArea = new CarAreaExEntity() { CARID = carId };
+            await areaAlarmService.DeleteCarArea(exCarArea);
+        }
     }
 }

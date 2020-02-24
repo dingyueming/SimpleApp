@@ -257,7 +257,17 @@
                 });
             },
             removeBind(carId) {
-                alert(carId);
+                axios.post('@Url.Action("RemoveBind")', Qs.stringify({ carId: carId})).then(function (response) {
+                    var commonResult = response.data;
+                    if (commonResult.isSuccess) {
+                        $('#myModal2').modal('hide');
+                        vm.getTableData();
+                    } else {
+                        alert(commonResult.message);
+                    }
+                }).catch(function (error) {
+                    console.log(commonResult.message);
+                });
             }
         },
         created() {

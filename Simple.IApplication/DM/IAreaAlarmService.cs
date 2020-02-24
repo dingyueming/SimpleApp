@@ -15,5 +15,6 @@ namespace Simple.IApplication.DM
         Task<Pagination<AreaExEntity>> GetPage(Pagination<AreaExEntity> param);
         Task<List<AreaExEntity>> GetAllAras();
         Task AddCarArea(CarAreaExEntity exEntity);
+        Task DeleteCarArea(CarAreaExEntity exEntity);
     }
 }

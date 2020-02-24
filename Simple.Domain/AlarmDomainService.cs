@@ -59,5 +59,10 @@ namespace Simple.Domain
             var entity = mapper.Map<CarAreaEntity>(exEntity);
             await carAreaRepository.InsertCarArea(entity);
         }
+        public async Task DeleteCarArea(CarAreaExEntity exEntity)
+        {
+            var entity = mapper.Map<CarAreaEntity>(exEntity);
+            await carAreaRepository.DeleteAsync(entity);
+        }
     }
 }

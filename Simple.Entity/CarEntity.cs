@@ -126,5 +126,10 @@ namespace Simple.Entity
         /// </summary>
         [Computed]
         public UnitEntity Unit { get; set; }
+        /// <summary>
+        /// 拥有的报警区域
+        /// </summary>
+        [Computed]
+        public List<AreaEntity> Areas { get; set; } = new List<AreaEntity>();
     }
 }

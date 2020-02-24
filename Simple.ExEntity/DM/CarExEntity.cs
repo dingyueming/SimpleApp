@@ -123,5 +123,9 @@ namespace Simple.ExEntity.DM
         /// 所属单位
         /// </summary>
         public UnitExEntity Unit { get; set; }
+        /// <summary>
+        /// 拥有的报警区域
+        /// </summary>
+        public List<AreaExEntity> Areas { get; set; } 
     }
 }
