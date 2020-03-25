@@ -8,6 +8,7 @@ using AutoMapper;
 using Simple.ExEntity.Map;
 using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
 using Simple.Infrastructure.Tools;
+using Simple.Entity;
 
 namespace Simple.Domain
 {
@@ -86,7 +87,37 @@ namespace Simple.Domain
                 }
                 listNode.Add(treeNode);
             }
-            return listNode.ToArray();
+            foreach (var item in listNode)
+            {
+                //循环单位,给单位加上下属设备的数量
+                if (!item.id.Contains("car"))
+                {
+                    item.name += $"({ RecursiveTreeNode(item, listNode)}/0)";
+                }
+            }
+            return listNode.Where(x => x.name.Contains("(0/0)") == false).ToArray();
+        }
+
+        private int RecursiveTreeNode(TreeNode treeNode, List<TreeNode> treeNodes)
+        {
+            //获取当前节点下的设备数量
+            var deviceCount = treeNodes.Where(x => x.pId == treeNode.id).Where(x => x.id.Contains("car")).ToList().Count;
+            //获取当前节点下的单位集合
+            var childUnit = treeNodes.Where(x => x.pId == treeNode.id).Where(x => x.id.Contains("unit")).ToList();
+            //当前节点下的单位数量
+            var unitCount = childUnit.Count;
+            //子节点用后的设备数据量
+            var childUnitsDeviceCount = 0;
+            //大于0说明有子单位
+            if (unitCount > 0)
+            {
+                //递归
+                foreach (var item in childUnit)
+                {
+                    childUnitsDeviceCount += RecursiveTreeNode(item, treeNodes);
+                }
+            }
+            return deviceCount + childUnitsDeviceCount;
         }
 
         public async Task<VueTreeSelectModel[]> GetVueDeviceTreeByUser(int userId)

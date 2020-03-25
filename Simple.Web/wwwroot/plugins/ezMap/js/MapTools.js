@@ -41,7 +41,7 @@ function getCarStateIcon(gpsData) {
 function getCarTreeStateSkin(gpsData) {
     if (gpsData) {
         var minute = Number((new Date().getTime() - JsonToDate(gpsData.gnsstime).getTime()) / (1000 * 60));
-        if (minute > 5) { //5分钟未上线判断为 离线
+        if (minute > 3) { //5分钟未上线判断为 离线
             return 'gray_car';
         }
         if (gpsData.locate === 0) { //未定位

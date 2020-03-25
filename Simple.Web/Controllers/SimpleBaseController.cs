@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Serialization;
 using Simple.ExEntity;
 using Simple.IApplication.DM;
@@ -19,15 +20,27 @@ namespace Simple.Web.Controllers
     {
         private readonly IMenusService menusService;
         private readonly IUnitService unitService;
+        private readonly IConfiguration configuration;
         public SimpleBaseController(IServiceProvider serviceProvider)
         {
-            this.menusService = (IMenusService)serviceProvider.GetService(typeof(IMenusService));
-            this.unitService = (IUnitService)serviceProvider.GetService(typeof(IUnitService));
+            menusService = (IMenusService)serviceProvider.GetService(typeof(IMenusService));
+            unitService = (IUnitService)serviceProvider.GetService(typeof(IUnitService));
+            configuration = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
         }
 
         public virtual IActionResult Index()
         {
             ViewBag.UserName = LoginUser.UsersName;
+            var strMapJsUrl = configuration.GetSection("MapConfig")["MapJsUrl"];
+            if (!string.IsNullOrEmpty(strMapJsUrl))
+            {
+                ViewBag.MapJs = strMapJsUrl.Split('|').ToList();
+            }
+            var strMapCssUrl = configuration.GetSection("MapConfig")["MapCssUrl"];
+            if (!string.IsNullOrEmpty(strMapCssUrl))
+            {
+                ViewBag.MapCss = strMapCssUrl.Split('|').ToList();
+            }
             return View();
         }
 

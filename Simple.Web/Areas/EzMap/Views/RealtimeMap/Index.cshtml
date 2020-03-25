@@ -4,16 +4,23 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Version"] = "20191219";
 }
-<link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.css">
-<link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/mapDemopage/css/popup.css">
+
 @section style{
+    <!--map-->
+    @foreach (var item in ViewBag.MapCss as List<string>)
+    {
+        <link rel="stylesheet" type="text/css" href="@item">
+    }
     <!--ztree-->
     <link rel="stylesheet" href="~/lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
 }
-<script src="http://39.104.61.84:9001/EzServerClient/lib/EzMapAPI.js"></script>
-<script src="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.js"></script>
 
 @section script{
+    <!--map-->
+    @foreach (var item in ViewBag.MapJs as List<string>)
+    {
+        <script src="@item"></script>
+    }
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/plugins/ezMap/js/MapTools.js"></script>
     <!--ztree-->
@@ -94,9 +101,9 @@
             </ul>
             <div class="tab-content" id="vmRealTime" style="overflow:auto; height:200px;">
                 <div class="tab-pane active" id="tab_1">
-                    <table class="table table-condensed">
+                    <table class="table table-hover">
                         <tr>
-                            <th>序号</th>
+                            @*<th>序号</th>*@
                             <th>车牌号</th>
                             <th>识别码</th>
                             <th>SIM卡</th>
@@ -107,12 +114,12 @@
                             <th>状态</th>
                             <th>定位模式</th>
                             <th>累计里程</th>
-                            <th>位置</th>
+                            @*<th>位置</th>*@
                             <th>经度</th>
                             <th>纬度</th>
                         </tr>
-                        <tr v-for="(newtrack,index) in newtracks">
-                            <td>{{index+1}}</td>
+                        <tr v-for="(newtrack,index) in newtracks" v-on:dblclick="dbclickLocationTable(newtrack.mac)">
+                            @*<td>{{index+1}}</td>*@
                             <td>{{newtrack.license}}</td>
                             <td>{{newtrack.mac}}</td>
                             <td>{{newtrack.sim}}</td>
@@ -123,7 +130,7 @@
                             <td>{{newtrack.status}}</td>
                             <td>{{newtrack.locatemode_str}}</td>
                             <td>{{newtrack.mileage}}</td>
-                            <td>{{newtrack.position}}</td>
+                            @*<td>{{newtrack.position}}</td>*@
                             <td>{{newtrack.longitude}}</td>
                             <td>{{newtrack.latitude}}</td>
                         </tr>
@@ -131,23 +138,51 @@
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_2">
-                    The European languages are members of the same family. Their separate existence is a myth.
-                    For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
-                    in their grammar, their pronunciation and their most common words. Everyone realizes why a
-                    new common language would be desirable: one could refuse to pay expensive translators. To
-                    achieve this, it would be necessary to have uniform grammar, pronunciation and more common
-                    words. If several languages coalesce, the grammar of the resulting language is more simple
-                    and regular than that of the individual languages.
+                    <table class="table table-condensed">
+                        <tr>
+                            <th>序号</th>
+                            <th>车牌号</th>
+                            <th>识别码</th>
+                            <th>SIM卡</th>
+                            <th>报警时间</th>
+                            <th>报警信息</th>
+                            <th>速度</th>
+                            <th>定位</th>
+                            <th>方向</th>
+                            <th>状态</th>
+                            <th>定位模式</th>
+                            <th>当日里程</th>
+                            <th>位置</th>
+                            <th>经度</th>
+                            <th>纬度</th>
+                        </tr>
+                        @*<tr v-for="(newtrack,index) in newtracks">
+                                <td>{{index+1}}</td>
+                                <td>{{newtrack.license}}</td>
+                                <td>{{newtrack.mac}}</td>
+                                <td>{{newtrack.sim}}</td>
+                                <td>{{newtrack.gnsstime}}</td>
+                                <td>{{newtrack.speed}}</td>
+                                <td>{{newtrack.locate_str}}</td>
+                                <td>{{newtrack.heading_str}}</td>
+                                <td>{{newtrack.status}}</td>
+                                <td>{{newtrack.locatemode_str}}</td>
+                                <td>{{newtrack.mileage}}</td>
+                                <td>{{newtrack.position}}</td>
+                                <td>{{newtrack.longitude}}</td>
+                                <td>{{newtrack.latitude}}</td>
+                            </tr>*@
+                    </table>
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_3">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                    It has survived not only five centuries, but also the leap into electronic typesetting,
-                    remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-                    sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-                    like Aldus PageMaker including versions of Lorem Ipsum.
+                    <table class="table table-condensed">
+                        <tr>
+                            <th>序号</th>
+                            <th>内容</th>
+                            <th>时间</th>
+                        </tr>
+                    </table>
                 </div>
                 <!-- /.tab-pane -->
             </div>
@@ -239,12 +274,27 @@
                             anchorYUnits: 'fraction',
                             opacity: 1
                         });
+                         /**
+                         * 通过marker添加Title到地图
+                         */
+                        var title = new EzTitle(device.license, {
+                            "fontSize": 12,
+                            "fontColor": "#FFFFFF",
+                            "fillColor": "#00CDFF",
+                            "isStroke": true,
+                            "strokeColor": "#FFFFFF",
+                            "strokeWidth": 1,
+                            "lineHeight": 2.2,
+                            "paddingH": 15,
+                            "offset": [0, -35]
+                        });
                         //marker点
                         var position = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);
-                        var marker = new EzMarker(position, icon);
+                        var marker = new EzMarker(position, icon,title);
                         map.addOverlay(marker);
+                        marker.showTitle();
                         device.marker = marker;
-                        device.marker.gpsData = lastTrackData;
+                        device.marker.lastTrackData = lastTrackData;
                     }
                 });
             }
@@ -254,25 +304,25 @@
     function updateGpsData(lastTrackData) {
         if (!checkLoLa(lastTrackData.longitude, lastTrackData.latitude)) return;
         var device = getDeviceByMac(lastTrackData.mac);
-        if (device) {
+        if (device && device.marker) {
             device.lastTrackData = lastTrackData;
             var newpos = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);
             var icon = new EzIcon({
-                            src: '@Url.Content("~/plugins/ezMap/images/")'+getCarStateIcon(lastTrackData),//item.iconImage
-                            anchor: [0.5, 1],
-                            anchorXUnits: 'fraction',
-                            anchorYUnits: 'fraction',
-                            opacity: 1
-                        });
+                src: '@Url.Content("~/plugins/ezMap/images/")' + getCarStateIcon(lastTrackData),//item.iconImage
+                anchor: [0.5, 1],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'fraction',
+                opacity: 1
+            });
             device.marker.setIcon(icon);
             device.marker.setPoint(newpos);
+            device.marker.hideTitle(); device.marker.showTitle();
 
+            //更新tree的icon
+            updateTreeNode(device, getCarTreeStateSkin(lastTrackData));;
 
-        //更新tree的icon
-        updateTreeNode(device, getCarTreeStateSkin(lastTrackData));
-
-        //更新实时定位数据
-        updateGpsTable(lastTrackData);
+            //更新实时定位数据
+            updateGpsTable(lastTrackData);
         }
     }
     function updateTreeNode(device, iconSkin) {
@@ -303,7 +353,7 @@
                 vmRealTime.newRow.speed = lastTrackData.speed;
                 vmRealTime.newRow.locate_str = lastTrackData.locatE_STR;
                 vmRealTime.newRow.heading_str = lastTrackData.headinG_STR;
-                vmRealTime.newRow.status = lastTrackData.status;
+                vmRealTime.newRow.status = lastTrackData.statusShow;
                 vmRealTime.newRow.locatemode_str = lastTrackData.locatemodE_STR;
                 vmRealTime.newRow.mileage = lastTrackData.mileagE_K;
                 vmRealTime.newRow.position = lastTrackData.position;
@@ -319,7 +369,7 @@
                     track.speed = lastTrackData.speed;
                     track.locate_str = lastTrackData.locatE_STR;
                     track.heading_str = lastTrackData.headinG_STR;
-                    track.status = lastTrackData.status;
+                    track.status = lastTrackData.statusShow;
                     track.locatemode_str = lastTrackData.locatemodE_STR;
                     track.mileage = lastTrackData.mileagE_K;
                     track.position = lastTrackData.position;
@@ -394,6 +444,21 @@
             addRow: function () {
                 this.newtracks.push(this.newRow);//新行数据追加至表格数据数组中
                 this.newRow = {};//新行数据置空
+            },
+            dbclickLocationTable(deviceId) {
+                //给所有的marker的Title变成白色字体
+                deviceList.forEach(function (value) {
+                    if (value.marker) {
+                        value.marker.title_.defaultStyle_.fontColor = "#FFFFFF";
+                    }
+                });
+                var device = getDeviceByMac(deviceId);
+                if (device && device.lastTrackData) {
+                    //设置中心点
+                    var centerCoord = new EzCoord(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                    map.centerAndZoom(centerCoord, 12);
+                    device.marker.title_.defaultStyle_.fontColor = "#FF0000";
+                }
             }
         }
     });
@@ -409,10 +474,36 @@
                         this.deviceData = response.data; //debugger;
                         $.fn.zTree.init($("#treeDemo"), setting, deviceData);
                         fuzzySearch('treeDemo', '#key', null, true); //初始化模糊搜索方法
+                        //启动一个定时器，定时计算车辆在线数
+                        setInterval(function updateOnlineCount() {
+                            //debugger;
+                            var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+                            //获取全部节点数据
+                            var nodes = treeObj.getNodes();
+                            nodes.forEach(function (value) { vmDeviceTree.recusiveUnit(treeObj, value); })
+                        }, 5000);
                     })
                     .catch(function (error) { // 请求失败处理
                         console.log(error);
                     });
+            },
+            recusiveUnit(treeObj, node) {
+                var count = 0;
+                if (node.children.length > 0) {
+                    node.children.forEach(function (value) {
+                        if (value.id.indexOf("unit") > -1) {
+                            count += vmDeviceTree.recusiveUnit(treeObj, value);
+                        }
+                        if (value.id.indexOf("car") > -1 && (value.iconSkin == "white_car" || value.iconSkin == "yellow_car" || value.iconSkin == "green_car")) {
+                            count++;
+                        }
+                    });
+                }
+                if (count > 0) {
+                    node.name = node.name.replace("/0)", "/" + count + ")");
+                    treeObj.updateNode(node);
+                }
+                return count;
             }
         },
         mounted: function () {
@@ -437,6 +528,25 @@
         data: {
             simpleData: {
                 enable: true
+            }
+        },
+        callback: {
+            onDblClick: function (event, treeId, treeNode) {
+                if (treeNode != null) {
+                    //给所有的marker的Title变成白色字体
+                    deviceList.forEach(function (value) {
+                        if (value.marker) {
+                            value.marker.title_.defaultStyle_.fontColor = "#FFFFFF";
+                        }
+                    });
+                    var device = getCarByCarID(parseInt(treeNode.id.replace('car-', '')));
+                    if (device && device.lastTrackData) {
+                        //设置中心点
+                        var centerCoord = new EzCoord(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                        map.centerAndZoom(centerCoord, 12);
+                        device.marker.title_.defaultStyle_.fontColor = "#FF0000";
+                    }
+                }
             }
         }
     };

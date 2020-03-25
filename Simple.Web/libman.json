@@ -512,6 +512,16 @@
       "provider": "cdnjs",
       "library": "element-ui@2.13.0",
       "destination": "wwwroot/lib/element-ui/"
+    },
+    {
+      "library": "@aspnet/signalr@1.1.4",
+      "destination": "wwwroot/lib/signalr/",
+      "files": [
+        "dist/browser/signalr.min.js.map",
+        "dist/browser/signalr.min.js",
+        "dist/browser/signalr.js",
+        "dist/browser/signalr.js.map"
+      ]
     }
   ]
 }

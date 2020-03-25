@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Simple.Repository
 {
-   public class UnitRepository : BaseRepository<UnitEntity>, IUnitRepository
+    public class UnitRepository : BaseRepository<UnitEntity>, IUnitRepository
     {
         public async Task<Pagination<UnitEntity>> GetPage(int pageSize, int pageIndex, string where, string orderby)
         {
@@ -35,6 +35,13 @@ namespace Simple.Repository
             pagination.Data = list.AsList().Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             pagination.Total = await Connection.QuerySingleAsync<int>(totalSql);
             return pagination;
+        }
+
+        public override async Task<IEnumerable<UnitEntity>> GetAllAsync()
+        {
+            var sql = "select * from unit t where t.pid is not null";
+            var entities = await Connection.QueryAsync<UnitEntity>(sql);
+            return entities.ToList();
         }
     }
 }

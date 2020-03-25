@@ -45,6 +45,9 @@ namespace Simple.Web.Other
 
         public void GpsDataUpdated(NEWTRACK data)
         {
+            CarStatus carStatus = new CarStatus();
+            carStatus.RefreshStatus(data.STATUS, data.STOPTIME);
+            data.StatusShow = carStatus.ToString();
             ClientProxy.SendAsync("ReceiveGpsData", data);
         }
 
@@ -189,10 +192,9 @@ namespace Simple.Web.Other
                     locatemode, gnsstime, lo, la, altitude, speed, (int)mileage, haveoil, oil1, oil2,
                     oil3, oil4, sensor1, sensor2, sensor3, sensor4, position, loadjust, laadjust,
                     stoptime, tmp, areaid);
-                if (new string[] { "1314010402", "1815030266" }.Contains(data.MAC))
-                {
-                    GpsDataUpdated(data);
-                }
+
+                GpsDataUpdated(data);
+
             }
             catch (Exception)
             {

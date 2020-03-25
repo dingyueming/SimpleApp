@@ -4,12 +4,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Version"] = "20200106";
 }
-<link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.css">
-<link rel="stylesheet" type="text/css" href="http://39.104.61.84:9001/EzServerClient/mapDemopage/css/popup.css">
-<script src="http://39.104.61.84:9001/EzServerClient/lib/EzMapAPI.js"></script>
-<script src="http://39.104.61.84:9001/EzServerClient/lib/EzServerClient.min.js"></script>
 
 @section style{
+    <!--map-->
+    @foreach (var item in ViewBag.MapCss as List<string>)
+    {
+        <link rel="stylesheet" type="text/css" href="@item">
+    }
     <!--ztree-->
     <link rel="stylesheet" href="~/lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
     <!-- daterange picker -->
@@ -18,6 +19,11 @@
     <link rel="stylesheet" href="~/lib/vue-treeselect/dist/vue-treeselect.min.css">
 }
 @section script{
+    <!--map-->
+    @foreach (var item in ViewBag.MapJs as List<string>)
+    {
+        <script src="@item"></script>
+    }
     <script src="~/plugins/ezMap/js/MapTools.js"></script>
     <!-- date-range-picker -->
     <script src="~/bower_components/moment/min/moment.min.js"></script>
@@ -66,7 +72,7 @@
                 </div>
                 <button type="button" v-on:click="play" class="btn btn-default">回放</button>
                 @*<button type="button" class="btn btn-default">暂停</button>
-                <button type="button" class="btn btn-default">继续</button>*@
+                    <button type="button" class="btn btn-default">继续</button>*@
             </form>
         </div>
     </div>

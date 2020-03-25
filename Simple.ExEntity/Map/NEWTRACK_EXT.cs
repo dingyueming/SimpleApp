@@ -82,6 +82,8 @@ namespace Simple.ExEntity.Map
             }
         }
 
+        public string StatusShow { get; set; }
+
         private DateTime lastUpTime = DateTimeHelper.Now;
         /// <summary>
         /// 辅助定位模式字符串
