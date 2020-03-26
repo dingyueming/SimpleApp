@@ -71,8 +71,8 @@
                     </label>
                 </div>
                 <button type="button" v-on:click="play" class="btn btn-default">回放</button>
-                @*<button type="button" class="btn btn-default">暂停</button>
-                    <button type="button" class="btn btn-default">继续</button>*@
+                <button type="button" v-on:click="overWhole" class="btn btn-default">预览全程</button>
+                @*<button type="button" class="btn btn-default">继续</button>*@
             </form>
         </div>
     </div>
@@ -201,12 +201,24 @@
                 label: '市局',
                 children: null,
             }],
+            marker: undefined,
+            intervalIndex: 0,
         },
         methods: {
+            valdataSearch() {
+                if (this.search.deviceid == null) {
+                    alert("请选择设备");
+                    return false;
+                } return true;
+            },
             play: function () {
+                if (!this.valdataSearch()) {
+                    return;
+                }
                 axios.post('@Url.Action("QueryHistoryBackData")', Qs.stringify(this.search))
                     .then(function (response) {
                         this.newtracks = response.data; //debugger;
+                        vmHistory.newtracks = [];
                         if (Array.isArray(newtracks)) {
                             if (newtracks.length > 0) {
                                 //设置地图级别
@@ -219,15 +231,20 @@
                                     anchorYUnits: 'fraction',
                                     opacity: 1
                                 });
+                                clearInterval(vmForm.intervalIndex);
+                                
                                 var position = new EzCoord(newtracks[0].longitude, newtracks[0].latitude);
-                                var marker = new EzMarker(position, icon);
-                                map.addOverlay(marker);
+
+                                if (!vmForm.marker) {
+                                    vmForm.marker = new EzMarker(position, icon);
+                                    map.addOverlay(vmForm.marker);
+                                }
+                               
                                 //设置中心点
                                 map.centerAtLatlng(position);
-
                                 //设定一个计时器
                                 var i = 0;
-                                var t = setInterval(function () {
+                                vmForm.intervalIndex = setInterval(function () {
                                     var lastTrackData = newtracks[i];
                                     var dev = getCarByCarID(lastTrackData.carid);
                                     if (dev) {
@@ -246,7 +263,11 @@
                                         vmHistory.newRow.latitude = lastTrackData.latitude;
                                         vmHistory.addRow();
                                     }
-                                    i++;
+                                    if (i < newtracks.length - 1) {
+                                        i++;
+                                    } else {
+                                        clearInterval(vmForm.intervalIndex);
+                                    }
                                      //新位置
                                     var newpos = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);
                                     //设置图标
@@ -257,12 +278,90 @@
                                         anchorYUnits: 'fraction',
                                         opacity: 1
                                     });
-                                    marker.setIcon(icon);
-                                    marker.setPoint(newpos);
+                                    vmForm.marker.setIcon(icon);
+                                    vmForm.marker.setPoint(newpos);
                                 }, 1000);
                             } else {
-                                alert("无可播放的数据");
+                                alert("无历史数据");
                             }
+                        }
+                    })
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                    });
+            },
+            overWhole() {
+                if (!this.valdataSearch()) {
+                    return;
+                }
+                //清除回放的interval
+                clearInterval(vmForm.intervalIndex);
+                //清空定位表
+                vmHistory.newtracks = [];
+                //清除界面上的marker图标
+                if (vmForm.marker) {
+                    vmForm.marker.hide();
+                }
+                axios.post('@Url.Action("QueryHistoryBackData")', Qs.stringify(this.search))
+                    .then(function (response) {
+                        var newtracks = response.data;
+                        if (Array.isArray(newtracks) && newtracks.length > 1) {
+                            //marker起点
+                            var icon = new EzIcon({
+                                src: '@Url.Content("~/plugins/ezMap/images/start.png")',//item.iconImage
+                                anchor: [0.5, 1],
+                                anchorXUnits: 'fraction',
+                                anchorYUnits: 'fraction',
+                                opacity: 1
+                            });
+                            var position = new EzCoord(newtracks[0].longitude, newtracks[0].latitude);
+                            var marker = new EzMarker(position, icon);
+                            map.addOverlay(marker);
+                            icon = new EzIcon({
+                                src: '@Url.Content("~/plugins/ezMap/images/end.png")',//item.iconImage
+                                anchor: [0.5, 1],
+                                anchorXUnits: 'fraction',
+                                anchorYUnits: 'fraction',
+                                opacity: 1
+                            });
+                            position = new EzCoord(newtracks[newtracks.length - 1].longitude, newtracks[newtracks.length - 1].latitude);
+                            marker = new EzMarker(position, icon);
+                            map.addOverlay(marker);
+                            //画线
+                            var polylineCoordArr = [];
+                            newtracks.forEach(function (newtrack) {
+                                polylineCoordArr.push(newtrack.longitude);
+                                polylineCoordArr.push(newtrack.latitude);
+                            });
+                            var polylineCoordStr = polylineCoordArr.join(",");
+                            var line = new Polyline(polylineCoordStr, { strokeColor: "#0DFF00", strokeWidth: 6 })
+                            map.addOverlay(line);
+                            //设置地图级别
+                            map.zoomTo(14);
+                            //设置中心点
+                            map.centerAtLatlng(line.getCenter());
+                            //填充数据表格
+                            newtracks.forEach(function (lastTrackData) {
+                                var dev = getCarByCarID(lastTrackData.carid);
+                                if (dev) {
+                                    vmHistory.newRow.license = dev.license;
+                                    vmHistory.newRow.mac = dev.mac;
+                                    vmHistory.newRow.sim = dev.sim;
+                                    vmHistory.newRow.gnsstime = lastTrackData.gnsstime;
+                                    vmHistory.newRow.speed = lastTrackData.speed;
+                                    vmHistory.newRow.locate_str = lastTrackData.locatE_STR;
+                                    vmHistory.newRow.heading_str = lastTrackData.headinG_STR;
+                                    vmHistory.newRow.status = lastTrackData.status;
+                                    vmHistory.newRow.locatemode_str = lastTrackData.locatemodE_STR;
+                                    vmHistory.newRow.mileage = lastTrackData.kilometre;
+                                    vmHistory.newRow.position = lastTrackData.position;
+                                    vmHistory.newRow.longitude = lastTrackData.longitude;
+                                    vmHistory.newRow.latitude = lastTrackData.latitude;
+                                    vmHistory.addRow();
+                                }
+                            });
+                        } else {
+                            alert("无历史数据");
                         }
                     })
                     .catch(function (error) { // 请求失败处理
@@ -316,9 +415,6 @@
             newRow: {}// 新增的行数据，用于新增行
         },
         methods: {
-            queryRealTimeData: function () {
-
-            },
             addRow: function () {
                 this.newtracks.push(this.newRow);//新行数据追加至表格数据数组中
                 this.newRow = {};//新行数据置空

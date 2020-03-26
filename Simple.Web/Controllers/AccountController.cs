@@ -60,7 +60,7 @@ namespace Simple.Web.Controllers
 
                 if (returnUrl.IsNullOrEmpty())
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "RealtimeMap", new { Area = "EzMap" });
                 }
                 return Redirect(returnUrl);
             }

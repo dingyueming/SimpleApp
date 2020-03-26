@@ -123,6 +123,14 @@ namespace Simple.Domain
         public async Task<VueTreeSelectModel[]> GetVueDeviceTreeByUser(int userId)
         {
             var allNodes = await GetDeviceTreeByUser(userId);
+            //过滤掉部门名称后边的总数和在线数
+            foreach (var item in allNodes)
+            {
+                if (item.id.Contains("unit-"))
+                {
+                    item.name = item.name.Remove(item.name.IndexOf("("), item.name.Length - item.name.IndexOf("("));
+                }
+            }
             var node = allNodes.FirstOrDefault(x => x.pId == "unit-0");
             var arrTreeSelectModel = TreeHelper.GetTreeSelectModels(allNodes.ToList(), node);
             return arrTreeSelectModel.ToArray();

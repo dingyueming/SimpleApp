@@ -484,7 +484,8 @@
         "dist/vue-treeselect.umd.js",
         "dist/vue-treeselect.umd.min.js",
         "dist/vue-treeselect.css",
-        "dist/vue-treeselect.min.css"
+        "dist/vue-treeselect.min.css",
+        "dist/vue-treeselect.umd.min.js.map"
       ]
     },
     {

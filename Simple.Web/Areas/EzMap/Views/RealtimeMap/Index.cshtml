@@ -489,19 +489,21 @@
             },
             recusiveUnit(treeObj, node) {
                 var count = 0;
-                if (node.children.length > 0) {
-                    node.children.forEach(function (value) {
-                        if (value.id.indexOf("unit") > -1) {
-                            count += vmDeviceTree.recusiveUnit(treeObj, value);
-                        }
-                        if (value.id.indexOf("car") > -1 && (value.iconSkin == "white_car" || value.iconSkin == "yellow_car" || value.iconSkin == "green_car")) {
-                            count++;
-                        }
-                    });
-                }
-                if (count > 0) {
-                    node.name = node.name.replace("/0)", "/" + count + ")");
-                    treeObj.updateNode(node);
+                if (node.children && Array.isArray(node.children)) {
+                    if (node.children.length > 0) {
+                        node.children.forEach(function (value) {
+                            if (value.id.indexOf("unit") > -1) {
+                                count += vmDeviceTree.recusiveUnit(treeObj, value);
+                            }
+                            if (value.id.indexOf("car") > -1 && (value.iconSkin == "white_car" || value.iconSkin == "yellow_car" || value.iconSkin == "green_car")) {
+                                count++;
+                            }
+                        });
+                    }
+                    if (count > 0) {
+                        node.name = node.name.replace("/0)", "/" + count + ")");
+                        treeObj.updateNode(node);
+                    }
                 }
                 return count;
             }
