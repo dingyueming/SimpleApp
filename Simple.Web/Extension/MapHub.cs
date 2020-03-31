@@ -54,12 +54,6 @@ namespace Simple.Web.Other
                             var fileIndex = int.Parse(item.Name.Substring(15, 3));
 
                             var time = DateTime.ParseExact(msgTimeString, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
-                            //时间大于等于当前时间减一分钟的数据，才进行发送
-                            if (time < DateTime.Now.AddMinutes(-1))
-                            {
-                                //File.Delete(item.PhysicalPath);
-                                //continue;
-                            }
 
                             DateTime Jan1st1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local);
                             var unixTime = (long)(time - Jan1st1970).TotalSeconds;

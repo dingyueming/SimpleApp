@@ -132,6 +132,30 @@ namespace Simple.Web.Models
         /// 方向 正北0 正东 90
         /// </summary>
         public int Heading { get; set; }
+        public string HeadingStr
+        {
+            get
+            {
+                var heading = Heading;
+                if (heading > 337 && heading < 23)
+                    return "北";
+                if (heading > 22 && heading < 68)
+                    return "东北";
+                if (heading > 67 && heading < 113)
+                    return "东";
+                if (heading > 112 && heading < 158)
+                    return "东南";
+                if (heading > 157 && heading < 203)
+                    return "南";
+                if (heading > 202 && heading < 248)
+                    return "西南";
+                if (heading > 247 && heading < 293)
+                    return "西";
+                if (heading > 292 && heading < 338)
+                    return "西北";
+                return "北";
+            }
+        }
         /// <summary>
         /// 速度
         /// </summary>
@@ -152,6 +176,10 @@ namespace Simple.Web.Models
         /// 是否定位
         /// </summary>
         public bool Locate { get; set; }
+        /// <summary>
+        /// 是否定位
+        /// </summary>
+        public string LocateStr => this.Locate ? "已定位" : "未定位";
         /// <summary>
         /// 定位模式
         /// </summary>

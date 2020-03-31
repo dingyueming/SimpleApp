@@ -1,5 +1,4 @@
-﻿using Simple.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -91,10 +90,42 @@ namespace Simple.ExEntity.Map
 
         public string HEADING_STR
         {
-            get { return GPSTool.GetHeadingStr(HEADING); }
+            get
+            {
+                var heading = HEADING;
+                if (heading > 337 && heading < 23)
+                    return "北";
+                if (heading > 22 && heading < 68)
+                    return "东北";
+                if (heading > 67 && heading < 113)
+                    return "东";
+                if (heading > 112 && heading < 158)
+                    return "东南";
+                if (heading > 157 && heading < 203)
+                    return "南";
+                if (heading > 202 && heading < 248)
+                    return "西南";
+                if (heading > 247 && heading < 293)
+                    return "西";
+                if (heading > 292 && heading < 338)
+                    return "西北";
+                return "北";
+            }
         }
-        public string LOCATE_STR { get { return GPSTool.GetLocateStr(LOCATE); } }
-        public string LOCATEMODE_STR { get { return GPSTool.GetLocateModeStr(LOCATEMODE); } }
+        public string LOCATE_STR => this.LOCATE == 1 ? "已定位" : "未定位";
+        public string LOCATEMODE_STR
+        {
+            get
+            {
+                List<string> modeList = new List<string>();
+
+                if ((LOCATE & 0x1) == 0x1) { modeList.Add("GPS"); }
+                if ((LOCATE & 0x2) == 0x2) { modeList.Add("北斗"); }
+                if ((LOCATE & 0x8) == 0x8) { modeList.Add("北斗一代"); }
+
+                return string.Join("+", modeList);
+            }
+        }
         public string StatusShow { get; set; }
     }
 }

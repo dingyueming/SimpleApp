@@ -1,5 +1,4 @@
-﻿using Simple.Common;
-using System;
+﻿using System;
 
 namespace Simple.ExEntity.Map
 {
@@ -15,18 +14,7 @@ namespace Simple.ExEntity.Map
         /// <summary>
         /// 时间
         /// </summary>		
-        public DateTime GNSSTIME
-        {
-            get { return _gnsstime; }
-            set
-            {
-                if ((value - DateTimeHelper.Now).TotalDays >= 1)
-                    value = DateTimeHelper.Now.AddMinutes(-10);
-                else if ((value - DateTimeHelper.Now).TotalMinutes > 10)
-                    value = DateTimeHelper.Now;
-                _gnsstime = value;
-            }
-        }
+        public DateTime GNSSTIME { get; set; }
 
         /// <summary>
         /// 经度

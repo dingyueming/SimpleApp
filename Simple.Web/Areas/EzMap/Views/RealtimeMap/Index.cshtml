@@ -37,7 +37,7 @@
     <div class="col-md-2" id="vmDeviceTree">
         <!-- Info Boxes Style 2 -->
         <!-- PRODUCT LIST -->
-        <div class="box box-primary" style="width:275px;">
+        <div class="box box-primary">
             <div class="box-header with-border">
                 <h4 class="box-title">设备列表</h4>
                 <div class="box-tools pull-right">
@@ -49,7 +49,7 @@
             <!-- /.box-header -->
             <div class="box-body">
                 <input type="text" id="key" value="" style="width:100%;" class="empty" placeholder="请输入关键字" /><br />
-                <ul id="treeDemo" class="ztree" style="border:0px; height:440px;width:100%; margin-top:3px; overflow:auto;"></ul>
+                <ul id="treeDemo" class="ztree" style="border:0px; height:425px;width:100%; margin-top:3px; overflow:auto;"></ul>
             </div>
             <!-- /.box-body -->
         </div>
@@ -74,7 +74,7 @@
                         <div class="pad">
                             <!-- Map will be created here -->
                             <!-- 提供地图容器，其中地图容器必须提供id号，用于生成地图 -->
-                            <div id="map" style="width:100%;height:469px;"></div>
+                            <div id="map" style="width:100%;height:455px;"></div>
                         </div>
                     </div>
                     <!-- /.col -->
@@ -119,7 +119,6 @@
                             <th>纬度</th>
                         </tr>
                         <tr v-for="(newtrack,index) in newtracks" v-on:dblclick="dbclickLocationTable(newtrack.mac)">
-                            @*<td>{{index+1}}</td>*@
                             <td>{{newtrack.license}}</td>
                             <td>{{newtrack.mac}}</td>
                             <td>{{newtrack.sim}}</td>
@@ -130,7 +129,6 @@
                             <td>{{newtrack.status}}</td>
                             <td>{{newtrack.locatemode_str}}</td>
                             <td>{{newtrack.mileage}}</td>
-                            @*<td>{{newtrack.position}}</td>*@
                             <td>{{newtrack.longitude}}</td>
                             <td>{{newtrack.latitude}}</td>
                         </tr>
@@ -140,38 +138,29 @@
                 <div class="tab-pane" id="tab_2">
                     <table class="table table-condensed">
                         <tr>
-                            <th>序号</th>
                             <th>车牌号</th>
                             <th>识别码</th>
                             <th>SIM卡</th>
                             <th>报警时间</th>
                             <th>报警信息</th>
                             <th>速度</th>
-                            <th>定位</th>
                             <th>方向</th>
-                            <th>状态</th>
+                            <th>定位状态</th>
+                            <th>定位</th>
                             <th>定位模式</th>
-                            <th>当日里程</th>
-                            <th>位置</th>
-                            <th>经度</th>
-                            <th>纬度</th>
                         </tr>
-                        @*<tr v-for="(newtrack,index) in newtracks">
-                                <td>{{index+1}}</td>
-                                <td>{{newtrack.license}}</td>
-                                <td>{{newtrack.mac}}</td>
-                                <td>{{newtrack.sim}}</td>
-                                <td>{{newtrack.gnsstime}}</td>
-                                <td>{{newtrack.speed}}</td>
-                                <td>{{newtrack.locate_str}}</td>
-                                <td>{{newtrack.heading_str}}</td>
-                                <td>{{newtrack.status}}</td>
-                                <td>{{newtrack.locatemode_str}}</td>
-                                <td>{{newtrack.mileage}}</td>
-                                <td>{{newtrack.position}}</td>
-                                <td>{{newtrack.longitude}}</td>
-                                <td>{{newtrack.latitude}}</td>
-                            </tr>*@
+                        <tr v-for="(alarmData,index) in alarmDatas">
+                            <td>{{alarmData.license}}</td>
+                            <td>{{alarmData.mac}}</td>
+                            <td>{{alarmData.sim}}</td>
+                            <td>{{alarmData.gnsstime}}</td>
+                            <td>{{alarmData.alarmtype}}</td>
+                            <td>{{alarmData.speed}}</td>
+                            <td>{{alarmData.heading_str}}</td>
+                            <td>{{alarmData.status}}</td>
+                            <td>{{alarmData.locate_str}}</td>
+                            <td>{{alarmData.locatemode_str}}</td>
+                        </tr>
                     </table>
                 </div>
                 <!-- /.tab-pane -->
@@ -218,7 +207,6 @@
             url: '@Url.Action("QueryDeviceList")',
             success: function (datas) {
                 deviceList = datas;
-                //if (isFunction(callback))
                 callback();
             },
             error: function (e) {
@@ -265,9 +253,9 @@
         });
         if (marker) {
             //通过单击marker时打开popup
-            var car = getCarByCarID(marker.gpsData.carid);
-            if (car) {
-                var strHtml = getGpsInfoWinContent(getCarByCarID(marker.gpsData.carid).license, marker.gpsData);
+            var device = getDeviceByMac(marker.lastTrackData.mac);
+            if (device) {
+                var strHtml = getGpsInfoWinContent(device.license, marker.gpsData);
                 marker.openInfoWindow(strHtml);
             }
         }
@@ -286,11 +274,12 @@
                 anchorYUnits: 'fraction',
                 opacity: 1
             });
-
+            device.marker.show();
+            device.marker.showTitle();
             device.marker.setIcon(icon);
             device.marker.setPoint(newpos);
-            device.marker.hideTitle(); device.marker.showTitle();
-
+            device.marker.title.setPosition(newpos);
+            device.marker.title.setOffset([0,-20]);
             //更新tree的icon
             updateTreeNode(device, getCarTreeStateSkin(lastTrackData));;
 
@@ -300,12 +289,65 @@
     }
     function updateTreeNode(device, iconSkin) {
         var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-        var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
-        if (node) {
-            node.iconSkin =iconSkin;
-            treeObj.updateNode(node);
+        if (treeObj != null) {
+            var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
+            if (node) {
+                node.iconSkin = iconSkin;
+                treeObj.updateNode(node);
+            }
         }
     }
+    //更新报警数据
+    function updateAlarmTable(mac,alarmData) {
+        var list = vmRealTime.alarmDatas;
+        var isTableData = false;
+        for (var i = 0; i < list.length; i++) {
+            var alarm = list[i];
+            if (alarm.mac == mac) {
+                isTableData = true;
+            }
+        }
+        if (!isTableData) {
+            var dev = getDeviceByMac(mac);
+            if (dev) {
+                var alarmRow = {};
+                alarmRow.license = dev.license;
+                alarmRow.mac = dev.mac;
+                alarmRow.sim = dev.sim;
+                alarmRow.gnsstime = alarmData.alarmTime;
+                alarmRow.alarmtype = alarmData.alarmType;
+                alarmRow.speed = alarmData.speed;
+                alarmRow.locate_str = alarmData.locateStr;
+                alarmRow.heading_str = alarmData.headingStr;
+                alarmRow.status = alarmData.status_Str;
+                alarmRow.locatemode_str = alarmData.locateMode;
+                alarmRow.mileage = alarmData.mileage;
+                alarmRow.position = alarmData.position;
+                alarmRow.longitude = alarmData.longitude;
+                alarmRow.latitude = alarmData.latitude;
+                vmRealTime.alarmDatas.push(alarmRow);
+            }
+        } else {
+            for (var i = 0; i < list.length; i++) {
+                var alarm = list[i];
+                if (alarm.mac == mac) {
+                    alarm.gnsstime = alarmData.alarmTime;
+                    alarm.alarmtype = alarmData.alarmType;
+                    alarm.speed = alarmData.speed;
+                    alarm.locate_str = alarmData.locateStr;
+                    alarm.heading_str = alarmData.headingStr;
+                    alarm.status = alarmData.status_Str;
+                    alarm.locatemode_str = alarmData.locateMode;
+                    alarm.mileage = alarmData.mileage;
+                    alarm.position = alarmData.position;
+                    alarm.longitude = alarmData.longitude;
+                    alarm.latitude = alarmData.latitude;
+                    vmRealTime.$set(vmRealTime.alarmDatas, i, alarm);
+                }
+            }
+        }
+    }
+
     //更新实时定位数据
     function updateGpsTable(lastTrackData) {
         var list = vmRealTime.newtracks;
@@ -397,10 +439,15 @@
     connection.start().then(() => { }).catch(err => console.error(err.toString()));
     connection.on("UpdateMapData", function (data) {
         console.log(data);
-        var gpsData = data.gpsData;
-        gpsData.mac = data.mac;
-        gpsData.gnsstime = gpsData.gnssTime;
-        updateGpsData(gpsData);
+        if (data.gpsData != null) {
+            var gpsData = data.gpsData;
+            gpsData.mac = data.mac;
+            gpsData.gnsstime = gpsData.gnssTime;
+            updateGpsData(gpsData);
+        }
+        if (data.alarmData != null) {
+            updateAlarmTable(data.mac, data.alarmData);
+        }
     });
     //connection.on("Test", function (data) {
     //    console.log(data);
@@ -417,8 +464,9 @@
         data: {
             checkAll: false,// 是否全选
             checkedRows: [],// 选中的行标，用于删除行
-            newtracks: [],// 表格数据
-            newRow: {}// 新增的行数据，用于新增行
+            newtracks: [],// 定位信息表格数据
+            newRow: {},// 新增的行数据，用于新增行
+            alarmDatas:[]//报警信息表格数据
         },
         methods: {
             queryRealTimeData: function () {
@@ -492,8 +540,6 @@
             }
         },
         mounted: function () {
-            //显示
-            $('#loading').modal('show');
 
             this.queryDeviceData();
             //获取当前用户所要定位的设备
@@ -501,9 +547,13 @@
                 //获取设备最后一次定位的数据
                 getLastTrackList(function (lastTrackList) {
                     if (Array.isArray(lastTrackList)) {
+                        //显示
+                        //$('#loading').modal('show');
                         lastTrackList.forEach(function (lastTrackData, index, arr) {
                             var device = getCarByCarID(lastTrackData.carid);
                             if (device) {
+                                var minute = Number((new Date().getTime() - JsonToDate(lastTrackData.gnsstime).getTime()) / (1000 * 60));
+
                                 device.lastTrackData = lastTrackData;
                                 var icon = new EzIcon({
                                     src: '@Url.Content("~/plugins/ezMap/images/")'+getCarStateIcon(lastTrackData),//item.iconImage
@@ -528,16 +578,22 @@
                                 });
                                 //marker点
                                 var position = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);
-                                var marker = new EzMarker(position, icon,title);
+                                var marker = new EzMarker(position, icon, title);
                                 map.addOverlay(marker);
-                                marker.showTitle();
+                                if (minute > 3) {
+                                    marker.hide();
+                                } else {
+                                    marker.show();
+                                    marker.showTitle();
+                                }
                                 device.marker = marker;
+                                device.marker.title = title;
                                 device.marker.lastTrackData = lastTrackData;
                             }
                         });
                     }
                     //隐藏
-                    $('#loading').modal('hide');
+                    //$('#loading').modal('hide');
                 });
             });
         }

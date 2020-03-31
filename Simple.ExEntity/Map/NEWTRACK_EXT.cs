@@ -1,5 +1,4 @@
-﻿using Simple.Common;
-using System;
+﻿using System;
 
 namespace Simple.ExEntity.Map
 {
@@ -53,12 +52,12 @@ namespace Simple.ExEntity.Map
 
         public string MAC { get; set; }
 
-        public string HEADING_STR
-        {
-            get { return GPSTool.GetHeadingStr(HEADING); }
-        }
-        public string LOCATE_STR { get { return GPSTool.GetLocateStr(LOCATE); } }
-        public string LOCATEMODE_STR { get { return GPSTool.GetLocateModeStr(LOCATEMODE); } }
+        //public string HEADING_STR
+        //{
+        //    get { return GPSTool.GetHeadingStr(HEADING); }
+        //}
+        //public string LOCATE_STR { get { return GPSTool.GetLocateStr(LOCATE); } }
+        //public string LOCATEMODE_STR { get { return GPSTool.GetLocateModeStr(LOCATEMODE); } }
         /// <summary>
         /// 所在城市
         /// </summary>
@@ -84,22 +83,22 @@ namespace Simple.ExEntity.Map
 
         public string StatusShow { get; set; }
 
-        private DateTime lastUpTime = DateTimeHelper.Now;
+        //private DateTime lastUpTime = DateTimeHelper.Now;
         /// <summary>
         /// 辅助定位模式字符串
         /// </summary>
-        public string ASSIST_LOCATEMODE_STR
-        {
-            get
-            {
-                return GPSTool.GetAssistLocateModeStr(LOCATEMODE);
-            }
-        }
+        //public string ASSIST_LOCATEMODE_STR
+        //{
+        //    get
+        //    {
+        //        //return GPSTool.GetAssistLocateModeStr(LOCATEMODE);
+        //    }
+        //}
         public void UpdateData(ushort heading, int status, int statusEx, int alarmStatus, int alarmStatusEx, byte locate, byte locatemode, DateTime gnsstime,
                                double lo, double la, ushort altitude, float speed, int mileage, byte haveoil, ushort oil1, ushort oil2, ushort oil3, ushort oil4,
                                ushort sensor1, ushort sensor2, ushort sensor3, ushort sensor4, string position, short loadjust, short laadjust, ushort stoptime, short tmp, int areaid)
         {
-            lastUpTime = DateTimeHelper.Now;
+            //lastUpTime = DateTimeHelper.Now;
             IsRealTime = true;
 
             HEADING = heading;

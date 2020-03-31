@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Extension\GnssSocket.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="wwwroot\bower_components\bootstrap-daterangepicker\.bower.json" />
     <Content Include="wwwroot\bower_components\bootstrap-daterangepicker\bower.json" />
     <Content Include="wwwroot\bower_components\bootstrap-daterangepicker\daterangepicker.css" />
