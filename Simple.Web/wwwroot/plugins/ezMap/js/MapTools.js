@@ -19,18 +19,27 @@ function checkLoLa(lo, la) {
 function getCarStateIcon(gpsData) {
     if (gpsData) {
         var minute = Number((new Date().getTime() - JsonToDate(gpsData.gnsstime).getTime()) / (1000 * 60));
-        if (minute > 5) { //5分钟未上线判断为 离线
-            return 'off.png';
+        if (gpsData.mac.length == 8) {//对讲机
+            if (minute > 3) { //3分钟未上线判断为 离线
+                return 'phone-blue.png';
+            } else {
+                return 'phone-green.png';
+            }
         }
-        if (gpsData.locate === 0) { //未定位
-            return "nogps.png";
+        else if (gpsData.mac.length == 10) {//车
+            if (minute > 3) { //3分钟未上线判断为 离线
+                return 'car-gray.png';
+            }
+            if (gpsData.locate === 0) { //未定位
+                return "car-white.png";
+            }
+            if (gpsData.speed < 3) { //小于3KM/h 判断为停车
+                return 'car-yellow.png';
+            }
+            return 'car-green.png'; //行驶中
         }
-        if (gpsData.speed < 3) { //小于3KM/h 判断为停车
-            return 'stop.png';
-        }
-        return 'run.png'; //行驶中
+        return 'person-gray.png';
     }
-    return 'off.png';
 }
 
 /**
@@ -41,18 +50,27 @@ function getCarStateIcon(gpsData) {
 function getCarTreeStateSkin(gpsData) {
     if (gpsData) {
         var minute = Number((new Date().getTime() - JsonToDate(gpsData.gnsstime).getTime()) / (1000 * 60));
-        if (minute > 3) { //5分钟未上线判断为 离线
-            return 'gray_car';
+        if (gpsData.mac.length == 8) {//对讲机
+            if (minute > 3) { //3分钟未上线判断为 离线
+                return 'blue_phone';
+            } else {
+                return 'green_phone';
+            }
         }
-        if (gpsData.locate === 0) { //未定位
-            return "white_car";
+        else if (gpsData.mac.length == 10) {//车
+            if (minute > 3) { //3分钟未上线判断为 离线
+                return 'gray_car';
+            }
+            if (gpsData.locate === 0) { //未定位
+                return "white_car";
+            }
+            if (gpsData.speed < 3) { //小于3KM/h 判断为停车
+                return 'yellow_car';
+            }
+            return 'green_car'; //行驶中
         }
-        if (gpsData.speed < 3) { //小于3KM/h 判断为停车
-            return 'yellow_car';
-        }
-        return 'green_car'; //行驶中
+        return 'gray_person';
     }
-    return 'gray_car';
 }
 
 /**

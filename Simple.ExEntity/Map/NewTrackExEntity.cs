@@ -38,7 +38,7 @@ namespace Simple.ExEntity.Map
         /// <summary>
         /// 状态
         /// </summary>
-        public uint STATUS { get; set; }
+        public int STATUS { get; set; }
         /// <summary>
         /// 扩展状态
         /// </summary>	
@@ -95,5 +95,6 @@ namespace Simple.ExEntity.Map
         }
         public string LOCATE_STR { get { return GPSTool.GetLocateStr(LOCATE); } }
         public string LOCATEMODE_STR { get { return GPSTool.GetLocateModeStr(LOCATEMODE); } }
+        public string StatusShow { get; set; }
     }
 }

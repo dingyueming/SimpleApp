@@ -15,7 +15,7 @@ namespace Simple.Web.Areas.DM.Controllers
     public class PersonController : SimpleBaseController
     {
         private readonly IPersonService personService;
-        public PersonController(IPersonService personService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public PersonController(IPersonService personService)
         {
             this.personService = personService;
         }

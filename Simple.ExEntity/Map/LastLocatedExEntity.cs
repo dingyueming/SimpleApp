@@ -77,6 +77,11 @@ namespace Simple.ExEntity.Map
         /// 记录时间
         /// </summary>		
         public DateTime RECORD_TIME { get; set; }
+
+        /// <summary>
+        /// mac
+        /// </summary>
+        public string Mac { get; set; }
     }
 }
 

@@ -16,7 +16,7 @@ namespace Simple.Web.Areas.DM.Controllers
     {
         private readonly ICarService carService;
         private readonly IAreaAlarmService areaAlarmService;
-        public CarController(IAreaAlarmService areaAlarmService, ICarService carService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public CarController(IAreaAlarmService areaAlarmService, ICarService carService)
         {
             this.areaAlarmService = areaAlarmService;
             this.carService = carService;

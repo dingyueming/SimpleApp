@@ -96,7 +96,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div id="vmHistory" class="box-body no-padding" style="overflow:auto; height:206px;">
-                    <table class="table table-condensed">
+                    <table class="table table-hover">
                         <tr>
                             <th>序号</th>
                             <th>车牌号</th>
@@ -109,7 +109,7 @@
                             <th>状态</th>
                             <th>定位模式</th>
                             <th>累计里程</th>
-                            <th>位置</th>
+                            @*<th>位置</th>*@
                             <th>经度</th>
                             <th>纬度</th>
                         </tr>
@@ -125,7 +125,7 @@
                             <td>{{newtrack.status}}</td>
                             <td>{{newtrack.locatemode_str}}</td>
                             <td>{{newtrack.mileage}}</td>
-                            <td>{{newtrack.position}}</td>
+                            @*<td>{{newtrack.position}}</td>*@
                             <td>{{newtrack.longitude}}</td>
                             <td>{{newtrack.latitude}}</td>
                         </tr>
@@ -255,7 +255,7 @@
                                         vmHistory.newRow.speed = lastTrackData.speed;
                                         vmHistory.newRow.locate_str = lastTrackData.locatE_STR;
                                         vmHistory.newRow.heading_str = lastTrackData.headinG_STR;
-                                        vmHistory.newRow.status = lastTrackData.status;
+                                        vmHistory.newRow.status = lastTrackData.statusShow;
                                         vmHistory.newRow.locatemode_str = lastTrackData.locatemodE_STR;
                                         vmHistory.newRow.mileage = lastTrackData.kilometre;
                                         vmHistory.newRow.position = lastTrackData.position;
@@ -351,7 +351,7 @@
                                     vmHistory.newRow.speed = lastTrackData.speed;
                                     vmHistory.newRow.locate_str = lastTrackData.locatE_STR;
                                     vmHistory.newRow.heading_str = lastTrackData.headinG_STR;
-                                    vmHistory.newRow.status = lastTrackData.status;
+                                    vmHistory.newRow.status = lastTrackData.statusShow;
                                     vmHistory.newRow.locatemode_str = lastTrackData.locatemodE_STR;
                                     vmHistory.newRow.mileage = lastTrackData.kilometre;
                                     vmHistory.newRow.position = lastTrackData.position;

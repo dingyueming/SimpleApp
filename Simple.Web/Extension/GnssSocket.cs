@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Simple.Web.Other
 {
+    /// <summary>
+    /// 搁置，暂时不用
+    /// </summary>
     public class GnssSocket
     {
         private IConfiguration configuration;

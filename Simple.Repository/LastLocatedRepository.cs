@@ -13,7 +13,7 @@ namespace Simple.Repository
     {
         public async Task<List<LastLocatedEntity>> GetLastLocatedEntityByUser(int userId)
         {
-            var sql = "SELECT * FROM NEWTRACK_LASTLOCATED N JOIN AUTH_LIMITS A ON N.CARID= A.CARID WHERE N.LOCATE =1 AND A.USERID=:USERID";
+            var sql = "SELECT V.mac,N.* FROM NEWTRACK_LASTLOCATED N JOIN VIEW_ALL_TARGET V ON V.carid=N.CARID JOIN AUTH_LIMITS A ON N.CARID= A.CARID WHERE N.LOCATE =1 AND A.USERID=:USERID";
             var entities = await Connection.QueryAsync<LastLocatedEntity>(sql, new { USERID = userId });
             return entities.AsList();
         }

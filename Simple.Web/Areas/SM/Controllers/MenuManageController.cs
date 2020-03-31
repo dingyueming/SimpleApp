@@ -14,7 +14,7 @@ namespace Simple.Web.Areas.SM.Controllers
     public class MenuManageController : SimpleBaseController
     {
         private readonly IMenusService menusService;
-        public MenuManageController(IMenusService menusService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public MenuManageController(IMenusService menusService)
         {
             this.menusService = menusService;
         }

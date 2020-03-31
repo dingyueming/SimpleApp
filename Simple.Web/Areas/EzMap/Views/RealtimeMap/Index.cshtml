@@ -9,7 +9,7 @@
     <!--map-->
     @foreach (var item in ViewBag.MapCss as List<string>)
     {
-        <link rel="stylesheet" type="text/css" href="@item">
+    <link rel="stylesheet" type="text/css" href="@item">
     }
     <!--ztree-->
     <link rel="stylesheet" href="~/lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
@@ -19,7 +19,7 @@
     <!--map-->
     @foreach (var item in ViewBag.MapJs as List<string>)
     {
-        <script src="@item"></script>
+    <script src="@item"></script>
     }
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/plugins/ezMap/js/MapTools.js"></script>
@@ -193,6 +193,20 @@
     <!-- /.col -->
 </div>
 <!-- /.row -->
+<!-- loading -->
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">提示</h4>
+            </div>
+            <div class="modal-body">
+                地图数据正在加载，请稍等……
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /loading -->
 <!--Map-->
 <script>
     //定义全局变量
@@ -258,48 +272,6 @@
             }
         }
     });
-    //获取当前用户所要定位的设备
-    getDeviceList(function () {
-        //获取设备最后一次定位的数据
-        getLastTrackList(function (lastTrackList) {
-            if (Array.isArray(lastTrackList)) {
-                lastTrackList.forEach(function (lastTrackData, index, arr) {
-                    var device = getCarByCarID(lastTrackData.carid);
-                    if (device) {
-                        device.lastTrackData = lastTrackData;
-                        var icon = new EzIcon({
-                            src: '@Url.Content("~/plugins/ezMap/images/")'+getCarStateIcon(lastTrackData),//item.iconImage
-                            anchor: [0.5, 1],
-                            anchorXUnits: 'fraction',
-                            anchorYUnits: 'fraction',
-                            opacity: 1
-                        });
-                         /**
-                         * 通过marker添加Title到地图
-                         */
-                        var title = new EzTitle(device.license, {
-                            "fontSize": 12,
-                            "fontColor": "#FFFFFF",
-                            "fillColor": "#00CDFF",
-                            "isStroke": true,
-                            "strokeColor": "#FFFFFF",
-                            "strokeWidth": 1,
-                            "lineHeight": 2.2,
-                            "paddingH": 15,
-                            "offset": [0, -35]
-                        });
-                        //marker点
-                        var position = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);
-                        var marker = new EzMarker(position, icon,title);
-                        map.addOverlay(marker);
-                        marker.showTitle();
-                        device.marker = marker;
-                        device.marker.lastTrackData = lastTrackData;
-                    }
-                });
-            }
-        });
-    });
     //更新设备位置
     function updateGpsData(lastTrackData) {
         if (!checkLoLa(lastTrackData.longitude, lastTrackData.latitude)) return;
@@ -314,6 +286,7 @@
                 anchorYUnits: 'fraction',
                 opacity: 1
             });
+
             device.marker.setIcon(icon);
             device.marker.setPoint(newpos);
             device.marker.hideTitle(); device.marker.showTitle();
@@ -351,11 +324,11 @@
                 vmRealTime.newRow.sim = dev.sim;
                 vmRealTime.newRow.gnsstime = lastTrackData.gnsstime;
                 vmRealTime.newRow.speed = lastTrackData.speed;
-                vmRealTime.newRow.locate_str = lastTrackData.locatE_STR;
-                vmRealTime.newRow.heading_str = lastTrackData.headinG_STR;
-                vmRealTime.newRow.status = lastTrackData.statusShow;
-                vmRealTime.newRow.locatemode_str = lastTrackData.locatemodE_STR;
-                vmRealTime.newRow.mileage = lastTrackData.mileagE_K;
+                vmRealTime.newRow.locate_str = lastTrackData.locateStr;
+                vmRealTime.newRow.heading_str = lastTrackData.headingStr;
+                vmRealTime.newRow.status = lastTrackData.status_Str;
+                vmRealTime.newRow.locatemode_str = lastTrackData.locateMode;
+                vmRealTime.newRow.mileage = lastTrackData.mileage;
                 vmRealTime.newRow.position = lastTrackData.position;
                 vmRealTime.newRow.longitude = lastTrackData.longitude;
                 vmRealTime.newRow.latitude = lastTrackData.latitude;
@@ -367,11 +340,11 @@
                 if (track.mac == lastTrackData.mac) {
                     track.gnsstime = lastTrackData.gnsstime;
                     track.speed = lastTrackData.speed;
-                    track.locate_str = lastTrackData.locatE_STR;
-                    track.heading_str = lastTrackData.headinG_STR;
-                    track.status = lastTrackData.statusShow;
-                    track.locatemode_str = lastTrackData.locatemodE_STR;
-                    track.mileage = lastTrackData.mileagE_K;
+                    track.locate_str = lastTrackData.locateStr;
+                    track.heading_str = lastTrackData.headingStr;
+                    track.status = lastTrackData.status_Str;
+                    track.locatemode_str = lastTrackData.locateMode;
+                    track.mileage = lastTrackData.mileage;
                     track.position = lastTrackData.position;
                     track.longitude = lastTrackData.longitude;
                     track.latitude = lastTrackData.latitude;
@@ -421,11 +394,21 @@
         .withUrl("@ViewBag.SignalrUrl")
         .configureLogging(signalR.LogLevel.Information)
         .build();
-    connection.start().then(() => { connection.invoke("Login"); }).catch(err => console.error(err.toString()));
-    connection.on("ReceiveGpsData", function (data) {
+    connection.start().then(() => { }).catch(err => console.error(err.toString()));
+    connection.on("UpdateMapData", function (data) {
         console.log(data);
-        updateGpsData(data);
+        var gpsData = data.gpsData;
+        gpsData.mac = data.mac;
+        gpsData.gnsstime = gpsData.gnssTime;
+        updateGpsData(gpsData);
     });
+    //connection.on("Test", function (data) {
+    //    console.log(data);
+    //    var gpsData = data.gpsData;
+    //    gpsData.mac = data.mac;
+    //    gpsData.gnsstime = gpsData.gnssTime;
+    //    updateGpsData(gpsData);
+    //});
 </script>
 <!--VUE-->
 <script>
@@ -495,7 +478,7 @@
                             if (value.id.indexOf("unit") > -1) {
                                 count += vmDeviceTree.recusiveUnit(treeObj, value);
                             }
-                            if (value.id.indexOf("car") > -1 && (value.iconSkin == "white_car" || value.iconSkin == "yellow_car" || value.iconSkin == "green_car")) {
+                            if (value.id.indexOf("car") > -1 && (value.iconSkin == "white_car" || value.iconSkin == "yellow_car" || value.iconSkin == "green_car" || value.iconSkin == "green_phone")) {
                                 count++;
                             }
                         });
@@ -509,7 +492,54 @@
             }
         },
         mounted: function () {
+            //显示
+            $('#loading').modal('show');
+
             this.queryDeviceData();
+            //获取当前用户所要定位的设备
+            getDeviceList(function () {
+                //获取设备最后一次定位的数据
+                getLastTrackList(function (lastTrackList) {
+                    if (Array.isArray(lastTrackList)) {
+                        lastTrackList.forEach(function (lastTrackData, index, arr) {
+                            var device = getCarByCarID(lastTrackData.carid);
+                            if (device) {
+                                device.lastTrackData = lastTrackData;
+                                var icon = new EzIcon({
+                                    src: '@Url.Content("~/plugins/ezMap/images/")'+getCarStateIcon(lastTrackData),//item.iconImage
+                                    anchor: [0.5, 1],
+                                    anchorXUnits: 'fraction',
+                                    anchorYUnits: 'fraction',
+                                    opacity: 1
+                                });
+                                 /**
+                                 * 通过marker添加Title到地图
+                                 */
+                                var title = new EzTitle(device.license, {
+                                    "fontSize": 12,
+                                    "fontColor": "#FFFFFF",
+                                    "fillColor": "#00CDFF",
+                                    "isStroke": true,
+                                    "strokeColor": "#FFFFFF",
+                                    "strokeWidth": 1,
+                                    "lineHeight": 2.2,
+                                    "paddingH": 15,
+                                    "offset": [0, -20]
+                                });
+                                //marker点
+                                var position = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);
+                                var marker = new EzMarker(position, icon,title);
+                                map.addOverlay(marker);
+                                marker.showTitle();
+                                device.marker = marker;
+                                device.marker.lastTrackData = lastTrackData;
+                            }
+                        });
+                    }
+                    //隐藏
+                    $('#loading').modal('hide');
+                });
+            });
         }
     });
 </script>

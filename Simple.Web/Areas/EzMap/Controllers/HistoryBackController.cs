@@ -13,7 +13,7 @@ namespace Simple.Web.Areas.EzMap.Controllers
     public class HistoryBackController : SimpleBaseController
     {
         private readonly IHistoryBackService historyBackService;
-        public HistoryBackController(IHistoryBackService historyBackService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public HistoryBackController(IHistoryBackService historyBackService)
         {
             this.historyBackService = historyBackService;
         }

@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Serialization;
 using Simple.Application;
 using Simple.Infrastructure;
 using Simple.Web.Other;
+using Simple.Web.Other.ServiceExpend;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Simple.Web
 {
@@ -44,10 +45,10 @@ namespace Simple.Web
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             #region SignalR
-
             services.AddSignalR().AddJsonProtocol(option => { option.PayloadSerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss"; });
             services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<GnssSocket>();
+            //services.AddSingleton<GnssSocket>();
+            services.AddSingleton<MapHub>();
 
             #endregion
 
@@ -114,7 +115,18 @@ namespace Simple.Web
             //创建容器.
             var autoFacContainer = builder.Build();
             //使用容器创建 autoFacServiceProvider 
-            return new AutofacServiceProvider(autoFacContainer);
+            var autofacServicePorovider = new AutofacServiceProvider(autoFacContainer);
+            //IServiceProvider
+            ServiceLocator.SetServices(autofacServicePorovider);
+
+            //启动推送消息
+            Task.Run(async () =>
+            {
+                var hub = autofacServicePorovider.GetService<MapHub>();
+                await hub.SendMsg();
+            });
+
+            return autofacServicePorovider;
             #endregion
         }
 
@@ -137,7 +149,6 @@ namespace Simple.Web
             {
                 route.MapHub<MapHub>("/mapHub");
             });
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

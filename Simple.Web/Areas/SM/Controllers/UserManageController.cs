@@ -20,7 +20,7 @@ namespace Simple.Web.Areas.SM.Controllers
         private readonly IRolesService rolesService;
         private readonly IUnitService unitService;
         private readonly IDmDomainService dmDomainService;
-        public UserManageController(IDmDomainService dmDomainService, IUnitService unitService, IRolesService rolesService, IUserService userService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public UserManageController(IDmDomainService dmDomainService, IUnitService unitService, IRolesService rolesService, IUserService userService)
         {
             this.dmDomainService = dmDomainService;
             this.unitService = unitService;

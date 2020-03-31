@@ -15,7 +15,7 @@ namespace Simple.Web.Areas.EzMap.Controllers
     {
         private IRealTimeMapService realTimeMapService;
         private IConfiguration configuration;
-        public RealtimeMapController(IConfiguration configuration, IRealTimeMapService realTimeMapService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public RealtimeMapController(IConfiguration configuration, IRealTimeMapService realTimeMapService)
         {
             this.configuration = configuration;
             this.realTimeMapService = realTimeMapService;
@@ -39,8 +39,8 @@ namespace Simple.Web.Areas.EzMap.Controllers
 
         public async Task<JsonResult> QueryDeviceList()
         {
-            //暂时先只查询车辆的
-            var devices = await realTimeMapService.GetCarExEntitiesByUser(LoginUser.UsersId);
+            //查询车辆和对讲机
+            var devices = await realTimeMapService.GetViewAllTargetByUser(LoginUser.UsersId);
             return Json(devices);
         }
 

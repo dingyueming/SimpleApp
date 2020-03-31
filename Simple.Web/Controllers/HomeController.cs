@@ -14,7 +14,7 @@ namespace Simple.Web.Controllers
     public class HomeController : SimpleBaseController
     {
         private readonly IUserService userService;
-        public HomeController(IUserService userService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public HomeController(IUserService userService)
         {
             this.userService = userService;
         }

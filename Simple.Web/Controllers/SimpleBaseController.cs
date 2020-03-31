@@ -12,6 +12,8 @@ using Newtonsoft.Json.Serialization;
 using Simple.ExEntity;
 using Simple.IApplication.DM;
 using Simple.IApplication.SM;
+using Simple.Web.Other.ServiceExpend;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Simple.Web.Controllers
 {
@@ -21,8 +23,11 @@ namespace Simple.Web.Controllers
         private readonly IMenusService menusService;
         private readonly IUnitService unitService;
         private readonly IConfiguration configuration;
-        public SimpleBaseController(IServiceProvider serviceProvider)
+        private readonly IMemoryCache memoryCache;
+        public SimpleBaseController()
         {
+            var serviceProvider = ServiceLocator.Services;
+            memoryCache = (IMemoryCache)serviceProvider.GetService(typeof(IMemoryCache));
             menusService = (IMenusService)serviceProvider.GetService(typeof(IMenusService));
             unitService = (IUnitService)serviceProvider.GetService(typeof(IUnitService));
             configuration = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
@@ -65,7 +70,12 @@ namespace Simple.Web.Controllers
         /// <returns></returns>
         public async Task<JsonResult> QueryMenusByUser()
         {
-            var menus = await menusService.GetMenusByUser(LoginUser.UsersId);
+            var flag = memoryCache.TryGetValue("cacheMenu", out var menus);
+            if (!flag)
+            {
+                menus = await menusService.GetMenusByUser(LoginUser.UsersId);
+                memoryCache.Set("cacheMenu", menus, DateTime.Now.AddMinutes(30) - DateTime.Now);
+            }
             return Json(menus);
         }
 

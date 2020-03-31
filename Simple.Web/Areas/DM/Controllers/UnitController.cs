@@ -15,7 +15,7 @@ namespace Simple.Web.Areas.DM.Controllers
     public class UnitController : SimpleBaseController
     {
         private readonly IUnitService unitService;
-        public UnitController(IUnitService unitService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public UnitController(IUnitService unitService)
         {
             this.unitService = unitService;
         }

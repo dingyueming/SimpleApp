@@ -168,6 +168,12 @@ namespace Simple.Domain
         {
             var entities = await newtrackRepository.GetNewtracksByDeviceId(queryModel);
             var exEntities = mapper.Map<List<NewTrackExEntity>>(entities);
+            foreach (NewTrackExEntity item in exEntities)
+            {
+                CarStatus carStatus = new CarStatus();
+                carStatus.RefreshStatus(item.STATUS, 0);
+                item.StatusShow = carStatus.ToString();
+            }
             return exEntities;
         }
     }

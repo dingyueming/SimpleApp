@@ -2081,7 +2081,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Simple.Application\Simple.Application.csproj" />
-    <ProjectReference Include="..\Simple.Common\Simple.Common.csproj" />
     <ProjectReference Include="..\Simple.IApplication\Simple.IApplication.csproj" />
     <ProjectReference Include="..\Simple.Infrastructure\Simple.Infrastructure.csproj" />
   </ItemGroup>
@@ -2098,6 +2097,30 @@
     <TypeScriptCompile Include="wwwroot\bower_components\moment\moment.d.ts" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties host_1json__JsonSchema="http://json.schemastore.org/jsinspectrc" appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ItemGroup>
+    <Content Update="wwwroot\plugins\ezMap\images\car-gray.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plugins\ezMap\images\car-green.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plugins\ezMap\images\car-red.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plugins\ezMap\images\car-white.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plugins\ezMap\images\car-yellow.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plugins\ezMap\images\person-gray.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plugins\ezMap\images\phone-blue.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" host_1json__JsonSchema="http://json.schemastore.org/jsinspectrc" /></VisualStudio></ProjectExtensions>
 
 </Project>

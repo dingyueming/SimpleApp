@@ -16,7 +16,7 @@ namespace Simple.Web.Areas.DM.Controllers
     public class AreaAlarmController : SimpleBaseController
     {
         private readonly IAreaAlarmService areaAlarmService;
-        public AreaAlarmController(IAreaAlarmService areaAlarmService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public AreaAlarmController(IAreaAlarmService areaAlarmService)
         {
             this.areaAlarmService = areaAlarmService;
         }

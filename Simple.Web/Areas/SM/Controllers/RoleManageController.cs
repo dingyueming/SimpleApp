@@ -15,7 +15,7 @@ namespace Simple.Web.Areas.SM.Controllers
     {
         private readonly IRolesService rolesService;
         private readonly IMenusService menusService;
-        public RoleManageController(IMenusService menusService, IRolesService rolesService, IServiceProvider serviceProvider) : base(serviceProvider)
+        public RoleManageController(IMenusService menusService, IRolesService rolesService)
         {
             this.rolesService = rolesService;
             this.menusService = menusService;
