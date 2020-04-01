@@ -13,6 +13,8 @@
     }
     <!--ztree-->
     <link rel="stylesheet" href="~/lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <!--报警提示-->
+    <link rel="stylesheet" type="text/css" href="~/plugins/notifyBybootstrap3/css/bootoast.css">
 }
 
 @section script{
@@ -29,13 +31,14 @@
     <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.excheck.js"></script>
     <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.exedit.js"></script>
     <script type="text/javascript" src="~/lib/ztree/demo/js/fuzzysearch.js"></script>
+    <!--报警提示-->
+    <script type="text/javascript" src="~/plugins/notifyBybootstrap3/js/bootoast.js"></script>
 }
 @*tree*@
 <!-- Main row -->
 <div class="row">
     <!-- /.col -->
     <div class="col-md-2" id="vmDeviceTree">
-        <!-- Info Boxes Style 2 -->
         <!-- PRODUCT LIST -->
         <div class="box box-primary">
             <div class="box-header with-border">
@@ -214,6 +217,32 @@
             }
         });
     }
+    //设定设备图标
+    function setDeviceIcon() {
+        if (deviceList && deviceList != null && Array.isArray(deviceList)) {
+            deviceList.forEach((device) => {
+                if (device.lastTrackData && device.marker) {
+                    var icon = new EzIcon({
+                        src: '@Url.Content("~/plugins/ezMap/images/")' + getCarStateIcon(device.lastTrackData),//item.iconImage
+                        anchor: [0.5, 1],
+                        anchorXUnits: 'fraction',
+                        anchorYUnits: 'fraction',
+                        opacity: 1
+                    });
+                    device.marker.setIcon(icon);
+                    var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+                    if (treeObj && treeObj != null) {
+                        var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
+                        if (node && node != null) {
+                            node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
+                            treeObj.updateNode(node);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
     //获取设备最后一次定位的数据
     function getLastTrackList(callback) {
         $.ajax({
@@ -326,6 +355,13 @@
                 alarmRow.longitude = alarmData.longitude;
                 alarmRow.latitude = alarmData.latitude;
                 vmRealTime.alarmDatas.push(alarmRow);
+                //弹出报警提示
+                bootoast({
+                    type: 'warning',
+                    position: 'right-bottom',
+                    timeout: 2,
+                    message: alarmData.alarmTime + '《' + dev.license + '》' + alarmData.alarmType
+                });
             }
         } else {
             for (var i = 0; i < list.length; i++) {
@@ -343,6 +379,13 @@
                     alarm.longitude = alarmData.longitude;
                     alarm.latitude = alarmData.latitude;
                     vmRealTime.$set(vmRealTime.alarmDatas, i, alarm);
+                    //弹出报警提示
+                    bootoast({
+                        type: 'warning',
+                        position: 'right-bottom',
+                        timeout: 2,
+                        message: alarmData.alarmTime + '《' + alarm.license + '》' + alarmData.alarmType
+                    });
                 }
             }
         }
@@ -418,15 +461,14 @@
     //marker的popup
     function getGpsInfoWinContent(title, gpsData) {
         //var html = $("#divPopup").html();
-            var tmpArr = [
-                "速度：" + gpsData.speed + "Km/h&nbsp;&nbsp;[" + gpsData.heading_str + "]",
-                "里程：" + gpsData.mileage_k + "Km",
-                "定位：" + gpsData.locate_str + " [" + gpsData.locatemode_str + "]",
-                "坐标：" + gpsData.longitude + "，" + gpsData.latitude,
-                "时间：" + gpsData.gnsstime,
-                "地点：" + gpsData.position
-            ];
-
+            //var tmpArr = [
+            //    "速度：" + gpsData.speed + "Km/h&nbsp;&nbsp;[" + gpsData.heading_str + "]",
+            //    "里程：" + gpsData.mileage_k + "Km",
+            //    "定位：" + gpsData.locate_str + " [" + gpsData.locatemode_str + "]",
+            //    "坐标：" + gpsData.longitude + "，" + gpsData.latitude,
+            //    "时间：" + gpsData.gnsstime,
+            //    "地点：" + gpsData.position
+            //];
         return title;
     }
 </script>
@@ -438,7 +480,6 @@
         .build();
     connection.start().then(() => { }).catch(err => console.error(err.toString()));
     connection.on("UpdateMapData", function (data) {
-        console.log(data);
         if (data.gpsData != null) {
             var gpsData = data.gpsData;
             gpsData.mac = data.mac;
@@ -532,7 +573,8 @@
                         });
                     }
                     if (count > 0) {
-                        node.name = node.name.replace("/0)", "/" + count + ")");
+                        var firstName = node.name.substring(0, node.name.indexOf("/"));
+                        node.name = firstName +"/"+ count + ")";
                         treeObj.updateNode(node);
                     }
                 }
@@ -540,7 +582,6 @@
             }
         },
         mounted: function () {
-
             this.queryDeviceData();
             //获取当前用户所要定位的设备
             getDeviceList(function () {
@@ -596,6 +637,7 @@
                     //$('#loading').modal('hide');
                 });
             });
+            setInterval(setDeviceIcon, 5000);
         }
     });
 </script>
