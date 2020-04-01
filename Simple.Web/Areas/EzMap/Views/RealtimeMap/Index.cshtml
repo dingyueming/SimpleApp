@@ -222,14 +222,21 @@
         if (deviceList && deviceList != null && Array.isArray(deviceList)) {
             deviceList.forEach((device) => {
                 if (device.lastTrackData && device.marker) {
+                    var imgName = getCarStateIcon(device.lastTrackData);
                     var icon = new EzIcon({
-                        src: '@Url.Content("~/plugins/ezMap/images/")' + getCarStateIcon(device.lastTrackData),//item.iconImage
+                        src: '@Url.Content("~/plugins/ezMap/images/")' + imgName,//item.iconImage
                         anchor: [0.5, 1],
                         anchorXUnits: 'fraction',
                         anchorYUnits: 'fraction',
                         opacity: 1
                     });
-                    device.marker.setIcon(icon);
+                    if (!(imgName.indexOf("gray") > -1 || imgName.indexOf("blue") > -1)) {
+                        device.marker.setIcon(icon);
+                    } else {
+                        device.marker.showTitle();
+                        device.marker.hideTitle();
+                        device.marker.hide();
+                    }
                     var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
                     if (treeObj && treeObj != null) {
                         var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
@@ -572,11 +579,9 @@
                             }
                         });
                     }
-                    if (count > 0) {
-                        var firstName = node.name.substring(0, node.name.indexOf("/"));
-                        node.name = firstName +"/"+ count + ")";
-                        treeObj.updateNode(node);
-                    }
+                    var firstName = node.name.substring(0, node.name.indexOf("/"));
+                    node.name = firstName + "/" + count + ")";
+                    treeObj.updateNode(node);
                 }
                 return count;
             }
