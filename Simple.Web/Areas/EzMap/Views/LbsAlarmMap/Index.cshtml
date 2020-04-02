@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewData["Title"] = "LBS报警位置查询";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Version"] = "20200401";
+}
+@section style{
+    <!--map-->
+    @foreach (var item in ViewBag.MapCss as List<string>)
+    {
+        <link rel="stylesheet" type="text/css" href="@item">
+    }
+}
+@section script{
+    <!--map-->
+    @foreach (var item in ViewBag.MapJs as List<string>)
+    {
+        <script src="@item"></script>
+    }
+}
+<div id="vmLbsAlarm">
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-inline" role="form">
+                <div class="form-group">
+                    <label>时间:</label>
+                    <div class="input-group">
+                        <el-date-picker v-model="search.timeValue"
+                                        type="datetimerange"
+                                        range-separator="-"
+                                        start-placeholder="开始日期"
+                                        end-placeholder="结束日期">
+                        </el-date-picker>
+                    </div>
+                    <button type="button" v-on:click="drawAction" class="btn btn-github">{{search.buttonText}}</button>
+                    <button type="button" v-on:click="searchAction" class="btn btn-success">查询</button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+        <div class="col-md-12">
+            <!-- 提供地图容器，其中地图容器必须提供id号，用于生成地图 -->
+            <div id="map" style="width:100%;height:666px;"></div>
+        </div>
+    </div>
+</div>
+<script src="~/Controllers/LbsAlarmMapController.js?r=@Guid.NewGuid()"></script>

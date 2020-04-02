@@ -145,6 +145,8 @@ namespace Simple.Domain
         {
             var entities = await roleMenuRepository.GetRoleMenuEntitiesByRole(rolesId);
             var listMenus = entities.Where(o => o.Menu != null).Select(x => x.Menu).ToList();
+            //过滤掉父节点，为了防止和左侧菜单冲突（左侧菜单这部分需要改进）
+            listMenus = listMenus.Where(x => x.ParentId != 0).ToList();
             return mapper.Map<List<MenusExEntity>>(listMenus);
         }
 

@@ -1,6 +1,8 @@
 ﻿using Simple.ExEntity.Map;
 using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
 using Simple.Infrastructure.InfrastructureModel.ZTree;
+using Simple.Infrastructure.QueryModels;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,6 +26,8 @@ namespace Simple.IDomain
         Task<List<ViewAllTargetExEntity>> GetAllDeviceByUser(int userId);
 
         Task<List<NewTrackExEntity>> GetNewTrackList(dynamic queryModel);
+
+        Task<List<Sjgx110AlarmExEntity>> GetSjgx110AlarmExEntities(Sjgx110AlarmQm queryModel);
 
     }
 }

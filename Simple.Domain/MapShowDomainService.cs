@@ -9,6 +9,8 @@ using Simple.ExEntity.Map;
 using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
 using Simple.Infrastructure.Tools;
 using Simple.Entity;
+using System;
+using Simple.Infrastructure.QueryModels;
 
 namespace Simple.Domain
 {
@@ -17,6 +19,7 @@ namespace Simple.Domain
     /// </summary>
     public class MapShowDomainService : IMapShowDomainService
     {
+        private readonly ISjgx110AlarmRepository sjgx110AlarmRepository;
         private readonly INewtrackRepository newtrackRepository;
         private readonly IViewAllTargetRepository viewAllTargetRepository;
         private readonly ILastLocatedRepository lastLocatedRepository;
@@ -24,9 +27,10 @@ namespace Simple.Domain
         private readonly IPersonRepository personRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IMapper mapper;
-        public MapShowDomainService(INewtrackRepository newtrackRepository, IViewAllTargetRepository viewAllTargetRepository, ILastLocatedRepository lastLocatedRepository,
+        public MapShowDomainService(ISjgx110AlarmRepository sjgx110AlarmRepository, INewtrackRepository newtrackRepository, IViewAllTargetRepository viewAllTargetRepository, ILastLocatedRepository lastLocatedRepository,
             IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.sjgx110AlarmRepository = sjgx110AlarmRepository;
             this.newtrackRepository = newtrackRepository;
             this.viewAllTargetRepository = viewAllTargetRepository;
             this.lastLocatedRepository = lastLocatedRepository;
@@ -175,6 +179,12 @@ namespace Simple.Domain
                 item.StatusShow = carStatus.ToString();
             }
             return exEntities;
+        }
+
+        public async Task<List<Sjgx110AlarmExEntity>> GetSjgx110AlarmExEntities(Sjgx110AlarmQm queryModel)
+        {
+            var entities = await sjgx110AlarmRepository.GetAlarmEntities(queryModel.DateTimes[0], queryModel.DateTimes[1], queryModel.Points.Count == 4 ? queryModel.Points[0] : null, queryModel.Points.Count == 4 ? queryModel.Points[2] : null);
+            return mapper.Map<List<Sjgx110AlarmExEntity>>(entities);
         }
     }
 }

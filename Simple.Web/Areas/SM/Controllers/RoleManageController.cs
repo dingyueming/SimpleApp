@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Simple.ExEntity.SM;
 using Simple.IApplication.SM;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
@@ -15,8 +16,10 @@ namespace Simple.Web.Areas.SM.Controllers
     {
         private readonly IRolesService rolesService;
         private readonly IMenusService menusService;
-        public RoleManageController(IMenusService menusService, IRolesService rolesService)
+        private readonly IMemoryCache memoryCache;
+        public RoleManageController(IMemoryCache memoryCache, IMenusService menusService, IRolesService rolesService)
         {
+            this.memoryCache = memoryCache;
             this.rolesService = rolesService;
             this.menusService = menusService;
         }
@@ -71,6 +74,11 @@ namespace Simple.Web.Areas.SM.Controllers
                     Rolesid = rolesId
                 });
             });
+            var flag = memoryCache.TryGetValue("cacheMenu", out var cacheMenus);
+            if (flag)
+            {
+                memoryCache.Remove("cacheMenu");
+            }
             return await rolesService.UpdateRolesMenu(list);
         }
     }
