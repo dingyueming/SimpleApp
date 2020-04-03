@@ -19,6 +19,7 @@ namespace Simple.Domain
     /// </summary>
     public class MapShowDomainService : IMapShowDomainService
     {
+        private readonly ISjtlAttendancePositionRepository sjtlAttendancePositionRepository;
         private readonly ISjgx110AlarmRepository sjgx110AlarmRepository;
         private readonly INewtrackRepository newtrackRepository;
         private readonly IViewAllTargetRepository viewAllTargetRepository;
@@ -27,9 +28,11 @@ namespace Simple.Domain
         private readonly IPersonRepository personRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IMapper mapper;
-        public MapShowDomainService(ISjgx110AlarmRepository sjgx110AlarmRepository, INewtrackRepository newtrackRepository, IViewAllTargetRepository viewAllTargetRepository, ILastLocatedRepository lastLocatedRepository,
+        public MapShowDomainService(ISjtlAttendancePositionRepository sjtlAttendancePositionRepository, ISjgx110AlarmRepository sjgx110AlarmRepository,
+            INewtrackRepository newtrackRepository, IViewAllTargetRepository viewAllTargetRepository, ILastLocatedRepository lastLocatedRepository,
             IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.sjtlAttendancePositionRepository = sjtlAttendancePositionRepository;
             this.sjgx110AlarmRepository = sjgx110AlarmRepository;
             this.newtrackRepository = newtrackRepository;
             this.viewAllTargetRepository = viewAllTargetRepository;
@@ -168,9 +171,9 @@ namespace Simple.Domain
             return exEntities;
         }
 
-        public async Task<List<NewTrackExEntity>> GetNewTrackList(dynamic queryModel)
+        public async Task<List<NewTrackExEntity>> GetNewTrackList(dynamic qm)
         {
-            var entities = await newtrackRepository.GetNewtracksByDeviceId(queryModel);
+            var entities = await newtrackRepository.GetNewtracksByDeviceId(qm);
             var exEntities = mapper.Map<List<NewTrackExEntity>>(entities);
             foreach (NewTrackExEntity item in exEntities)
             {
@@ -181,10 +184,16 @@ namespace Simple.Domain
             return exEntities;
         }
 
-        public async Task<List<Sjgx110AlarmExEntity>> GetSjgx110AlarmExEntities(Sjgx110AlarmQm queryModel)
+        public async Task<List<Sjgx110AlarmExEntity>> GetSjgx110AlarmExEntities(Sjgx110AlarmQm qm)
         {
-            var entities = await sjgx110AlarmRepository.GetAlarmEntities(queryModel.DateTimes[0], queryModel.DateTimes[1], queryModel.Points.Count == 4 ? queryModel.Points[0] : null, queryModel.Points.Count == 4 ? queryModel.Points[2] : null);
+            var entities = await sjgx110AlarmRepository.GetAlarmEntities(qm.DateTimes[0], qm.DateTimes[1], qm.Points.Count == 4 ? qm.Points[0] : null, qm.Points.Count == 4 ? qm.Points[2] : null);
             return mapper.Map<List<Sjgx110AlarmExEntity>>(entities);
+        }
+
+        public async Task<List<SjtlAttendancePositionExEntity>> GetSjtlAttenPosExEnties(SjtlAttPosQm qm)
+        {
+            var entities = await sjtlAttendancePositionRepository.GetEntities(qm.DateTimes[0], qm.DateTimes[1], qm.Points.Count == 4 ? qm.Points[0] : null, qm.Points.Count == 4 ? qm.Points[2] : null, qm.NameOrPoliceCode);
+            return mapper.Map<List<SjtlAttendancePositionExEntity>>(entities);
         }
     }
 }

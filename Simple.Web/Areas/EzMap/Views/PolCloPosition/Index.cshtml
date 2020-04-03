@@ -1,14 +1,14 @@
 ﻿
 @{
-    ViewData["Title"] = "LBS报警位置查询";
+    ViewData["Title"] = "警员打卡位置查询";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Version"] = "20200401";
+    ViewData["Version"] = "20200403";
 }
 @section style{
     <!--map-->
     @foreach (var item in ViewBag.MapCss as List<string>)
     {
-        <link rel="stylesheet" type="text/css" href="@item">
+    <link rel="stylesheet" type="text/css" href="@item">
     }
     <!--Popup-->
     <link rel="stylesheet" type="text/css" href="~/plugins/ezMap/css/popup.css" />
@@ -17,7 +17,7 @@
     <!--map-->
     @foreach (var item in ViewBag.MapJs as List<string>)
     {
-        <script src="@item"></script>
+    <script src="@item"></script>
     }
 }
 <div id="vmLbsAlarm">
@@ -34,10 +34,10 @@
                                         end-placeholder="结束日期">
                         </el-date-picker>
                     </div>
+                    <div class="input-group"><el-input v-model="search.nameOrPoliceCode" placeholder="请输入警号或姓名"></el-input></div>
                     <button type="button" v-on:click="searchAction" class="btn btn-success">查询</button>
                     <button type="button" v-on:click="drawAction" class="btn btn-github">框选查询</button>
                 </div>
-
             </form>
         </div>
     </div>
@@ -48,4 +48,4 @@
         </div>
     </div>
 </div>
-<script src="~/Controllers/EzMap/LbsAlarmMapController.js?r=@Guid.NewGuid()"></script>
+<script src="~/Controllers/EzMap/PolcolPositionController.js?r=@Guid.NewGuid()"></script>

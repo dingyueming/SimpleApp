@@ -5,12 +5,10 @@
         data: {
             map: {},//地图对象
             search: {//查询
-                timeValue: null,
+                timeValue: [new Date(new Date(new Date().toLocaleDateString()).getTime()), new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)],
                 points: null,
                 feature: null,
-                buttonText: "绘制图形"
             },
-            markers: [],
         },
         methods: {
             //初始化地图
@@ -46,36 +44,21 @@
             },
             //画框
             drawAction() {
-                if (this.search.buttonText == "删除图形") {
-                    this.map.removeOverlay(this.search.feature);
-                    this.search.points = null;
-                    vmLbsAlarm.search.buttonText = "绘制图形";
-                    return;
-                }
-                if (vmLbsAlarm.search.points != null) {
-                    this.$message.error('仅能绘制一个图形');
-                    return;
-                }
                 this.map.changeDragMode('drawRect', function (/** feature为Ez.g.*要素类 */feature) {
                     /** 一般鼠标右键结束绘制,回调参数为动态绘制的要素,可以在回调中进行余下操作,例如，增加绘制要素到地图上. */
                     vmLbsAlarm.map.addOverlay(feature);
                     vmLbsAlarm.search.points = feature.getPoints()[0];
                     vmLbsAlarm.search.feature = feature;
-                    vmLbsAlarm.search.buttonText = "删除图形";
+                    vmLbsAlarm.searchAction();
                 });
             },
             //查询
             searchAction() {
-                if (this.markers.length > 0) {
-                    this.markers.forEach((marker) => {
-                        marker.closeInfoWindow();
-                        this.map.removeOverlay(marker);
-                    });
-                }
                 if (this.search.timeValue == null) {
                     this.$message.error('请选择时间');
                     return;
                 }
+                this.map.clear();
                 const loading = this.$loading({
                     lock: true,
                     text: 'Loading',
@@ -98,17 +81,18 @@
                                 var marker = new EzMarker(position, icon);
                                 //构造打开的html
                                 var tmparr = [
-                                    "<div>报警人：" + alarm.bjrxm + "</div>",
-                                    "<div>联系电话：" + alarm.lxdh + "</div>",
-                                    "<div>报警时间：" + alarm.bjsj + "</div>",
-                                    "<div>管辖单位：" + alarm.gxdw.unitname + "</div>",
-                                    "<div>接警单位：" + alarm.jjdw.unitname
+                                    "<div style='margin-top:15px;;word-break:break-all;'>接警单编号：" + alarm.jjdbh + "</div>",
+                                    "<div style='margin-top:15px;'>报警人：" + alarm.bjrxm + "</div>",
+                                    "<div style='margin-top:15px;'>联系电话：" + alarm.lxdh + "</div>",
+                                    "<div style='margin-top:15px;'>报警时间：" + alarm.bjsj + "</div>",
+                                    "<div style='margin-top:15px;'>管辖单位：" + alarm.gxdw.unitname + "</div>",
+                                    "<div style='margin-top:15px;'>接警单位：" + alarm.jjdw.unitname + "</div>",
                                 ];
                                 marker.openedHtml = "<div style='text-align:left;'>" + tmparr.join(' ') + "</div>";
-                                this.markers.push(marker);
                                 this.map.addOverlay(marker);
                             });
                         }
+                        this.search.points = null;
                         loading.close();
                     }
                 }).catch((error) => {

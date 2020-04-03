@@ -5,12 +5,14 @@ using System.Text;
 namespace Simple.Infrastructure.QueryModels
 {
     /// <summary>
-    /// lbs位置查询
+    /// 警员打卡位置查询Model
     /// </summary>
-    public class Sjgx110AlarmQm
+    public class SjtlAttPosQm
     {
         public DateTime[] DateTimes { get; set; }
 
         public List<double[]> Points { get; set; }
+
+        public string NameOrPoliceCode { get; set; }
     }
 }

@@ -27,7 +27,9 @@ namespace Simple.IDomain
 
         Task<List<NewTrackExEntity>> GetNewTrackList(dynamic queryModel);
 
-        Task<List<Sjgx110AlarmExEntity>> GetSjgx110AlarmExEntities(Sjgx110AlarmQm queryModel);
+        Task<List<Sjgx110AlarmExEntity>> GetSjgx110AlarmExEntities(Sjgx110AlarmQm qm);
+
+        Task<List<SjtlAttendancePositionExEntity>> GetSjtlAttenPosExEnties(SjtlAttPosQm qm);
 
     }
 }
