@@ -15,7 +15,7 @@ namespace Simple.Repository
     {
         public async Task<List<Sjgx110AlarmEntity>> GetAlarmEntities(DateTime startTime, DateTime endTime, double[] startPoint, double[] endPoint)
         {
-            var sql = "select t.* from sjgx_110_alarm t where t.bjsj between :startTime and :endTime";
+            var sql = "select t.*,u.*,u2.* from sjgx_110_alarm t left join unit u on t.jjdwdm=u.org_code left join unit u2 on t.gxdwdm=u2.org_code where t.bjsj between :startTime and :endTime";
             var param = new DynamicParameters();
             param.Add("startTime", startTime, System.Data.DbType.DateTime, System.Data.ParameterDirection.Input);
             param.Add("endTime", endTime, System.Data.DbType.DateTime, System.Data.ParameterDirection.Input);
@@ -29,7 +29,15 @@ namespace Simple.Repository
                 param.Add("latitudeStart", latitudeArr[0], System.Data.DbType.Double, System.Data.ParameterDirection.Input, 9);
                 param.Add("latitudeEnd", latitudeArr[1], System.Data.DbType.Double, System.Data.ParameterDirection.Input, 9);
             }
-            var entities = await Connection.QueryAsync<Sjgx110AlarmEntity>(sql, param);
+            var commond = new CommandDefinition(sql, param);
+            var entities = await Connection.QueryAsync<Sjgx110AlarmEntity, UnitEntity, UnitEntity, Sjgx110AlarmEntity>(commond, (a, b, c) =>
+            {
+
+                a.Jjdw = b ?? new UnitEntity();
+                a.Gxdw = c ?? new UnitEntity();
+                return a;
+
+            }, splitOn: "unitid,unitid");
             return entities.ToList();
         }
     }

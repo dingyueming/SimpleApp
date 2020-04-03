@@ -30,6 +30,19 @@
                 //设置中心点
                 var centerCoord = new EzCoord(106.661876, 26.609144);
                 this.map.centerAtLatlng(centerCoord);
+                this.map.addMapEventListener(Ez.Event.MAP_CLICK, function (evt) {
+                    var pixel = evt.pixel;
+                    var coord = evt.coordinate;
+                    var marker = vmLbsAlarm.map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+                        if (feature instanceof EzMarker) {
+                            return feature;
+                        }
+                    });
+                    if (marker) {
+                        //通过单击marker时打开popup
+                        marker.openInfoWindow(marker.openedHtml);
+                    }
+                });
             },
             //画框
             drawAction() {
@@ -55,6 +68,7 @@
             searchAction() {
                 if (this.markers.length > 0) {
                     this.markers.forEach((marker) => {
+                        marker.closeInfoWindow();
                         this.map.removeOverlay(marker);
                     });
                 }
@@ -82,6 +96,15 @@
                                 });
                                 var position = new EzCoord(alarm.jd, alarm.wd);
                                 var marker = new EzMarker(position, icon);
+                                //构造打开的html
+                                var tmparr = [
+                                    "<div>报警人：" + alarm.bjrxm + "</div>",
+                                    "<div>联系电话：" + alarm.lxdh + "</div>",
+                                    "<div>报警时间：" + alarm.bjsj + "</div>",
+                                    "<div>管辖单位：" + alarm.gxdw.unitname + "</div>",
+                                    "<div>接警单位：" + alarm.jjdw.unitname
+                                ];
+                                marker.openedHtml = "<div style='text-align:left;'>" + tmparr.join(' ') + "</div>";
                                 this.markers.push(marker);
                                 this.map.addOverlay(marker);
                             });

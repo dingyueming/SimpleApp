@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Simple.ExEntity.DM;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -47,6 +48,16 @@ namespace Simple.ExEntity.Map
         /// 插入时间戳
         /// </summary>
         public virtual DateTime InsertDate { get; set; }
+
+        /// <summary>
+        /// 接警单位
+        /// </summary>
+        public virtual UnitExEntity Jjdw { get; set; }
+
+        /// <summary>
+        /// 管辖单位
+        /// </summary>
+        public virtual UnitExEntity Gxdw { get; set; }
         #endregion
     }
 }

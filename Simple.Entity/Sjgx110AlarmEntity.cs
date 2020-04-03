@@ -50,6 +50,18 @@ namespace Simple.Entity
         /// 插入时间戳
         /// </summary>
         public virtual DateTime InsertDate { get; set; }
+
+        /// <summary>
+        /// 接警单位
+        /// </summary>
+        [Computed]
+        public virtual UnitEntity Jjdw { get; set; }
+
+        /// <summary>
+        /// 管辖单位
+        /// </summary>
+        [Computed]
+        public virtual UnitEntity Gxdw { get; set; }
         #endregion
     }
 }
