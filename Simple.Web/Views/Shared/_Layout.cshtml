@@ -8,7 +8,7 @@ scratch. This page gets reditorid of all links and provides the needed markup on
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>全球卫星定位系统</title>
+    <title>警用卫星定位位置服务系统</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="~/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -97,7 +97,7 @@ desired effect
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b>GNSS</b></span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>GNSS</b>定位系统</span>
+                <span class="logo-lg">@*<b>GNSS</b>*@警用卫星定位位置服务系统</span>
             </a>
             <!-- Header Navbar -->
             <nav class="navbar navbar-static-top" role="navigation">
@@ -113,14 +113,14 @@ desired effect
                             <!-- Menu Toggle Button -->
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <!-- The user image in the navbar-->
-                                <img src="~/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                                @*<img src="~/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">*@
                                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
                                 <span class="hidden-xs" style="margin-right:20px;">@ViewBag.UserName</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- The user image in the menu -->
-                                <li class="user-header">
-                                    <img src="~/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                <li class="user-header" style="height:80px;">
+                                    @*<img src="~/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">*@
                                     <p>
                                         @ViewBag.UserName - 管理员
                                         <small>@DateTime.Now.ToString("yyyy年MM月dd日")</small>
@@ -144,7 +144,7 @@ desired effect
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <a href="#" class="btn btn-default btn-flat">个人资料</a>
+                                        @*<a href="#" class="btn btn-default btn-flat">个人资料</a>*@
                                     </div>
                                     <div class="pull-right">
                                         <a href="~/account/logout" class="btn btn-default btn-flat">退出</a>
@@ -177,7 +177,7 @@ desired effect
                         </div>
                     </div>*@
                 <!-- search form (Optional) -->
-                <form action="#" method="get" class="sidebar-form">
+                @*<form action="#" method="get" class="sidebar-form">
                     <div class="input-group">
                         <input type="text" name="q" class="form-control" placeholder="Search...">
                         <span class="input-group-btn">
@@ -186,7 +186,7 @@ desired effect
                             </button>
                         </span>
                     </div>
-                </form>
+                </form>*@
                 <!-- /.search form -->
                 <!-- Sidebar Menu -->
                 <ul class="sidebar-menu" data-widget="tree" id="vmMenu">

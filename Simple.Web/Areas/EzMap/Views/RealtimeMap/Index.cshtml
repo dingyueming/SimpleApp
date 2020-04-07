@@ -9,19 +9,21 @@
     <!--map-->
     @foreach (var item in ViewBag.MapCss as List<string>)
     {
-    <link rel="stylesheet" type="text/css" href="@item">
+        <link rel="stylesheet" type="text/css" href="@item">
     }
     <!--ztree-->
     <link rel="stylesheet" href="~/lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
     <!--报警提示-->
     <link rel="stylesheet" type="text/css" href="~/plugins/notifyBybootstrap3/css/bootoast.css">
+    <!--popup-->
+    <link rel="stylesheet" type="text/css" href="~/plugins/ezMap/css/popup.css" />
 }
 
 @section script{
     <!--map-->
     @foreach (var item in ViewBag.MapJs as List<string>)
     {
-    <script src="@item"></script>
+        <script src="@item"></script>
     }
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/plugins/ezMap/js/MapTools.js"></script>
@@ -291,7 +293,7 @@
             //通过单击marker时打开popup
             var device = getDeviceByMac(marker.lastTrackData.mac);
             if (device) {
-                var strHtml = getGpsInfoWinContent(device.license, marker.gpsData);
+                var strHtml = getGpsInfoWinContent(device.license, marker.lastTrackData);
                 marker.openInfoWindow(strHtml);
             }
         }
@@ -467,16 +469,26 @@
     }
     //marker的popup
     function getGpsInfoWinContent(title, gpsData) {
-        //var html = $("#divPopup").html();
-            //var tmpArr = [
-            //    "速度：" + gpsData.speed + "Km/h&nbsp;&nbsp;[" + gpsData.heading_str + "]",
-            //    "里程：" + gpsData.mileage_k + "Km",
-            //    "定位：" + gpsData.locate_str + " [" + gpsData.locatemode_str + "]",
-            //    "坐标：" + gpsData.longitude + "，" + gpsData.latitude,
-            //    "时间：" + gpsData.gnsstime,
-            //    "地点：" + gpsData.position
-            //];
-        return title;
+        //车牌号、所属单位、识别码、时间、速度、方向、状态
+        var device = getDeviceByMac(gpsData.mac);
+        if (device) {
+            var tmpArr = [
+                "<tr><td>单位：</td><td>" + device.unitname + "</td></tr>",
+                "<tr><td>识别码：</td><td>" + device.mac + "</td></tr>",
+                "<tr><td>时间：</td><td>" + gpsData.gnsstime + "</td></tr>",
+                "<tr><td>速度：</td><td>" + gpsData.speed + "</td></tr>",
+                "<tr><td>方向：</td><td>" + gpsData.headingStr + "</td></tr>",
+                "<tr><td>状态：</td><td>" + gpsData.status_Str + "</td></tr>",
+            ];
+            var openedHtml = "";
+            if (gpsData.mac.length == 8) {
+                openedHtml += "<tr><td>对讲机：</td><td>" + title + "</td></tr>";
+            } else {
+                openedHtml += "<tr><td>车牌号：</td><td>" + title + "</td></tr>";
+            }
+            return "<table style='text-align:left;'>" + openedHtml + tmpArr.join(' ') + "<table>";
+        }
+        return "";
     }
 </script>
 <!--Signal-->

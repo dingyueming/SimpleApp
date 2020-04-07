@@ -11,6 +11,10 @@ namespace Simple.ExEntity.Map
         /// </summary>
         public uint CARID { get; set; }
         /// <summary>
+        /// mac
+        /// </summary>
+        public ViewAllTargetExEntity Device { get; set; }
+        /// <summary>
         /// 时间
         /// </summary>		
         public DateTime GNSSTIME { get; set; }

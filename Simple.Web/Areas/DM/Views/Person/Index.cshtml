@@ -17,12 +17,28 @@
 <div class="box" id="vmBox">
     <table style="margin-left:5px;">
         <tr>
-            <th>姓名:</th>
+            <th>名称：</th>
             <td>
                 <div class="input-group">
                     <!-- /btn-group -->
                     <input type="text" class="form-control" v-model="searchWhere.name">
                 </div>
+
+            </td>
+            <th>单位：</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <treeselect v-model="searchWhere.unitid" style="width:300px;" :multiple="false" name="searchUnitid" id="searchUnitid" v-on:select="treeSelect" :options="options" />
+                </div>
+            </td>
+            <th>设备号：</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <input type="text" class="form-control" v-model="searchWhere.code">
+                </div>
+
             </td>
             <td>
                 <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
@@ -66,9 +82,9 @@
                     <form class="form-horizontal" role="form" id="myForm">
                         <fieldset>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-4 control-label" for="name">姓名</label>
+                                <label class="col-sm-4 control-label" for="name">名称</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" v-model="row.name" id="name" name="name" type="text" placeholder="姓名" />
+                                    <input class="form-control" v-model="row.name" id="name" name="name" type="text" placeholder="名称" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -78,12 +94,12 @@
                                 </div>
                             </div>
                         </fieldset>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="policE_CODE">警号</label>
-                            <div class="col-sm-4">
-                                <input class="form-control" id="policE_CODE" name="policE_CODE" v-model="row.policE_CODE" type="text" placeholder="警号" />
-                            </div>
-                        </div>
+                        @*<div class="form-group">
+                                <label class="col-sm-2 control-label" for="policE_CODE">警号</label>
+                                <div class="col-sm-4">
+                                    <input class="form-control" id="policE_CODE" name="policE_CODE" v-model="row.policE_CODE" type="text" placeholder="警号" />
+                                </div>
+                            </div>*@
                         <div class="form-group">
                             <label for="status" class="col-sm-2 control-label">所属单位</label>
                             <div class="col-sm-10">
@@ -176,9 +192,9 @@
                             return "";
                         }
                     },
-                    { field: 'name', title: '姓名', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'name', title: '名称', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'terminaL_CODE', title: '设备号', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'policE_CODE', title: '警号', width: 180, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    //{ field: 'policE_CODE', title: '警号', width: 180, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'remark', title: '备注', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'custome-adv', title: '操作', width: 200, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
                 ],
@@ -189,16 +205,26 @@
             row: {},
             selectedRows: [],
             options: [],
-            searchWhere: { name: '', },
+            searchWhere: {
+                name: '',
+                unitid: null,
+                code: ''
+            },
         },
         methods: {
             getTableData() {
-                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: ' and a.name like \'%' + this.searchWhere.name + '%\'', orderBy: ' a.id desc' };
+                var strWhere = ' and a.name like \'%' + this.searchWhere.name + '%\'';
+                if (this.searchWhere.unitid != null) {
+                    strWhere += ' and a.unitid=' + this.searchWhere.unitid ;
+                }
+                if ($.trim(this.searchWhere.code) != "") {
+                    strWhere += ' and a.terminal_code=' + this.searchWhere.code;
+                }
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: strWhere, orderBy: ' a.id desc' };
                 axios.post('@Url.Action("Query")', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
                     vm.tableConfig.tableData = pagination.data;
                     vm.total = pagination.total;
-                    console.log(vm.tableConfig.tableData);
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -271,7 +297,7 @@
                         } else {
                             alert(commonResult.message);
                         }
-                        
+
                     }).catch(function (error) {
                         console.log(error);
                     });

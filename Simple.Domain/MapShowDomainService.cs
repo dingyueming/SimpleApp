@@ -160,8 +160,8 @@ namespace Simple.Domain
         public async Task<List<LastLocatedExEntity>> GetLastLocatedByUser(int userId)
         {
             var lastLocateds = await lastLocatedRepository.GetLastLocatedEntityByUser(userId);
-            var exEnties = mapper.Map<List<LastLocatedExEntity>>(lastLocateds);
-            return exEnties;
+            var exEntities = mapper.Map<List<LastLocatedExEntity>>(lastLocateds);
+            return exEntities;
         }
 
         public async Task<List<ViewAllTargetExEntity>> GetAllDeviceByUser(int userId)

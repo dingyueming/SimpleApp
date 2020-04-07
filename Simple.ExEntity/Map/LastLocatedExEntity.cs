@@ -35,7 +35,7 @@ namespace Simple.ExEntity.Map
         /// <summary>
         /// 状态
         /// </summary>
-        public uint STATUS { get; set; }
+        public int STATUS { get; set; }
         /// <summary>
         /// 扩展状态
         /// </summary>	
@@ -82,6 +82,40 @@ namespace Simple.ExEntity.Map
         /// mac
         /// </summary>
         public string Mac { get; set; }
+        public string HeadingStr
+        {
+            get
+            {
+                var heading = HEADING;
+                if (heading > 337 && heading < 23)
+                    return "北";
+                if (heading > 22 && heading < 68)
+                    return "东北";
+                if (heading > 67 && heading < 113)
+                    return "东";
+                if (heading > 112 && heading < 158)
+                    return "东南";
+                if (heading > 157 && heading < 203)
+                    return "南";
+                if (heading > 202 && heading < 248)
+                    return "西南";
+                if (heading > 247 && heading < 293)
+                    return "西";
+                if (heading > 292 && heading < 338)
+                    return "西北";
+                return "北";
+            }
+        }
+
+        public string Status_Str
+        {
+            get
+            {
+                CarStatus carStatus = new CarStatus();
+                carStatus.RefreshStatus(this.STATUS, 0);
+                return carStatus.ToString();
+            }
+        }
     }
 }
 

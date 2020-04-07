@@ -16,13 +16,17 @@ namespace Simple.Repository
         public async Task<List<NewTrackEntity>> GetNewtracksByDeviceId(dynamic queryModel)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("SELECT * from newtrack t where 1=1 and t.carid=:deviceid and t.gnsstime between :starttime and :endtime and t.speed>:minspeed");
+            sb.Append("SELECT * from newtrack t join view_all_target v on t.carid =v.carid where 1=1 and t.carid=:deviceid and t.gnsstime between :starttime and :endtime and t.speed>:minspeed");
             if ((bool)queryModel.ZeroSpeed)
             {
                 sb.Append(" and t.speed<>0");
             }
             sb.Append(" order by t.gnsstime");
-            var list = await Connection.QueryAsync<NewTrackEntity>(sb.ToString(), new { deviceid = queryModel.DeviceId, starttime = queryModel.StartTime, endtime = queryModel.EndTime, minspeed = queryModel.MinSpeed });
+            var command = new CommandDefinition(sb.ToString(), new { deviceid = queryModel.DeviceId, starttime = queryModel.StartTime, endtime = queryModel.EndTime, minspeed = queryModel.MinSpeed });
+            var list = await Connection.QueryAsync<NewTrackEntity, ViewAllTargetEntity, NewTrackEntity>(command,(a,b)=>{
+                a.Device = b;
+                return a;
+            }, splitOn: "carid");
             return list.AsList();
         }
     }

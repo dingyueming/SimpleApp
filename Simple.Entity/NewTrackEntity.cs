@@ -84,5 +84,10 @@ namespace Simple.Entity
         /// 记录时间
         /// </summary>		
         public DateTime RECORD_TIME { get; set; }
+        /// <summary>
+        /// 设备实体
+        /// </summary>
+        [Computed]
+        public ViewAllTargetEntity Device { get; set; }
     }
 }
