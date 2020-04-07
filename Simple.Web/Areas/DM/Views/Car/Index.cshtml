@@ -12,16 +12,33 @@
 @section script{
     <!--vue-treeselect-->
     <script src="~/lib/vue-treeselect/dist/vue-treeselect.umd.min.js"></script>
+    <!--simplehelper-->
+    <script src="~/dist/js/simpleHelper.js"></script>
 }
 <div class="box" id="vmBox">
     <table style="margin-left:5px;">
         <tr>
+            <th>单位：</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <treeselect v-model="searchWhere.unitid" style="width:300px;" :multiple="false" name="searchUnitid" id="searchUnitid" v-on:select="treeSelect" :options="options" />
+                </div>
+            </td>
             <th>车牌号:</th>
             <td>
                 <div class="input-group">
                     <!-- /btn-group -->
-                    <input type="text" class="form-control" v-model="searchWhere.unitname">
+                    <input type="text" class="form-control" v-model="searchWhere.name">
                 </div>
+            </td>
+            <th>设备号：</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <input type="text" class="form-control" v-model="searchWhere.code">
+                </div>
+
             </td>
             <td>
                 <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
@@ -128,7 +145,7 @@
                         <div class="form-group">
                             <label for="remark" class="col-sm-2 control-label">报警类型</label>
                             <div class="col-sm-4">
-                                <select id="status" v-model="carArea.alarmtype" class="form-control">
+                                <select id="alarmStatus" v-model="carArea.alarmtype" class="form-control">
                                     <option value="0">入区报警</option>
                                     <option value="1">出区报警</option>
                                     <option value="2">出入报警</option>
@@ -236,19 +253,18 @@
                         }
                     },
                     { field: 'license', title: '车牌号', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'mac', title: '识别码', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'mac', title: '设备号', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'engineno', title: '发动机号', width: 180, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'chassisno', title: '车架号', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { 
+                    {
                         field: 'area', title: '报警区域', width: 150, titleAlign: 'center', columnAlign: 'left', isResize: true, formatter: function (rowData, index, pagingIndex) {
+                            var html = "";
                             if (rowData.areas.length > 0) {
-                                var html = "";
                                 for (var i = 0; i < rowData.areas.length; i++) {
-                                    html += '<span style="color:red;font-weight: normal;"><' + rowData.areas[i].areaname + '> </span>';
+                                    html += '<span style="color:red;font-weight: normal;">' + rowData.areas[i].areaname + ',</span>';
                                 }
-                                return html;
                             }
-                            return "";
+                            return html;
                         }
                     },
                     { field: 'custome-adv', title: '操作', width: 200, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
@@ -260,7 +276,11 @@
             row: {},
             selectedRows: [],
             options: [],
-            searchWhere: { unitname: '', },
+            searchWhere: {
+                name: '',
+                unitid: null,
+                code: ''
+            },
             alarmAreaOptions: [],
             carArea: { alarmtype: 2, status: 1,areaid: null },
         },
@@ -272,12 +292,20 @@
                 }
             },
             getTableData() {
-                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: ' and a.license like \'%' + this.searchWhere.unitname + '%\'', orderBy: ' a.carid desc' };
+                var strWhere = ' and a.license like \'%' + this.searchWhere.name + '%\'';
+                if (this.searchWhere.unitid != null) {
+                    var node = recuTreeSelectNodes(this.searchWhere.unitid, this.options);
+                    var ids = getUnitChildrenId(node);
+                    strWhere += ' and a.unitid  in (' + ids.join(',') + ')';
+                }
+                if ($.trim(this.searchWhere.code) != "") {
+                    strWhere += ' and a.mac like \'%' + this.searchWhere.code + '%\'';
+                }
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: strWhere, orderBy: ' a.carid desc' };
                 axios.post('@Url.Action("Query")', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
                     vm.tableConfig.tableData = pagination.data;
                     vm.total = pagination.total;
-                    console.log(vm.tableConfig.tableData);
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -285,7 +313,6 @@
             pageChange(pageIndex) {
                 this.pageIndex = pageIndex;
                 this.getTableData();
-                console.log(pageIndex)
             },
             pageSizeChange(pageSize) {
                 this.pageIndex = 1;
@@ -343,7 +370,6 @@
                             $('#myModal').modal('hide');
                             vm.getTableData();
                         }
-                        console.log(flag);
                     }).catch(function (error) {
                         console.log(error);
                     });
@@ -358,13 +384,11 @@
                                 $('#myModal').modal('hide');
                                 vm.getTableData();
                             }
-                            console.log(flag);
                         }).catch(function (error) {
                             console.log(error);
                         });
                     }
                 }
-                console.log(this.selectedRows);
             },
             select() {
                 this.pageIndex = 1;

@@ -40,17 +40,21 @@ namespace Simple.Repository
                 return a;
             }, splitOn: "UnitId");
             pagination.Data = list.AsList().Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-            //查询车辆的报警区域
-            sql = $"select a.*,c.* from cars a left join  car_area b on a.carid=b.carid left join area c on b.areaid=c.areaid  where b.status=1 and a.carid in ({string.Join(',', pagination.Data.Select(x => x.CARID).ToArray())})";
-            list = await Connection.QueryAsync<CarEntity, AreaEntity, CarEntity>(sql, (a, b) =>
+            if (pagination.Data.Count > 0)
             {
-                var car = pagination.Data.Find(x => x.CARID == a.CARID);
-                if (b != null)
+                //查询车辆的报警区域
+                sql = $"select a.*,c.* from cars a left join  car_area b on a.carid=b.carid left join area c on b.areaid=c.areaid  where b.status=1 and a.carid in ({string.Join(',', pagination.Data.Select(x => x.CARID).ToArray())})";
+                list = await Connection.QueryAsync<CarEntity, AreaEntity, CarEntity>(sql, (a, b) =>
                 {
-                    car.Areas.Add(b);
-                }
-                return a;
-            }, splitOn: "areaid");
+                    var car = pagination.Data.Find(x => x.CARID == a.CARID);
+                    if (b != null)
+                    {
+                        car.Areas.Add(b);
+                    }
+                    return a;
+                }, splitOn: "areaid");
+            }
+           
             pagination.Total = await Connection.QuerySingleAsync<int>(totalSql);
             return pagination;
         }

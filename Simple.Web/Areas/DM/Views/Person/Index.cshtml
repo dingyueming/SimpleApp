@@ -13,10 +13,19 @@
 @section script{
     <!--vue-treeselect-->
     <script src="~/lib/vue-treeselect/dist/vue-treeselect.umd.min.js"></script>
+    <!--simplehelper-->
+    <script src="~/dist/js/simpleHelper.js"></script>
 }
 <div class="box" id="vmBox">
     <table style="margin-left:5px;">
         <tr>
+            <th>单位：</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <treeselect v-model="searchWhere.unitid" style="width:300px;" :multiple="false" name="searchUnitid" id="searchUnitid" v-on:select="treeSelect" :options="options" />
+                </div>
+            </td>
             <th>名称：</th>
             <td>
                 <div class="input-group">
@@ -24,13 +33,6 @@
                     <input type="text" class="form-control" v-model="searchWhere.name">
                 </div>
 
-            </td>
-            <th>单位：</th>
-            <td>
-                <div class="input-group">
-                    <!-- /btn-group -->
-                    <treeselect v-model="searchWhere.unitid" style="width:300px;" :multiple="false" name="searchUnitid" id="searchUnitid" v-on:select="treeSelect" :options="options" />
-                </div>
             </td>
             <th>设备号：</th>
             <td>
@@ -214,11 +216,13 @@
         methods: {
             getTableData() {
                 var strWhere = ' and a.name like \'%' + this.searchWhere.name + '%\'';
-                if (this.searchWhere.unitid != null) {
-                    strWhere += ' and a.unitid=' + this.searchWhere.unitid ;
+                if (this.searchWhere.unitid != null) {                    
+                    var node = recuTreeSelectNodes(this.searchWhere.unitid, this.options);
+                    var ids = getUnitChildrenId(node);
+                    strWhere += ' and a.unitid  in (' + ids.join(',') +')';
                 }
                 if ($.trim(this.searchWhere.code) != "") {
-                    strWhere += ' and a.terminal_code=' + this.searchWhere.code;
+                    strWhere += ' and a.terminal_code like \'%' + this.searchWhere.code + '%\'';
                 }
                 var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: strWhere, orderBy: ' a.id desc' };
                 axios.post('@Url.Action("Query")', Qs.stringify(search)).then(function (response) {
@@ -232,7 +236,6 @@
             pageChange(pageIndex) {
                 this.pageIndex = pageIndex;
                 this.getTableData();
-                console.log(pageIndex)
             },
             pageSizeChange(pageSize) {
                 this.pageIndex = 1;
@@ -312,13 +315,11 @@
                                 $('#myModal').modal('hide');
                                 vm.getTableData();
                             }
-                            console.log(flag);
                         }).catch(function (error) {
                             console.log(error);
                         });
                     }
                 }
-                console.log(this.selectedRows);
             },
             select() {
                 this.pageIndex = 1;
