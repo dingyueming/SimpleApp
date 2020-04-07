@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Simple.IDomain;
+using Simple.Infrastructure.ControllerFilter;
 
 namespace Simple.Web.Areas.SM.Controllers
 {
@@ -32,6 +33,7 @@ namespace Simple.Web.Areas.SM.Controllers
             var data = await userService.GetUserPage(pagination);
             return Json(data);
         }
+        [SimpleActionFilter]
         public async Task<bool> Add(UsersExEntity exEntity)
         {
             exEntity.Modifier = LoginUser.UsersId;
@@ -40,18 +42,21 @@ namespace Simple.Web.Areas.SM.Controllers
             exEntity.CreateTime = DateTime.Now;
             return await userService.AddUser(exEntity);
         }
+        [SimpleActionFilter]
         public async Task<bool> Update(UsersExEntity exEntity)
         {
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             return await userService.UpdateUser(exEntity);
         }
+        [SimpleActionFilter]
         public async Task<bool> Delete(UsersExEntity exEntity)
         {
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             return await userService.DeleteUser(new List<UsersExEntity>() { exEntity });
         }
+        [SimpleActionFilter]
         public async Task<bool> BatchDelete(List<UsersExEntity> exEntities)
         {
             exEntities.ForEach(x => { x.Modifier = LoginUser.UsersId; x.ModifyTime = DateTime.Now; });
@@ -62,6 +67,7 @@ namespace Simple.Web.Areas.SM.Controllers
             var list = await rolesService.GetAllRoles();
             return Json(list);
         }
+        [SimpleActionFilter]
         public async Task<bool> SaveUsersRole(UserRoleExEntity userRoleExEntity)
         {
             userRoleExEntity.Createtime = DateTime.Now;
@@ -78,6 +84,7 @@ namespace Simple.Web.Areas.SM.Controllers
             var list = await dmDomainService.GetDeviceIdsByUser(userId);
             return Json(list);
         }
+        [SimpleActionFilter]
         public async Task<bool> SaveUsersDevice(List<ElementTreeModel> nodes, int userId)
         {
             return await dmDomainService.UpdateAuthLimits(nodes, userId);

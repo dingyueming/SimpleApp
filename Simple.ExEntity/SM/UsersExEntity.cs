@@ -1,4 +1,5 @@
-﻿using Simple.ExEntity.SM;
+﻿using Simple.ExEntity.DM;
+using Simple.ExEntity.SM;
 using System;
 using System.Security.Principal;
 
@@ -72,6 +73,10 @@ namespace Simple.ExEntity
         /// 备注
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 单位ID
+        /// </summary>
+        public int UnitId { get; set; }
 
         public UsersExEntity User { get; set; }
         public RolesExEntity Role { get; set; }
@@ -82,5 +87,6 @@ namespace Simple.ExEntity
                 return Role == null ? 0 : Role.Rolesid;
             }
         }
+        public UnitExEntity Unit { get; set; }
     }
 }

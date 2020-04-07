@@ -61,9 +61,16 @@ namespace Simple.Entity
         /// 备注
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 单位ID
+        /// </summary>
+        public int UnitId { get; set; }
+
         [Computed]
         public UsersEntity User { get; set; }
         [Computed]
         public RolesEntity Role { get; set; }
+        [Computed]
+        public UnitEntity Unit { get; set; }
     }
 }

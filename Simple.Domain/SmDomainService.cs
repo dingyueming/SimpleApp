@@ -67,7 +67,7 @@ namespace Simple.Domain
         public async Task<bool> AddUser(UsersExEntity exEntity)
         {
             //数据校验
-            var entities = await userRepository.GetUsersEntityByUserName(exEntity.UsersName);
+            var entities = await userRepository.GetUsersEntity(new UsersEntity() { UsersId = exEntity.UsersId, UsersName = exEntity.UsersName });
             if (entities.Count > 0)
             {
                 throw new Exception("重复的用户名！");
@@ -79,7 +79,7 @@ namespace Simple.Domain
         public async Task<bool> UpdateUser(UsersExEntity exEntity)
         {
             //数据校验
-            var entities = await userRepository.GetUsersEntityByUserName(exEntity.UsersName);
+            var entities = await userRepository.GetUsersEntity(new UsersEntity() { UsersId = exEntity.UsersId, UsersName = exEntity.UsersName });
             if (entities.Count > 2)
             {
                 throw new Exception("重复的用户名！");
