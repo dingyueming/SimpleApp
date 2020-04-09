@@ -10,6 +10,8 @@
     {
         <link rel="stylesheet" type="text/css" href="@item">
     }
+    <!--vue-treeselect-->
+    <link rel="stylesheet" href="~/lib/vue-treeselect/dist/vue-treeselect.min.css">
 }
 @section script{
     <!--map-->
@@ -17,6 +19,10 @@
     {
         <script src="@item"></script>
     }
+    <!--simplehelper-->
+    <script src="~/dist/js/simpleHelper.js"></script>
+    <!--vue-treeselect-->
+    <script src="~/lib/vue-treeselect/dist/vue-treeselect.umd.min.js"></script>
 }
 <div class="box" id="vmBox">
     <table style="margin-left:5px;">
@@ -49,7 +55,6 @@
              row-click-color="#edf7ff"
              :select-all="selectALL"
              :select-change="selectChange"
-             :select-group-change="selectGroupChange"
              v-on:sort-change="sortChange"
              :paging-index="(pageIndex-1)*pageSize"></v-table>
     <div style="margin-top:5px;">
@@ -66,11 +71,12 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">区域绑定车辆列表</h4>
+                    <h4 class="modal-title" style="float:left" id="myModalLabel">区域绑定车辆列表</h4>
+                    <div style="float:right;"><button style="right:0px;" data-toggle="modal" data-target="#carModal" class="btn btn-success">绑定车辆</button></div>
                 </div>
                 <div class="modal-body">
-                    <div style="height:400px;">
-                        <table class="table table-condensed">
+                    <div style="height:450px; overflow-y:auto;">
+                        <table class="table">
                             <tr>
                                 <th>序号</th>
                                 <th>车牌号</th>
@@ -86,12 +92,72 @@
                             </tr>
                         </table>
                     </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="carModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" style="width:1000px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">车辆列表</h4>
+                </div>
+                <div class="modal-body">
+                    <table style="margin-left:5px;">
+                        <tr>
+                            <th>单位：</th>
+                            <td>
+                                <div class="input-group">
+                                    <!-- /btn-group -->
+                                    <treeselect v-model="carTableSearchWhere.unitid" style="width:200px;" :multiple="false" name="searchUnitid" id="searchUnitid" :options="options" />
+                                </div>
+                            </td>
+                            <th>车牌号:</th>
+                            <td>
+                                <div class="input-group">
+                                    <!-- /btn-group -->
+                                    <input type="text" class="form-control" v-model="carTableSearchWhere.name">
+                                </div>
+                            </td>
+                            <th>设备号：</th>
+                            <td>
+                                <div class="input-group">
+                                    <!-- /btn-group -->
+                                    <input type="text" class="form-control" v-model="carTableSearchWhere.code">
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="carTableSelect">查询</button>
+                                <button type="button" id="btn_delete_main" class="btn btn-success" style="margin:10px;" v-on:click="bindCar">绑定</button>
+                            </td>
+                        </tr>
+                    </table>
+                    <v-table is-vertical-resize
+                             :vertical-resize-offset='60'
+                             is-horizontal-resize
+                             style="width:100%"
+                             :multiple-sort="false"
+                             :min-height="350"
+                             even-bg-color="#f2f2f2"
+                             :title-rows="carTableConfig.titleRows"
+                             :columns="carTableConfig.columns"
+                             :table-data="carTableConfig.tableData"
+                             row-hover-color="#eee"
+                             row-click-color="#edf7ff"
+                             :select-all="carTableSelectALL"
+                             :select-change="carTableSelectChange"
+                             :paging-index="(carTableConfig.pageIndex-1)*carTableConfig.pageSize"></v-table>
+                    <div style="margin-top:5px;">
+                        <v-pagination v-on:page-change="carTablePageChange" v-on:page-size-change="carTablePageSizeChange" :page-size-option="[10,20,30]" :total="carTableConfig.total" :page-size="carTableConfig.pageSize" :layout="['total', 'prev', 'pager', 'next', 'sizer', 'jumper']"></v-pagination>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
+    Vue.component('treeselect', VueTreeselect.Treeselect);
     // 自定义列组件
     Vue.component('table-operation', {
         template: `<span>
@@ -169,10 +235,48 @@
 
                 ],
             },
+            carTableConfig: {
+                total: 0,
+                pageIndex: 1,
+                pageSize: 10,
+                multipleSort: false,
+                tableData: [
+                ],
+                columns: [
+                    { width: 60, titleAlign: 'center', columnAlign: 'center', type: 'selection' },
+                    {
+                        field: 'custome', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center',
+                        formatter: function (rowData, index, pagingIndex) {
+                            var currentIndex = index + pagingIndex;
+                            return '<span style="color:red;font-weight: bold;">' + (currentIndex + 1) + '</span>';
+                        }, isFrozen: false
+                    },
+                    {
+                        field: 'unit.unitname', title: '单位', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
+                            if (rowData.unit != null) {
+                                return rowData.unit.unitname;
+                            }
+                            return "";
+                        }
+                    },
+                    { field: 'license', title: '车牌号', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'mac', title: '设备号', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'engineno', title: '发动机号', width: 180, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'chassisno', title: '车架号', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                ],
+                titleRows: [],
+                selectedRows: [],
+            },
             row: {},
             selectedRows: [],
             options: [],
             searchWhere: { areaname: '', },
+            carTableSearchWhere: {
+                name: '',
+                unitid: null,
+                code: '',
+                carId:[]
+            },
             map: {
                 points: [],
             },
@@ -188,9 +292,44 @@
                     console.log(error);
                 });
             },
+            getCarTableData() {
+                var strWhere = ' and a.license like \'%' + this.carTableSearchWhere.name + '%\'';
+                if (this.row.Devices.length > 0) {
+                    var carIds = [];
+                    for (var i = 0; i < this.row.Devices.length; i++) {
+                        carIds.push(this.row.Devices[i].CARID);
+                    }
+                    strWhere += 'and a.carid not in (' + carIds.join(',') + ')';
+                }
+                if (this.carTableSearchWhere.unitid != null) {
+                    var node = recuTreeSelectNodes(this.carTableSearchWhere.unitid, this.options);
+                    var ids = getUnitChildrenId(node);
+                    strWhere += ' and a.unitid  in (' + ids.join(',') + ')';
+                }
+                if ($.trim(this.carTableSearchWhere.code) != "") {
+                    strWhere += ' and a.mac like \'%' + this.carTableSearchWhere.code + '%\'';
+                }
+                var search = { pageIndex: this.carTableConfig.pageIndex, pageSize: this.carTableConfig.pageSize, where: strWhere, orderBy: ' a.carid desc' };
+                axios.post('@Url.Action("Query","Car")', Qs.stringify(search)).then(function (response) {
+                    var pagination = response.data;
+                    vm.carTableConfig.tableData = pagination.data;
+                    vm.carTableConfig.total = pagination.total;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
             pageChange(pageIndex) {
                 this.pageIndex = pageIndex;
+                this.getCarTableData();
+            },
+            carTablePageChange(pageIndex) {
+                this.carTableConfig.pageIndex = pageIndex;
                 this.getTableData();
+            },
+            carTablePageSizeChange(pageSize) {
+                this.carTableConfig.pageIndex = 1;
+                this.carTableConfig.pageSize = pageSize;
+                this.getCarTableData();
             },
             pageSizeChange(pageSize) {
                 this.pageIndex = 1;
@@ -203,10 +342,15 @@
             selectALL(selection){
                 this.selectedRows = selection;
             },
+            carTableSelectALL(selection) {
+                this.carTableConfig.selectedRows = selection;
+            },
             selectChange(selection,rowData){
                 this.selectedRows = selection;
             },
-            selectGroupChange(selection){
+            carTableSelectChange(selection, rowData) {
+                this.carTableConfig.selectedRows = selection;
+                console.log(this.carTableConfig.selectedRows);
             },
             deleteSelect() {
                 if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
@@ -229,6 +373,10 @@
             select() {
                 this.pageIndex = 1;
                 this.getTableData();
+            },
+            carTableSelect() {
+                this.carTableConfig.pageIndex = 1;
+                this.getCarTableData();
             },
             saveAreaAlarm() {
                 var areaName = $("#areaName").val();
@@ -272,12 +420,48 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
-            }
+            },
+            queryUnitTree() {
+                axios.post('@Url.Action("QueryUnitTree")', {}).then(function (response) {
+                    vm.options = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            bindCar() {
+                var carSelectRows = this.carTableConfig.selectedRows;
+                if (carSelectRows.length > 0) {
+                    axios.post('@Url.Action("BindCars")', Qs.stringify({ cars: carSelectRows, areaId: this.row.AREAID, alarmType:2 })).then(function (response) {
+                        var commonResult = response.data;
+                        if (commonResult.isSuccess) {
+                            $('#myModal2').modal('hide');
+                            $('#carModal').modal('hide');
+                            vm.getTableData();
+                        } else {
+                            vm.$message.error(commonResult.message);
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    vm.$message("请选择要绑定的车辆");
+                }
+            },
         },
         created() {
             this.getTableData();
         },
         mounted() {
+            this.queryUnitTree();
+            //清除弹窗原数据
+            $("#carModal").on("shown.bs.modal", function () {
+                vm.carTableSearchWhere = {
+                    name: '',
+                    unitid: null,
+                    code: ''
+                }
+                vm.carTableSelect();
+            });
             $('#myModal').on('shown.bs.modal', function (e) {
                 var map = new EzMap('map');
                 //设置地图级别

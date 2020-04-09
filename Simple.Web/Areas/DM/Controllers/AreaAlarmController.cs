@@ -85,6 +85,23 @@ namespace Simple.Web.Areas.DM.Controllers
             await areaAlarmService.DeleteCarArea(exCarArea);
         }
 
+        [SimpleAction]
+        public async Task BindCars(List<CarExEntity> cars, int areaId, int alarmType)
+        {
+            var list = new List<CarAreaExEntity>();
+            cars.ToList().ForEach(x =>
+            {
+                list.Add(new CarAreaExEntity()
+                {
+                    CARID = x.CARID,
+                    AREAID = areaId,
+                    ALARMTYPE = alarmType,
+                    STATUS = 1
+                });
+            });
+            await areaAlarmService.AddCarArea(list);
+        }
+
         public async Task<JsonResult> QueryArea(int areaId)
         {
             var data = await areaAlarmService.GetAreaExEntity(areaId);

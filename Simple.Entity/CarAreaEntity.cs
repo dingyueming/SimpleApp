@@ -14,17 +14,9 @@ namespace Simple.Entity
         [ExplicitKey]
         public int CARID { get; set; }
         /// <summary>
-        /// 车牌号
-        /// </summary>
-        public string LICENSE { get; set; }
-        /// <summary>
         /// 区域ID
         /// </summary>		
         public int AREAID { get; set; }
-        /// <summary>
-        /// 区域名字
-        /// </summary>
-        public string AREANAME { get; set; }
         /// <summary>
         /// 区域状态 0 禁用 1启用
         /// </summary>		

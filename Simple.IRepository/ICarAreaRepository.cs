@@ -10,5 +10,6 @@ namespace Simple.IRepository
     public interface ICarAreaRepository : IBaseRepository<CarAreaEntity>
     {
         Task InsertCarArea(CarAreaEntity entity);
+        Task BatchInsertCarArea(List<CarAreaEntity> entities);
     }
 }

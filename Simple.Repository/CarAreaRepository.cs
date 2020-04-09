@@ -31,5 +31,20 @@ namespace Simple.Repository
                 throw e;
             }
         }
+        public async Task BatchInsertCarArea(List<CarAreaEntity> entities)
+        {
+            var insSql = @"insert into car_area
+                          (carid, areaid, status, alarmtype, alarmdelaytime, errorscope, mobileareaid, areaflag, overspeed, openlocknumber)
+                        values
+                          (:carid, :areaid, :status, :alarmtype, :alarmdelaytime, :errorscope, :mobileareaid, :areaflag, :overspeed, :openlocknumber)";
+            try
+            {
+                await Connection.ExecuteAsync(insSql, entities);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

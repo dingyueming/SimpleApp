@@ -41,6 +41,11 @@ namespace Simple.Application.DM
             await alarmDomainService.AddCarArea(exEntity);
         }
 
+        public async Task AddCarArea(List<CarAreaExEntity> exEntities)
+        {
+            await alarmDomainService.AddCarArea(exEntities);
+        }
+
         public async Task DeleteCarArea(CarAreaExEntity exEntity)
         {
             await alarmDomainService.DeleteCarArea(exEntity);
