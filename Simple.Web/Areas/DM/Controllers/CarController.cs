@@ -50,7 +50,7 @@ namespace Simple.Web.Areas.DM.Controllers
             var list = await areaAlarmService.GetAllAras();
             return FormerJson(list);
         }
-        [SimpleActionFilter]
+        [SimpleAction]
         public async Task SaveCarArea(CarAreaExEntity exEntity)
         {
             await areaAlarmService.AddCarArea(exEntity);

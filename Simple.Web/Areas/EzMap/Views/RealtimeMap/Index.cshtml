@@ -112,7 +112,8 @@
                             <th>车牌号</th>
                             <th>识别码</th>
                             <th>SIM卡</th>
-                            <th>时间</th>
+                            <th>定位时间</th>
+                            <th>接收时间</th>
                             <th>速度</th>
                             <th>定位</th>
                             <th>方向</th>
@@ -128,6 +129,7 @@
                             <td>{{newtrack.mac}}</td>
                             <td>{{newtrack.sim}}</td>
                             <td>{{newtrack.gnsstime}}</td>
+                            <td>{{newtrack.receive_time}}</td>
                             <td>{{newtrack.speed}}</td>
                             <td>{{newtrack.locate_str}}</td>
                             <td>{{newtrack.heading_str}}</td>
@@ -278,6 +280,8 @@
     map.showScaleControl();
     //设置地图级别
     map.zoomTo(5);
+    //showLayersControl
+    map.showLayersControl();
     //设置中心点
     var centerCoord = new EzCoord(106.661876,26.609144);
     map.centerAtLatlng(centerCoord);
@@ -417,6 +421,7 @@
                 vmRealTime.newRow.mac = dev.mac;
                 vmRealTime.newRow.sim = dev.sim;
                 vmRealTime.newRow.gnsstime = lastTrackData.gnsstime;
+                vmRealTime.newRow.receive_time = lastTrackData.receive_time;
                 vmRealTime.newRow.speed = lastTrackData.speed;
                 vmRealTime.newRow.locate_str = lastTrackData.locateStr;
                 vmRealTime.newRow.heading_str = lastTrackData.headingStr;
@@ -433,6 +438,7 @@
                 var track = list[i];
                 if (track.mac == lastTrackData.mac) {
                     track.gnsstime = lastTrackData.gnsstime;
+                    track.receive_time = lastTrackData.receive_time;
                     track.speed = lastTrackData.speed;
                     track.locate_str = lastTrackData.locateStr;
                     track.heading_str = lastTrackData.headingStr;
@@ -507,15 +513,39 @@
         }
         if (data.alarmData != null) {
             updateAlarmTable(data.mac, data.alarmData);
+            //根据区域id，在地图上显示区域，并使车辆图标在地图中局中显示
+            axios.post('@Url.Action("QueryArea", "AreaAlarm",new { Area="DM"})', Qs.stringify({ areaId: data.alarmData.areaId }))
+                .then(function (response){
+                    if (response.status == 200) {
+                        var areaData = response.data;
+                        if (areaData != null && areaData.areaDetailsOrderBy && areaData.areaDetailsOrderBy != null) {
+                            var coord = [];
+                            var areaDetails = areaData.areaDetailsOrderBy;
+                            if (Array.isArray(areaDetails)) {
+                                for (var i = 0; i < areaDetails.length; i++) {
+                                    coord.push(areaDetails[i].longtitude / 1000000);
+                                    coord.push(areaDetails[i].latitude / 1000000);
+                                }
+                            }
+                            var feature;
+                            ///区域类型 0 矩形1 多边形 2 圆形3线路,4点
+                            if (areaData.areatype == 0) {
+                                feature = new Rectangle(coord.join(), undefined)
+                            } else if (areaData.areatype == 1) {
+                                feature = new Polygon(coord.join(), undefined)
+                            } else {
+                                feature = new Circle(coord.join(), 100, undefined);
+                            }
+                            map.addOverlay(feature);
+                            map.centerAndZoom(new EzCoord(data.alarmData.longitude, data.alarmData.latitude), 12)
+                        }
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
     });
-    //connection.on("Test", function (data) {
-    //    console.log(data);
-    //    var gpsData = data.gpsData;
-    //    gpsData.mac = data.mac;
-    //    gpsData.gnsstime = gpsData.gnssTime;
-    //    updateGpsData(gpsData);
-    //});
 </script>
 <!--VUE-->
 <script>

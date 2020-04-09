@@ -106,7 +106,8 @@
                             <th>车牌号</th>
                             <th>识别码</th>
                             <th>SIM卡</th>
-                            <th>时间</th>
+                            <th>定位时间</th>
+                            <th>接收时间</th>
                             <th>速度</th>
                             <th>定位</th>
                             <th>方向</th>
@@ -123,6 +124,7 @@
                             <td>{{newtrack.mac}}</td>
                             <td>{{newtrack.sim}}</td>
                             <td>{{newtrack.gnsstime}}</td>
+                            <td>{{newtrack.receive_time}}</td>
                             <td>{{newtrack.speed}}</td>
                             <td>{{newtrack.locate_str}}</td>
                             <td>{{newtrack.heading_str}}</td>
@@ -183,6 +185,8 @@
     map.showScaleControl();
     //设置地图级别
     map.zoomTo(5);
+    //showLayersControl
+    map.showLayersControl();
     //设置中心点
     var centerCoord = new EzCoord(106.661876, 26.609144);
     map.centerAtLatlng(centerCoord);
@@ -295,6 +299,7 @@
                                         vmHistory.newRow.mac = dev.mac;
                                         vmHistory.newRow.sim = dev.sim;
                                         vmHistory.newRow.gnsstime = lastTrackData.gnsstime;
+                                        vmHistory.newRow.receive_time = lastTrackData.recorD_TIME;
                                         vmHistory.newRow.speed = lastTrackData.speed;
                                         vmHistory.newRow.locate_str = lastTrackData.locatE_STR;
                                         vmHistory.newRow.heading_str = lastTrackData.headinG_STR;
@@ -345,6 +350,7 @@
                         vmHistory.newRow.mac = dev.mac;
                         vmHistory.newRow.sim = dev.sim;
                         vmHistory.newRow.gnsstime = lastTrackData.gnsstime;
+                        vmHistory.newRow.receive_time = lastTrackData.recorD_TIME;
                         vmHistory.newRow.speed = lastTrackData.speed;
                         vmHistory.newRow.locate_str = lastTrackData.locatE_STR;
                         vmHistory.newRow.heading_str = lastTrackData.headinG_STR;

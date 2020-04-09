@@ -15,5 +15,6 @@ namespace Simple.IDomain
         Task<List<AreaExEntity>> GetAllAras();
         Task AddCarArea(CarAreaExEntity exEntity);
         Task DeleteCarArea(CarAreaExEntity exEntity);
+        Task<AreaExEntity> GetAlarmArea(int areaId);
     }
 }

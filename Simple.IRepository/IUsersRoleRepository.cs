@@ -11,5 +11,6 @@ namespace Simple.IRepository
     {
         Task<UserRoleEntity> GetRoleEntityByUser(int usersId);
         Task<bool> UpdateUsersRole(UserRoleEntity userRoleEntity);
+        Task DeleteUsersRoleByUserId(decimal userId);
     }
 }

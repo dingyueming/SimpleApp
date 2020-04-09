@@ -21,21 +21,28 @@ namespace Simple.Repository
         public async Task<bool> UpdateUsersRole(UserRoleEntity userRoleEntity)
         {
             var trans = Connection.BeginTransaction();
-            bool flag;
             try
             {
                 var delsql = "delete from tb_usersrole t where t.usersid=:usersId";
-                await Connection.ExecuteAsync(delsql, new { usersId = userRoleEntity.Usersid });
-                await InsertAsync(userRoleEntity);
+                await Connection.ExecuteAsync(delsql, new { usersId = userRoleEntity.Usersid }, trans);
+                await Connection.ExecuteAsync(@"insert into tb_usersrole
+                                              (usersroleid, usersid, rolesid, creator, createtime, remark)
+                                            values
+                                              (:usersroleid, :usersid, :rolesid, :creator, :createtime, :remark)", userRoleEntity, trans);
                 trans.Commit();
-                flag = true;
             }
             catch (System.Exception)
             {
                 trans.Rollback();
                 throw;
             }
-            return flag;
+            return true;
+        }
+
+        public async Task DeleteUsersRoleByUserId(decimal usersId)
+        {
+            var delsql = "delete from tb_usersrole t where t.usersid=:usersId";
+            await Connection.ExecuteAsync(delsql, new { usersId });
         }
     }
 }

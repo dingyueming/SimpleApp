@@ -16,5 +16,6 @@ namespace Simple.IRepository
 
         Task InsertAlarmArea(AreaEntity entity);
 
+        Task<AreaEntity> GetAreaEntityById(int areaId);
     }
 }

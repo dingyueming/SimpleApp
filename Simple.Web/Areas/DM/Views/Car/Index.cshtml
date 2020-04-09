@@ -181,10 +181,10 @@
     // 自定义列组件
     Vue.component('table-operation', {
         template: `<span>
-        <a href="" v-on:click.stop.prevent="setAlarmArea(rowData,index)">设置报警区域</a>&nbsp;
         <a href="" v-on:click.stop.prevent="update(rowData,index)">编辑</a>&nbsp;
         <a href="" v-on:click.stop.prevent="deleteRow(rowData,index)">删除</a>
         </span>`,
+        //<a href="" v-on:click.stop.prevent="setAlarmArea(rowData,index)">设置报警区域</a>&nbsp;
         props: {
             rowData: {
                 type: Object
@@ -259,12 +259,14 @@
                     {
                         field: 'area', title: '报警区域', width: 150, titleAlign: 'center', columnAlign: 'left', isResize: true, formatter: function (rowData, index, pagingIndex) {
                             var html = "";
+                            var text = "";
                             if (rowData.areas.length > 0) {
                                 for (var i = 0; i < rowData.areas.length; i++) {
                                     html += '<span style="color:red;font-weight: normal;">' + rowData.areas[i].areaname + ',</span>';
+                                    text += rowData.areas[i].areaname+",";
                                 }
                             }
-                            return html;
+                            return "<div title='" + text + "'>" + html + "</div>";
                         }
                     },
                     { field: 'custome-adv', title: '操作', width: 200, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },

@@ -25,17 +25,17 @@ namespace Simple.Web.Areas.DM.Controllers
             return Json(data);
         }
 
-        [SimpleActionFilter]
+        [SimpleAction]
         public async Task<bool> Add(PersonExEntity exEntity)
         {
             return await personService.Add(exEntity);
         }
-        [SimpleActionFilter]
+        [SimpleAction]
         public async Task<bool> Update(PersonExEntity exEntity)
         {
             return await personService.Update(exEntity);
         }
-        [SimpleActionFilter]
+        [SimpleAction]
         public async Task<bool> Delete(PersonExEntity exEntity)
         {
             return await personService.Delete(new List<PersonExEntity>() { exEntity });

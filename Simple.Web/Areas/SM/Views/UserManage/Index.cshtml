@@ -362,7 +362,7 @@
                     axios.post(url, Qs.stringify(this.row)).then(function (response) {
                         var commonResult = response.data;
                         if (commonResult.isSuccess) {
-                            $('#deviceModal').modal('hide');
+                            $('#myModal').modal('hide');
                             vm.getTableData();
                         } else {
                             vm.$message.error(commonResult.message);
@@ -378,7 +378,6 @@
                         axios.post('@Url.Action("BatchDelete")', Qs.stringify({ exEntities: this.selectedRows })).then(function (response) {
                             var commonResult = response.data;
                             if (commonResult.isSuccess) {
-                                $('#deviceModal').modal('hide');
                                 vm.getTableData();
                             } else {
                                 vm.$message.error(commonResult.message);
@@ -400,7 +399,7 @@
                 axios.post('@Url.Action("SaveUsersRole")', Qs.stringify({ usersid: this.row.usersId, rolesId: this.row.rolesid })).then(response => {
                     var commonResult = response.data;
                     if (commonResult.isSuccess) {
-                        $('#deviceModal').modal('hide');
+                        $('#roleModal').modal('hide');
                         vm.getTableData();
                     } else {
                         vm.$message.error(commonResult.message);
@@ -481,19 +480,6 @@
                                 }
                             }
                         },
-                        email: {
-                            validators: {
-                                notEmpty: {
-                                    message: '邮箱不能位空'
-                                },
-                                emailAddress: {
-                                    message: '邮箱地址格式有误'
-                                }
-                            }
-                        },
-                        status: {
-                            validators: {}
-                        }
                     }
                 });
             }

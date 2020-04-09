@@ -28,6 +28,7 @@ namespace Simple.Infrastructure.Dapper.Contrib
         /// </summary>
         public PropertyInfo PrimaryKey { get; set; }
 
+        private IDbConnection _connection;
         /// <summary>
         /// 数据库连接
         /// </summary>
@@ -35,10 +36,14 @@ namespace Simple.Infrastructure.Dapper.Contrib
         {
             get
             {
-                var connection = ConnectionFactory.CreateConnection();
-                connection.Open();
-                return connection;
+                if (_connection == null)
+                {
+                    _connection = ConnectionFactory.CreateConnection();
+                    _connection.Open();
+                }
+                return _connection;
             }
+            set => value = _connection;
         }
         public IDbConnection GetDbConnection()
         {

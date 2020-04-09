@@ -97,5 +97,25 @@ namespace Simple.Repository
             }
         }
 
+        public async Task<AreaEntity> GetAreaEntityById(int areaId)
+        {
+            var sql = $"select a.*,b.* from area a left join area_detail b on a.areaid=b.areaid where a.areaid={areaId} ";
+            AreaEntity areaEntity = null;
+            await Connection.QueryAsync<AreaEntity, AreaDetailEntity, AreaEntity>(sql, (a, b) =>
+            {
+                if (areaEntity == null)
+                {
+                    areaEntity = a;
+                    areaEntity.AreaDetails.Add(b);
+                }
+                else
+                {
+                    areaEntity.AreaDetails.Add(b);
+                }
+                return a;
+            }, splitOn: "AREAID");
+            return areaEntity;
+        }
+
     }
 }

@@ -184,7 +184,6 @@
                     var pagination = response.data;
                     vm.tableConfig.tableData = pagination.Data;
                     vm.total = pagination.Total;
-                    console.log(vm.tableConfig.tableData);
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -192,7 +191,6 @@
             pageChange(pageIndex) {
                 this.pageIndex = pageIndex;
                 this.getTableData();
-                console.log(pageIndex)
             },
             pageSizeChange(pageSize) {
                 this.pageIndex = 1;
@@ -203,15 +201,12 @@
 
             },
             selectALL(selection){
-                console.log('select-aLL', selection);
                 this.selectedRows = selection;
             },
             selectChange(selection,rowData){
-                console.log('select-change', selection, rowData);
                 this.selectedRows = selection;
             },
             selectGroupChange(selection){
-                console.log('select-group-change',selection);
             },
             deleteSelect() {
                 if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
@@ -226,11 +221,10 @@
                                 alert(commonResult.message);
                             }
                         }).catch(function (error) {
-                            console.log(commonResult.message);
+                            console.log(error);
                         });
                     }
                 }
-                console.log(this.selectedRows);
             },
             select() {
                 this.pageIndex = 1;
@@ -259,11 +253,11 @@
                     if (commonResult.isSuccess) {
                         $('#myModal').modal('hide');
                         vm.getTableData();
-                    }else {
-                        alert(commonResult.message);
+                    } else {
+                        vm.$message.error(commonResult.message);
                     }
                 }).catch(function (error) {
-                    console.log(commonResult.message);
+                    console.log(error);
                 });
             },
             removeBind(carId) {
@@ -273,10 +267,10 @@
                         $('#myModal2').modal('hide');
                         vm.getTableData();
                     } else {
-                        alert(commonResult.message);
+                        vm.$message.error(commonResult.message);
                     }
                 }).catch(function (error) {
-                    console.log(commonResult.message);
+                    console.log(error);
                 });
             }
         },
@@ -286,6 +280,10 @@
         mounted() {
             $('#myModal').on('shown.bs.modal', function (e) {
                 var map = new EzMap('map');
+                //设置地图级别
+                map.zoomTo(8);
+                var centerCoord = new EzCoord(106.661876, 26.609144);
+                map.centerAtLatlng(centerCoord);
                 var drawbtn = document.getElementById("drawbtn");
                 if (vm.pageMode == "view") {
                     $("#divAdd").hide();
@@ -295,7 +293,6 @@
                     var areaDetails = vm.row.AreaDetailsOrderBy;
                     if (Array.isArray(areaDetails)) {
                         for (var i = 0; i < areaDetails.length; i++) {
-                            //var c = new EzCoord(parseFloat(areaDetails[i].LONGTITUDE / 1000000), parseFloat(areaDetails[i].LATITUDE / 1000000));
                             coord.push(areaDetails[i].LONGTITUDE / 1000000);
                             coord.push(areaDetails[i].LATITUDE / 1000000);
                         }
@@ -307,23 +304,35 @@
                     } else if (vm.row.AREATYPE == 1) {
                         feature = new Polygon(coord.join(), undefined)
                     } else {
-                        feature = new Circle(coord.join(), 100, undefined);
+                        var circleCoord = new EzCoord(coord[0], coord[1]);
+                        feature = new Circle(circleCoord, coord[2] * 1000000, undefined);
                     }
                     map.addOverlay(feature);
                     map.centerAndZoom(feature.getCenter(), 12)
                 } else {
                     $("#divView").hide();
                     drawbtn.addEventListener("click", function () {
+                        map.clear();
+                        vm.map.points = [];
                         var selectElement = document.getElementById("drawtype");
                         var type = selectElement[selectElement.selectedIndex].value;
                         map.changeDragMode(type, function (/** feature为Ez.g.*要素类 */feature) {
                             /** 一般鼠标右键结束绘制,回调参数为动态绘制的要素,可以在回调中进行余下操作,例如，增加绘制要素到地图上. */
-                            vm.map.points = feature.getPoints();
+                            if (type != "drawCircle") {
+                                vm.map.points = feature.getPoints();
+                            } else {
+                                var radius = feature.getRadius();
+                                var center = feature.getCenter();
+                                var laji = [];
+                                laji.push(center.coordinate_);
+                                laji.push([radius, 0]);
+                                vm.map.points.push(laji);
+                            }
                             map.addOverlay(feature);
                         });
                     });
-                    var drawbtn = document.getElementById("clearbtn");
-                    drawbtn.addEventListener("click", function () {
+                    var clearbtn = document.getElementById("clearbtn");
+                    clearbtn.addEventListener("click", function () {
                         map.clear();
                         vm.map.points = [];
                     });

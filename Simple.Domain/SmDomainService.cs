@@ -97,7 +97,16 @@ namespace Simple.Domain
         public async Task<bool> UpdateUsersRole(UserRoleExEntity userRoleExEntity)
         {
             var entity = mapper.Map<UserRoleEntity>(userRoleExEntity);
-            return await usersRoleRepository.UpdateUsersRole(entity);
+            if (userRoleExEntity.Rolesid == 0)
+            {
+                //删除角色
+                await usersRoleRepository.DeleteUsersRoleByUserId(userRoleExEntity.Usersid);
+            }
+            else
+            {
+                await usersRoleRepository.UpdateUsersRole(entity);
+            }
+            return true;
         }
 
         #endregion

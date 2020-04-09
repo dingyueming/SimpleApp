@@ -32,36 +32,63 @@ namespace Simple.Web.Areas.DM.Controllers
             return FormerJson(data);
         }
 
-        [SimpleActionFilter]
+        [SimpleAction]
         public async Task Add(AreaExEntity exEntitiy, List<List<double[]>> points)
         {
             exEntitiy.USERID = LoginUser.UsersId;
-            for (int i = 0; i < points[0].Count; i++)
+            //圆的计算方式和其他不一样
+            if (exEntitiy.AREATYPE == 2 && points.Count == 1 && points[0].Count == 2)
             {
-                var lo = points[0][i][0];
-                var la = points[0][i][1];
-                GeoLatLng geo = GPSTool.gcj02towgs84(lo, la);
                 exEntitiy.AreaDetails.Add(new AreaDetailExEntity()
                 {
-                    POINTNO = i,
-                    LONGTITUDE = geo.longitude * 1000000,
-                    LATITUDE = geo.latitude * 1000000,
+                    POINTNO = 0,
+                    LONGTITUDE = points[0][0][0] * 1000000,
+                    LATITUDE = points[0][0][1] * 1000000,
                 });
+                if ((int)points[0][1][0] > 99999)
+                {
+                    throw new Exception("区域范围过大");
+                }
+                exEntitiy.AreaDetails.Add(new AreaDetailExEntity()
+                {
+                    POINTNO = 1,
+                    LONGTITUDE = (int)points[0][1][0],
+                });
+            }
+            else
+            {
+                for (int i = 0; i < points[0].Count; i++)
+                {
+                    var lo = points[0][i][0];
+                    var la = points[0][i][1];
+                    exEntitiy.AreaDetails.Add(new AreaDetailExEntity()
+                    {
+                        POINTNO = i,
+                        LONGTITUDE = lo * 1000000,
+                        LATITUDE = la * 1000000,
+                    });
+                }
             }
             await areaAlarmService.AddAreaAlarm(exEntitiy);
         }
 
-        [SimpleActionFilter]
+        [SimpleAction]
         public async Task BatchDelete(List<AreaExEntity> exEntities)
         {
             await areaAlarmService.DeleteAreaAlarm(exEntities);
         }
 
-        [SimpleActionFilter]
+        [SimpleAction]
         public async Task RemoveBind(int carId)
         {
             var exCarArea = new CarAreaExEntity() { CARID = carId };
             await areaAlarmService.DeleteCarArea(exCarArea);
+        }
+
+        public async Task<JsonResult> QueryArea(int areaId)
+        {
+            var data = await areaAlarmService.GetAreaExEntity(areaId);
+            return Json(data);
         }
     }
 }

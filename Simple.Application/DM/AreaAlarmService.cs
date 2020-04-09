@@ -45,5 +45,10 @@ namespace Simple.Application.DM
         {
             await alarmDomainService.DeleteCarArea(exEntity);
         }
+
+        public async Task<AreaExEntity> GetAreaExEntity(int areaId)
+        {
+            return await alarmDomainService.GetAlarmArea(areaId);
+        }
     }
 }

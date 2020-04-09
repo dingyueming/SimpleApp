@@ -106,6 +106,10 @@ namespace Simple.Web.Models
         /// 定位模式
         /// </summary>
         public string LocateMode { get; set; }
+        /// <summary>
+        /// 接收时间
+        /// </summary>
+        public string Receive_time { get; set; }
     }
     /// <summary>
     /// 报警对象
@@ -184,6 +188,10 @@ namespace Simple.Web.Models
         /// 定位模式
         /// </summary>
         public string LocateMode { get; set; }
+        /// <summary>
+        /// 区域ID
+        /// </summary>
+        public int AreaId { get; set; }
     }
 
 }
