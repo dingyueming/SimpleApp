@@ -54,16 +54,16 @@ namespace Simple.Repository
                     return a;
                 }, splitOn: "areaid");
             }
-           
+
             pagination.Total = await Connection.QuerySingleAsync<int>(totalSql);
             return pagination;
         }
 
         public async Task<CarEntity> GetCarEntityForValdata(CarEntity car)
         {
-            var sql = "select * from cars c where c.license=:license or c.mac=:mac or c.sim=:sim";
+            var sql = "select * from cars c where (c.license=:license or c.mac=:mac or c.sim=:sim)";
             var entity = await Connection.QuerySingleOrDefaultAsync<CarEntity>(sql,
-                    new { license = car.LICENSE, mac = car.MAC, sim = car.SIM });
+                    new { license = car.LICENSE, mac = car.MAC, sim = car.SIM});
             return entity;
         }
     }

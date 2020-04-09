@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Simple.ExEntity.DM;
@@ -26,11 +25,12 @@ namespace Simple.Web.Areas.DM.Controllers
             var data = await carService.GetPage(pagination);
             return Json(data);
         }
-
+        [SimpleAction]
         public async Task<bool> Add(CarExEntity exEntity)
         {
             return await carService.Add(exEntity);
         }
+        [SimpleAction]
         public async Task<bool> Update(CarExEntity exEntity)
         {
             exEntity.RECORDDATE = DateTime.Now;
@@ -41,6 +41,7 @@ namespace Simple.Web.Areas.DM.Controllers
         {
             return await carService.Delete(new List<CarExEntity>() { exEntity });
         }
+        [SimpleAction]
         public async Task<bool> BatchDelete(List<CarExEntity> exEntities)
         {
             return await carService.Delete(exEntities);

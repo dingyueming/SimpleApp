@@ -42,7 +42,7 @@
             </td>
             <td>
                 <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
-                <button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;" data-toggle="modal" onclick="vm.pageMode = 'add';vm.row = []; " data-target="#myModal">新增</button>
+                <button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;" data-toggle="modal" v-on:click="add">新增</button>
                 <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
             </td>
         </tr>
@@ -206,6 +206,7 @@
                 this.$emit('on-custom-comp', params);
             },
             update() {
+                vm.validataForm();
                 vm.row = this.rowData;
                 vm.pageMode = "edit";
                 $('#myModal').modal();
@@ -349,7 +350,17 @@
             selectGroupChange(selection){
                 console.log('select-group-change',selection);
             },
+            add() {
+                this.validataForm();
+                this.pageMode = 'add'; this.row = { };
+                $('#myModal').modal({ backdrop: 'static' });
+            },
             operateData() {
+                $('#myForm').data('bootstrapValidator').validate();//启用验证
+                var flag = $('#myForm').data('bootstrapValidator').isValid()//验证是否通过true/false
+                if (!flag) {
+                    return;
+                }
                 var url = '';
                 switch (this.pageMode) {
                     case "edit":
@@ -367,10 +378,12 @@
                 }
                 if (url) {
                     axios.post(url, Qs.stringify(this.row)).then(function (response) {
-                        var flag = response.data;
-                        if (flag) {
+                        var commonResult = response.data;
+                        if (commonResult.isSuccess) {
                             $('#myModal').modal('hide');
                             vm.getTableData();
+                        } else {
+                            vm.$message.error(commonResult.message);
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -381,10 +394,12 @@
                 if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
                     if (confirm('确认删除吗')) {
                         axios.post('@Url.Action("BatchDelete")', Qs.stringify({ exEntities: this.selectedRows })).then(function (response) {
-                            var flag = response.data;
-                            if (flag) {
+                            var commonResult = response.data;
+                            if (commonResult.isSuccess) {
                                 $('#myModal').modal('hide');
                                 vm.getTableData();
+                            } else {
+                                vm.$message.error(commonResult.message);
                             }
                         }).catch(function (error) {
                             console.log(error);
@@ -422,10 +437,10 @@
                 axios.post('@Url.Action("SaveCarArea")', Qs.stringify(this.carArea)).then(function (response) {
                     var commonResult = response.data;
                     if (commonResult.isSuccess) {
-                        $('#alarmModal').modal('hide');
+                        $('#myModal').modal('hide');
                         vm.getTableData();
                     } else {
-                        alert(commonResult.message);
+                        vm.$message.error(commonResult.message);
                     }
                 }).catch(function (error) {
                     console.log(error);
@@ -436,12 +451,12 @@
             validataForm() {
                 //表单验证
                 $('#myForm').bootstrapValidator({
-                    message: 'This value is not valid',
-                    //feedbackIcons: {
-                    //    valid: 'glyphicon glyphicon-ok',
-                    //    invalid: 'glyphicon glyphicon-remove',
-                    //    validating: 'glyphicon glyphicon-refresh'
-                    //},
+                    message: '',
+                    feedbackIcons: {
+                        valid: 'glyphicon glyphicon-ok',
+                        invalid: 'glyphicon glyphicon-remove',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
                     fields: {
                         license: {
                             validators: {
@@ -468,11 +483,14 @@
                 });
             }
         },
-        created() {
+        mounted() {
             this.getTableData();
             this.queryUnitTree();
             this.queryAlarmArea();
-            this.validataForm();
+            //模态框 关闭前事件
+            $('#myModal').on('hide.bs.modal', function () {
+                $("#myForm").data('bootstrapValidator').destroy();
+            });
         },
     });
 </script>

@@ -112,7 +112,7 @@ namespace Simple.Domain
             var entity = mapper.Map<CarEntity>(exEntity);
             //数据校验
             var valdataEntity = await carRepository.GetCarEntityForValdata(entity);
-            if (valdataEntity != null)
+            if (valdataEntity != null && valdataEntity.CARID != exEntity.CARID)
             {
                 if (valdataEntity.SIM == entity.SIM)
                 {
