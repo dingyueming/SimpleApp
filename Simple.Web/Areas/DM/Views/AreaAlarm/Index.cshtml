@@ -68,7 +68,7 @@
     </div>
     <!--模态窗口-->
     <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog" role="document" style="width:1000px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" style="float:left" id="myModalLabel">区域绑定车辆列表</h4>
@@ -110,25 +110,37 @@
                             <td>
                                 <div class="input-group">
                                     <!-- /btn-group -->
-                                    <treeselect v-model="carTableSearchWhere.unitid" style="width:200px;" :multiple="false" name="searchUnitid" id="searchUnitid" :options="options" />
+                                    <treeselect v-model="carTableSearchWhere.unitid" style="width:150px;" :multiple="false" name="searchUnitid" id="searchUnitid" :options="options" />
                                 </div>
                             </td>
                             <th>车牌号:</th>
                             <td>
                                 <div class="input-group">
                                     <!-- /btn-group -->
-                                    <input type="text" class="form-control" v-model="carTableSearchWhere.name">
+                                    <input type="text" class="form-control" style="width:150px;" v-model="carTableSearchWhere.name">
                                 </div>
                             </td>
                             <th>设备号：</th>
                             <td>
                                 <div class="input-group">
                                     <!-- /btn-group -->
-                                    <input type="text" class="form-control" v-model="carTableSearchWhere.code">
+                                    <input type="text" class="form-control" style="width:150px;" v-model="carTableSearchWhere.code">
                                 </div>
                             </td>
                             <td>
                                 <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="carTableSelect">查询</button>
+                            </td>
+                            <td>报警类型：</td>
+                            <td>
+                                <select v-model="alarmType" class="form-control">
+                                    <option value="0">进入报警</option>
+                                    <option value="1">出去报警</option>
+                                    <option value="2">出入报警</option>
+                                    @*<option value="3">路线偏离报警</option>*@
+                                </select>
+                            </td>
+                            <td>
+                                
                                 <button type="button" id="btn_delete_main" class="btn btn-success" style="margin:10px;" v-on:click="bindCar">绑定</button>
                             </td>
                         </tr>
@@ -280,6 +292,7 @@
             map: {
                 points: [],
             },
+            alarmType:2,
         },
         methods: {
             getTableData() {
@@ -431,7 +444,7 @@
             bindCar() {
                 var carSelectRows = this.carTableConfig.selectedRows;
                 if (carSelectRows.length > 0) {
-                    axios.post('@Url.Action("BindCars")', Qs.stringify({ cars: carSelectRows, areaId: this.row.AREAID, alarmType:2 })).then(function (response) {
+                    axios.post('@Url.Action("BindCars")', Qs.stringify({ cars: carSelectRows, areaId: this.row.AREAID, alarmType: this.alarmType })).then(function (response) {
                         var commonResult = response.data;
                         if (commonResult.isSuccess) {
                             $('#myModal2').modal('hide');

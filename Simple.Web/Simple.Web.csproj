@@ -44,6 +44,8 @@
     <Folder Include="Areas\DM\Data\" />
     <Folder Include="Areas\DM\Models\" />
     <Folder Include="Areas\EzMap\Data\" />
+    <Folder Include="Areas\InterfaceDom\Data\" />
+    <Folder Include="Areas\InterfaceDom\Models\" />
     <Folder Include="Areas\SM\Data\" />
     <Folder Include="Areas\SM\Models\" />
   </ItemGroup>

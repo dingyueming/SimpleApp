@@ -260,10 +260,12 @@
                 }
                 if (url) {
                     axios.post(url, Qs.stringify(this.row)).then(function (response) {
-                        var flag = response.data;
-                        if (flag) {
+                        var commonResult = response.data;
+                        if (commonResult.isSuccess) {
                             $('#myModal').modal('hide');
                             vm.getTableData();
+                        } else {
+                            vm.$message.error(commonResult.message);
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -275,10 +277,12 @@
                     if (confirm('确认删除吗')) {
                         axios.post('@Url.Action("BatchDelete")', Qs.stringify({ exEntities: this.selectedRows })
                         ).then(function (response) {//this.selectedRows
-                            var flag = response.data;
-                            if (flag) {
+                            var commonResult = response.data;
+                            if (commonResult.isSuccess) {
                                 $('#myModal').modal('hide');
                                 vm.getTableData();
+                            } else {
+                                vm.$message.error(commonResult.message);
                             }
                         }).catch(function (error) {
                             console.log(error);

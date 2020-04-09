@@ -28,14 +28,19 @@ namespace Simple.Repository
             try
             {
                 var delSql = "delete from tb_rolemenu t where t.rolesid=:rolesId";
-                await Connection.ExecuteAsync(delSql, new { rolesId = roleMenuExEntities.Select(x => x.Rolesid).FirstOrDefault() });
-                await InsertAsync(roleMenuExEntities);
+                await Connection.ExecuteAsync(delSql, new { rolesId = roleMenuExEntities.Select(x => x.Rolesid).FirstOrDefault() }, trans);
+                var insSql = @"insert into tb_rolemenu
+                              (rolemenuid, rolesid, menusid, creator, createtime, remark)
+                            values
+                              (:rolemenuid, :rolesid, :menusid, :creator, :createtime, :remark)";
+                await Connection.ExecuteAsync(insSql, roleMenuExEntities, trans);
                 trans.Commit();
                 flag = true;
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
                 trans.Rollback();
+                throw e;
             }
             return flag;
         }
