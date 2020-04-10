@@ -195,5 +195,11 @@ namespace Simple.Domain
             var entities = await sjtlAttendancePositionRepository.GetEntities(qm.DateTimes[0], qm.DateTimes[1], qm.Points.Count == 4 ? qm.Points[0] : null, qm.Points.Count == 4 ? qm.Points[2] : null, qm.NameOrPoliceCode);
             return mapper.Map<List<SjtlAttendancePositionExEntity>>(entities);
         }
+
+        public async Task<LastLocatedExEntity> GetLastLocatedByMac(string mac)
+        {
+            var entity = await lastLocatedRepository.GetEntityByMac(mac);
+            return mapper.Map<LastLocatedExEntity>(entity);
+        }
     }
 }

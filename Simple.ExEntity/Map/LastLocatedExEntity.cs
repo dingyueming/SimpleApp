@@ -82,6 +82,7 @@ namespace Simple.ExEntity.Map
         /// mac
         /// </summary>
         public string Mac { get; set; }
+        public string License { get; set; }
         public string HeadingStr
         {
             get

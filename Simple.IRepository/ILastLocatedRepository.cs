@@ -10,5 +10,7 @@ namespace Simple.IRepository
     public interface ILastLocatedRepository : IBaseRepository<LastLocatedEntity>
     {
         Task<List<LastLocatedEntity>> GetLastLocatedEntityByUser(int userId);
+
+        Task<LastLocatedEntity> GetEntityByMac(string mac);
     }
 }

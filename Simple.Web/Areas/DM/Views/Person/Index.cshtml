@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = Context.Request.Query["pageCate"] == "person" ? "人员信息管理" : "对讲机管理";
+    ViewData["Title"] = ViewData["Title"] ?? "对讲机信息管理";
     //ViewData["Title"] = "人员信息管理";
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Version"] = "20200106";

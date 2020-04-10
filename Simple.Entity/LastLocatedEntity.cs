@@ -85,6 +85,11 @@ namespace Simple.Entity
         /// </summary>
         [Computed]
         public string Mac { get; set; }
+        /// <summary>
+        /// LIcense
+        /// </summary>
+        [Computed]
+        public string License { get; set; }
     }
 }
 

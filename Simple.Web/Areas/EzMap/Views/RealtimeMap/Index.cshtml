@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "实时监控";
+    ViewData["Title"] = ViewData["Title"] ?? "实时监控";
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Version"] = "20191219";
 }
@@ -143,7 +143,7 @@
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_2">
-                    <table class="table table-condensed">
+                    <table class="table table-hover">
                         <tr>
                             <th>车牌号</th>
                             <th>识别码</th>
@@ -156,7 +156,7 @@
                             <th>定位</th>
                             <th>定位模式</th>
                         </tr>
-                        <tr v-for="(alarmData,index) in alarmDatas">
+                        <tr v-for="(alarmData,index) in alarmDatas" v-on:dblclick="dbclickLocationTable(alarmData.mac)">
                             <td>{{alarmData.license}}</td>
                             <td>{{alarmData.mac}}</td>
                             <td>{{alarmData.sim}}</td>
@@ -537,7 +537,7 @@
                                 feature = new Circle(coord.join(), 100, undefined);
                             }
                             map.addOverlay(feature);
-                            map.centerAndZoom(new EzCoord(data.alarmData.longitude, data.alarmData.latitude), 12)
+                            map.centerAndZoom(new EzCoord(data.alarmData.longitude, data.alarmData.latitude), 14)
                         }
                     }
                 })
@@ -577,7 +577,7 @@
                 if (device && device.lastTrackData) {
                     //设置中心点
                     var centerCoord = new EzCoord(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                    map.centerAndZoom(centerCoord, 12);
+                    map.centerAndZoom(centerCoord, 14);
                     device.marker.title_.defaultStyle_.fontColor = "#FF0000";
                 }
             }
@@ -720,7 +720,7 @@
                     if (device && device.lastTrackData) {
                         //设置中心点
                         var centerCoord = new EzCoord(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                        map.centerAndZoom(centerCoord, 12);
+                        map.centerAndZoom(centerCoord, 14);
                         device.marker.title_.defaultStyle_.fontColor = "#FF0000";
                     }
                 }

@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "区域报警设置";
+    ViewData["Title"] = ViewData["Title"] ?? "区域报警设置";
     ViewData["Version"] = "20200218";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -140,7 +140,7 @@
                                 </select>
                             </td>
                             <td>
-                                
+
                                 <button type="button" id="btn_delete_main" class="btn btn-success" style="margin:10px;" v-on:click="bindCar">绑定</button>
                             </td>
                         </tr>

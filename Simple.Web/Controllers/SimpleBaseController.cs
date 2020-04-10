@@ -14,12 +14,14 @@ using Simple.IApplication.DM;
 using Simple.IApplication.SM;
 using Simple.Web.Other.ServiceExpend;
 using Microsoft.Extensions.Caching.Memory;
+using Simple.ExEntity.SM;
 
 namespace Simple.Web.Controllers
 {
     [Authorize]
     public class SimpleBaseController : Controller
     {
+        #region 构造函数
         private readonly IMenusService menusService;
         private readonly IUnitService unitService;
         private readonly IConfiguration configuration;
@@ -32,7 +34,9 @@ namespace Simple.Web.Controllers
             unitService = (IUnitService)serviceProvider.GetService(typeof(IUnitService));
             configuration = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
         }
+        #endregion
 
+        #region 页面BaseIndex
         public virtual IActionResult Index()
         {
             ViewBag.UserName = LoginUser.UsersName;
@@ -46,9 +50,31 @@ namespace Simple.Web.Controllers
             {
                 ViewBag.MapCss = strMapCssUrl.Split('|').ToList();
             }
+
+            //根据当前页面url设置页面的title
+            var path = HttpContext.Request.Path;
+            if (path.HasValue)
+            {
+                foreach (var menu in UsersMenus)
+                {
+                    var secondMenu = menu.ChildMenus.FirstOrDefault(x => x.MenusUrl.IndexOf(path.Value) > -1);
+                    if (secondMenu != null)
+                    {
+                        ViewBag.Title = secondMenu.MenusName;
+                    }
+                }
+
+            }
             return View();
         }
 
+        #endregion
+
+        #region 属性
+
+        /// <summary>
+        /// 登录用户
+        /// </summary>
         public UsersExEntity LoginUser
         {
             get
@@ -64,6 +90,29 @@ namespace Simple.Web.Controllers
                 return user;
             }
         }
+
+        /// <summary>
+        /// 用户拥有的菜单
+        /// </summary>
+        public List<MenusExEntity> UsersMenus
+        {
+            get
+            {
+                var flag = memoryCache.TryGetValue("cacheMenu", out var menus);
+                if (!flag)
+                {
+                    menus = menusService.GetMenusByUser(LoginUser.UsersId).Result;
+                    memoryCache.Set("cacheMenu", menus, DateTime.Now.AddMinutes(30) - DateTime.Now);
+                }
+                return menus as List<MenusExEntity>;
+            }
+        }
+
+
+        #endregion
+
+        #region 方法
+
         /// <summary>
         /// 查询用户所拥有的菜单
         /// </summary>
@@ -88,26 +137,29 @@ namespace Simple.Web.Controllers
             var menus = await menusService.GetAllMenus();
             return Json(menus);
         }
+        /// <summary>
+        /// 查询单位树
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> QueryUnitTree()
         {
             var trees = await unitService.GetUnitTree();
             return Json(trees);
         }
-        public async Task GetAuth()
-        {
-            var auth = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (auth.Succeeded)
-            {
-                var aa = auth.Principal.Identity;
-            }
-        }
 
         #region 重载Json方法
 
+        /// <summary>
+        /// 格式化返回JSON
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>返回值不会修改属性的大小写</returns>
         internal JsonResult FormerJson(object data)
         {
             return Json(data, new Newtonsoft.Json.JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() });
         }
+
+        #endregion
 
         #endregion
     }
