@@ -47,7 +47,6 @@ namespace Simple.Web
             #region SignalR
             services.AddSignalR().AddJsonProtocol(option => { option.PayloadSerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss"; });
             services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddSingleton<GnssSocket>();
             services.AddSingleton<MapHub>();
 
             #endregion

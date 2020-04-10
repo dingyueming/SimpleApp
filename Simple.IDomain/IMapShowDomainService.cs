@@ -31,6 +31,5 @@ namespace Simple.IDomain
 
         Task<List<SjtlAttendancePositionExEntity>> GetSjtlAttenPosExEnties(SjtlAttPosQm qm);
 
-        Task<LastLocatedExEntity> GetLastLocatedByMac(string mac);
     }
 }

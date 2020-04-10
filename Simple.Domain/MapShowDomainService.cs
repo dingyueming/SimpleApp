@@ -196,10 +196,5 @@ namespace Simple.Domain
             return mapper.Map<List<SjtlAttendancePositionExEntity>>(entities);
         }
 
-        public async Task<LastLocatedExEntity> GetLastLocatedByMac(string mac)
-        {
-            var entity = await lastLocatedRepository.GetEntityByMac(mac);
-            return mapper.Map<LastLocatedExEntity>(entity);
-        }
     }
 }

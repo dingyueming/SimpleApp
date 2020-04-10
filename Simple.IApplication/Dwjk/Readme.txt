@@ -1,0 +1,1 @@
+﻿“对外接口”应用服务模块，提供对外应用接口 使用ifdomainService领域（if=interface)
