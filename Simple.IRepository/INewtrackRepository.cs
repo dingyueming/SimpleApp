@@ -10,5 +10,7 @@ namespace Simple.IRepository
     public interface INewtrackRepository : IBaseRepository<NewTrackEntity>
     {
         Task<List<NewTrackEntity>> GetNewtracksByDeviceId(dynamic queryModel);
+
+        Task<List<NewTrackEntity>> GetNewTrackEntities(string keyword);
     }
 }

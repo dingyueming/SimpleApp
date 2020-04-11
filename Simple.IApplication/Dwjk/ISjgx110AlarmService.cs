@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Simple.IApplication.Dwjk
 {
-    public interface ILastLocatedService
+    public interface ISjgx110AlarmService
     {
-        Task<LastLocatedExEntity> GetLastLocatedByMac(string mac);
-        Task<LastLocatedExEntity> GetLastLocated(string keyword);
+        Task<List<Sjgx110AlarmExEntity>> GetAlarmPositionList(DateTime startTime, DateTime endTime);
     }
 }

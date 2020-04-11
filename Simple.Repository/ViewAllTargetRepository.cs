@@ -24,5 +24,18 @@ namespace Simple.Repository
             var devices = await Connection.QueryAsync<ViewAllTargetEntity>(sql);
             return devices.AsList();
         }
+
+        public async Task<ViewAllTargetEntity> GetViewAllTargetByKeyword(string keyword)
+        {
+            var sql = "select v.* from view_all_target v where v.mac=:keyword or v.license=:keyword";
+            return await Connection.QueryFirstOrDefaultAsync<ViewAllTargetEntity>(sql, new { keyword });
+        }
+
+        public async Task<List<ViewAllTargetEntity>> GetViewAllTarget(string[] orgCodes)
+        {
+            var sql = "select v.* from view_all_target v where v.org_code in :orgCodes";
+            var entities = await Connection.QueryAsync<ViewAllTargetEntity>(sql, new { orgCodes });
+            return entities.AsList();
+        }
     }
 }

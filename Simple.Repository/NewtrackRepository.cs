@@ -23,11 +23,24 @@ namespace Simple.Repository
             }
             sb.Append(" order by t.gnsstime");
             var command = new CommandDefinition(sb.ToString(), new { deviceid = queryModel.DeviceId, starttime = queryModel.StartTime, endtime = queryModel.EndTime, minspeed = queryModel.MinSpeed });
-            var list = await Connection.QueryAsync<NewTrackEntity, ViewAllTargetEntity, NewTrackEntity>(command,(a,b)=>{
+            var list = await Connection.QueryAsync<NewTrackEntity, ViewAllTargetEntity, NewTrackEntity>(command, (a, b) =>
+            {
                 a.Device = b;
                 return a;
             }, splitOn: "carid");
             return list.AsList();
         }
+
+        public async Task<List<NewTrackEntity>> GetNewTrackEntities(string keyword)
+        {
+            var sql = $"select t.*,v.* from newtrack t join view_all_target v on t.carid =v.carid where t.gnsstime>=sysdate-3 and (v.mac='{keyword}' or v.license='{keyword}')";
+            var list = await Connection.QueryAsync<NewTrackEntity, ViewAllTargetEntity, NewTrackEntity>(sql, (a, b) =>
+            {
+                a.Device = b;
+                return a;
+            }, splitOn: "carid");
+            return list.ToList();
+        }
+
     }
 }

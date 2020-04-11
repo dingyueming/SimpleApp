@@ -11,5 +11,7 @@ namespace Simple.IRepository
     {
         Task<List<ViewAllTargetEntity>> GetDevicesByUser(int userId);
         Task<List<ViewAllTargetEntity>> GetAllDevice();
+        Task<ViewAllTargetEntity> GetViewAllTargetByKeyword(string keyword);
+        Task<List<ViewAllTargetEntity>> GetViewAllTarget(string[] orgCodes);
     }
 }

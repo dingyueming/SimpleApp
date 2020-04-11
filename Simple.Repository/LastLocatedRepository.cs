@@ -24,5 +24,12 @@ namespace Simple.Repository
             var entity = await Connection.QueryFirstOrDefaultAsync<LastLocatedEntity>(sql, new { mac });
             return entity;
         }
+
+        public async Task<LastLocatedEntity> GetEntityByKeyword(string keyword)
+        {
+            var sql = "select t.*,c.mac,c.license from newtrack_lastlocated t join  view_all_target c on t.carid=c.carid where c.mac=:keyword or c.license=:keyword";
+            var entity = await Connection.QueryFirstOrDefaultAsync<LastLocatedEntity>(sql, new { keyword });
+            return entity;
+        }
     }
 }

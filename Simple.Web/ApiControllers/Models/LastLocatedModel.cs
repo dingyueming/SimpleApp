@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Simple.Web.Models.OutputModels
+namespace Simple.Web.ApiControllers.Models
 {
 
     public class LastLocatedModel
     {
         
-        public string License { get; set; }
+        public string Name { get; set; }
         
         public string Mac { get; set; }
         

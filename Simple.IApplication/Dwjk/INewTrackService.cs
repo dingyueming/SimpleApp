@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Simple.IApplication.Dwjk
 {
-    public interface ILastLocatedService
+    public interface INewTrackService
     {
-        Task<LastLocatedExEntity> GetLastLocatedByMac(string mac);
-        Task<LastLocatedExEntity> GetLastLocated(string keyword);
+        Task<List<NewTrackExEntity>> GetHistoryTrackList(string keyword);
     }
 }

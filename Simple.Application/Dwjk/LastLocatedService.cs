@@ -17,5 +17,10 @@ namespace Simple.Application.Dwjk
         {
             return await ifDomainService.GetLastLocatedByMac(mac);
         }
+
+        public async Task<LastLocatedExEntity> GetLastLocated(string keyword)
+        {
+            return await ifDomainService.GetLastLocated(keyword);
+        }
     }
 }

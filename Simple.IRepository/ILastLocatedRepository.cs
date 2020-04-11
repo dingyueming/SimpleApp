@@ -12,5 +12,7 @@ namespace Simple.IRepository
         Task<List<LastLocatedEntity>> GetLastLocatedEntityByUser(int userId);
 
         Task<LastLocatedEntity> GetEntityByMac(string mac);
+
+        Task<LastLocatedEntity> GetEntityByKeyword(string keyword);
     }
 }

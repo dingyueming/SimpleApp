@@ -12,5 +12,14 @@ namespace Simple.IDomain
     {
         Task<LastLocatedExEntity> GetLastLocatedByMac(string mac);
 
+        Task<LastLocatedExEntity> GetLastLocated(string keyword);
+
+        Task<List<NewTrackExEntity>> GetHistoryTrackList(string keyword);
+
+        Task<ViewAllTargetExEntity> GetViewAllTarget(string keyword);
+
+        Task<List<ViewAllTargetExEntity>> GetViewAllTargetListByOrgcode(string code);
+
+        Task<List<Sjgx110AlarmExEntity>> GetAlarmPositionList(DateTime startTime, DateTime endTime);
     }
 }

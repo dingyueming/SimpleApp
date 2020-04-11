@@ -8,20 +8,20 @@ namespace Simple.Web.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LastlocatedController : ControllerBase
+    public class CurrentTrackController : ControllerBase
     {
         private readonly ILastLocatedService lastLocatedService;
 
-        public LastlocatedController(ILastLocatedService lastLocatedService)
+        public CurrentTrackController(ILastLocatedService lastLocatedService)
         {
             this.lastLocatedService = lastLocatedService;
         }
 
-        public async Task<LastLocatedModel> Get(string mac)
+        public async Task<LastLocatedModel> Get(string keyword)
         {
             try
             {
-                var entity = await lastLocatedService.GetLastLocatedByMac(mac);
+                var entity = await lastLocatedService.GetLastLocated(keyword);
                 if (entity != null)
                 {
                     return new LastLocatedModel
