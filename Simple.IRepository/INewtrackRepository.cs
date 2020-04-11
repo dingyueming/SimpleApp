@@ -11,6 +11,6 @@ namespace Simple.IRepository
     {
         Task<List<NewTrackEntity>> GetNewtracksByDeviceId(dynamic queryModel);
 
-        Task<List<NewTrackEntity>> GetNewTrackEntities(string keyword);
+        Task<List<NewTrackEntity>> GetNewTrackEntities(string keyword, DateTime startTime, DateTime endTime);
     }
 }

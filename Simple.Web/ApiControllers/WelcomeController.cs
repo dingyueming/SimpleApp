@@ -16,5 +16,10 @@ namespace Simple.Web.ApiControllers
         {
             return "success";
         }
+        [HttpGet("{id}")]
+        public string Get(int id)
+        {
+            return $"success{id}";
+        }
     }
 }

@@ -18,12 +18,12 @@ namespace Simple.Web.ApiControllers
         {
             this.viewAllTargetService = viewAllTargetService;
         }
-        public async Task<List<DeviceModel>> Get(string orgCode)
+        public async Task<List<DeviceModel>> Get(string keyword)
         {
             try
             {
                 var list = new List<DeviceModel>();
-                var exEntities = await viewAllTargetService.GetViewAllTargetListByOrgcode(orgCode);
+                var exEntities = await viewAllTargetService.GetViewAllTargetListByOrgcode(keyword);
                 if (exEntities != null && exEntities.Count > 0)
                 {
                     exEntities.ForEach((exEntity) =>

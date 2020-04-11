@@ -49,9 +49,9 @@ namespace Simple.Domain
             return mapper.Map<LastLocatedExEntity>(entity);
         }
 
-        public async Task<List<NewTrackExEntity>> GetHistoryTrackList(string keyword)
+        public async Task<List<NewTrackExEntity>> GetHistoryTrackList(string keyword, DateTime startTime, DateTime endTime)
         {
-            var entities = await newtrackRepository.GetNewTrackEntities(keyword);
+            var entities = await newtrackRepository.GetNewTrackEntities(keyword, startTime, endTime);
             return mapper.Map<List<NewTrackExEntity>>(entities);
         }
 

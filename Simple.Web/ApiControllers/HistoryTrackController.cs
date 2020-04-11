@@ -20,12 +20,18 @@ namespace Simple.Web.ApiControllers
             this.newTrackService = newTrackService;
         }
 
-        public async Task<List<LastLocatedModel>> Get(string keyword)
+        public async Task<dynamic> Get(string keyword, string startTime, string endTime)
         {
             try
             {
+                var timespan = DateTime.Parse(endTime) - DateTime.Parse(startTime);
+                if (timespan.TotalDays > 3)
+                {
+                    return "间隔时间不能大于3天";
+                }
+
                 var list = new List<LastLocatedModel>();
-                var entities = await newTrackService.GetHistoryTrackList(keyword);
+                var entities = await newTrackService.GetHistoryTrackList(keyword, DateTime.Parse(startTime), DateTime.Parse(endTime));
                 if (entities != null && entities.ToList().Count > 0)
                 {
                     foreach (var entity in entities.ToList())

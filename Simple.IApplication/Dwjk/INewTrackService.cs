@@ -8,6 +8,6 @@ namespace Simple.IApplication.Dwjk
 {
     public interface INewTrackService
     {
-        Task<List<NewTrackExEntity>> GetHistoryTrackList(string keyword);
+        Task<List<NewTrackExEntity>> GetHistoryTrackList(string keyword, DateTime startTime, DateTime endTime);
     }
 }

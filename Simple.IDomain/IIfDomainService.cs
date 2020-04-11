@@ -14,7 +14,7 @@ namespace Simple.IDomain
 
         Task<LastLocatedExEntity> GetLastLocated(string keyword);
 
-        Task<List<NewTrackExEntity>> GetHistoryTrackList(string keyword);
+        Task<List<NewTrackExEntity>> GetHistoryTrackList(string keyword, DateTime startTime, DateTime endTime);
 
         Task<ViewAllTargetExEntity> GetViewAllTarget(string keyword);
 

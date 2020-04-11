@@ -31,10 +31,11 @@ namespace Simple.Repository
             return list.AsList();
         }
 
-        public async Task<List<NewTrackEntity>> GetNewTrackEntities(string keyword)
+        public async Task<List<NewTrackEntity>> GetNewTrackEntities(string keyword, DateTime startTime, DateTime endTime)
         {
-            var sql = $"select t.*,v.* from newtrack t join view_all_target v on t.carid =v.carid where t.gnsstime>=sysdate-3 and (v.mac='{keyword}' or v.license='{keyword}')";
-            var list = await Connection.QueryAsync<NewTrackEntity, ViewAllTargetEntity, NewTrackEntity>(sql, (a, b) =>
+            var sql = $"select t.*,v.* from newtrack t join view_all_target v on t.carid =v.carid where t.gnsstime between :starttime and :endtime and (v.mac=:keyword or v.license=:keyword)";
+            var command = new CommandDefinition(sql, new { startTime, endTime, keyword });
+            var list = await Connection.QueryAsync<NewTrackEntity, ViewAllTargetEntity, NewTrackEntity>(command, (a, b) =>
             {
                 a.Device = b;
                 return a;
