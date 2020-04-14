@@ -3,11 +3,32 @@
     var vmLbsAlarm = new Vue({
         el: '#vmLbsAlarm',
         data: {
-            map: {},//地图对象
-            search: {//查询
+            //地图对象
+            map: {},
+            //查询对象
+            search: {
                 timeValue: [new Date(new Date(new Date().toLocaleDateString()).getTime()), new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)],
                 points: null,
                 feature: null,
+                drawType: 'drawRect',
+            },
+            //画框类型
+            options: [{
+                value: 'drawCircle',
+                label: '圆'
+            },
+            {
+                value: 'drawPolygon',
+                label: '多边形'
+            },
+            {
+                value: 'drawRect',
+                label: '矩形'
+            }],
+            //设备对象
+            device: {
+                //设备列表
+                list: [],
             },
         },
         methods: {
@@ -42,9 +63,17 @@
                     }
                 });
             },
+            //初始化设备列表
+            initDeviceList() {
+                axios.post('../RealTimeMap/QueryDeviceList', Qs.stringify()).then((response) => {
+                    vmLbsAlarm.deviceList = response.data;
+                }).catch((error) => {
+                    console.log(error);
+                });
+            },
             //画框
             drawAction() {
-                this.map.changeDragMode('drawRect', function (/** feature为Ez.g.*要素类 */feature) {
+                this.map.changeDragMode(vmLbsAlarm.search.drawType, function (/** feature为Ez.g.*要素类 */feature) {
                     /** 一般鼠标右键结束绘制,回调参数为动态绘制的要素,可以在回调中进行余下操作,例如，增加绘制要素到地图上. */
                     vmLbsAlarm.map.addOverlay(feature);
                     vmLbsAlarm.search.points = feature.getPoints()[0];
@@ -99,10 +128,22 @@
                     loading.close();
                     console.log(error);
                 });
+            },
+            //启动signalr
+            startSignalR() {
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl("../mapHub")
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
+                connection.start().then(() => { }).catch(err => console.error(err.toString()));
+                connection.on("UpdateMapData", function (data) {
+
+                });
             }
         },
         mounted() {
             this.initMap();
+            this.initDeviceList();
         }
     });
 })();

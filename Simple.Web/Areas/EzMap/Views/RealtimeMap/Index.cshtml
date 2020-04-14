@@ -234,7 +234,8 @@
                         anchorYUnits: 'fraction',
                         opacity: 1
                     });
-                    if (!(imgName.indexOf("gray") > -1 || imgName.indexOf("blue") > -1)) {
+                    //隐藏地图上不在线的车辆
+                    if (!(imgName.indexOf("off") > -1 || imgName.indexOf("blue") > -1)) {
                         device.marker.setIcon(icon);
                     } else {
                         device.marker.showTitle();
@@ -321,7 +322,7 @@
             device.marker.setIcon(icon);
             device.marker.setPoint(newpos);
             device.marker.title.setPosition(newpos);
-            device.marker.title.setOffset([0,-20]);
+            device.marker.title.setOffset([0,-40]);
             //更新tree的icon
             updateTreeNode(device, getCarTreeStateSkin(lastTrackData));;
 
@@ -492,7 +493,7 @@
             } else {
                 openedHtml += "<tr><td>车牌号：</td><td>" + title + "</td></tr>";
             }
-            return "<table style='text-align:left;'>" + openedHtml + tmpArr.join(' ') + "<table>";
+            return "<table style='text-align:left; line-height:22px;'>" + openedHtml + tmpArr.join(' ') + "<table>";
         }
         return "";
     }
@@ -662,7 +663,7 @@
                                     "strokeWidth": 1,
                                     "lineHeight": 2.2,
                                     "paddingH": 15,
-                                    "offset": [0, -20]
+                                    "offset": [0, -40]
                                 });
                                 //marker点
                                 var position = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);

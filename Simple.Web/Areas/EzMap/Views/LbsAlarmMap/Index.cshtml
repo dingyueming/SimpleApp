@@ -8,7 +8,7 @@
     <!--map-->
     @foreach (var item in ViewBag.MapCss as List<string>)
     {
-        <link rel="stylesheet" type="text/css" href="@item">
+    <link rel="stylesheet" type="text/css" href="@item">
     }
     <!--Popup-->
     <link rel="stylesheet" type="text/css" href="~/plugins/ezMap/css/popup.css" />
@@ -17,8 +17,11 @@
     <!--map-->
     @foreach (var item in ViewBag.MapJs as List<string>)
     {
-        <script src="@item"></script>
+    <script src="@item"></script>
     }
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/plugins/ezMap/js/MapTools.js"></script>
+    <script src="~/plugins/ezMap/js/bmapLib.js"></script>
 }
 <div id="vmLbsAlarm">
     <div class="row">
@@ -35,6 +38,15 @@
                         </el-date-picker>
                     </div>
                     <button type="button" v-on:click="searchAction" class="btn btn-success">查询</button>
+                    <div class="input-group">
+                        <el-select v-model="search.drawType" placeholder="请选择">
+                            <el-option v-for="item in options"
+                                       :key="item.value"
+                                       :label="item.label"
+                                       :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
                     <button type="button" v-on:click="drawAction" class="btn btn-github">框选查询</button>
                 </div>
 

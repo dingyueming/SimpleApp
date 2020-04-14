@@ -28,15 +28,19 @@ function getCarStateIcon(gpsData) {
         }
         else if (gpsData.mac.length == 10) {//车
             if (minute > 3) { //3分钟未上线判断为 离线
-                return 'car-gray.png';
+                //return 'car-gray.png';
+                return 'off.png';
             }
             if (gpsData.locate === 0) { //未定位
-                return "car-white.png";
+                //return "car-white.png";
+                return 'nogps.png';
             }
             if (gpsData.speed < 3) { //小于3KM/h 判断为停车
-                return 'car-yellow.png';
+                //return 'car-yellow.png';
+                return 'stop.png';
             }
-            return 'car-green.png'; //行驶中
+            //return 'car-green.png'; //行驶中
+            return 'run.png';
         }
         return 'person-gray.png';
     }
