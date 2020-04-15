@@ -188,6 +188,10 @@
                         this.search.points = null;
                         //启动signalR
                         this.startSignalR();
+                        if (this.search.feature) {
+                            //在地图上显示画框
+                            this.map.addOverlay(this.search.feature)
+                        }
                         loading.close();
                     }
                 }).catch((error) => {

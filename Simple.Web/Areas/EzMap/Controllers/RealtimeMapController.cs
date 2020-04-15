@@ -23,7 +23,6 @@ namespace Simple.Web.Areas.EzMap.Controllers
 
         public override IActionResult Index()
         {
-            ViewBag.SignalrUrl = configuration["SignalrUrl"];
             return base.Index();
         }
 
