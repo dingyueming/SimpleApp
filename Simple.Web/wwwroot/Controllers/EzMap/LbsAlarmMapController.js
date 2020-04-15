@@ -1,4 +1,5 @@
-﻿(function () {
+﻿
+(function () {
     'use strict';
     var vmLbsAlarm = new Vue({
         el: '#vmLbsAlarm',
@@ -10,10 +11,15 @@
                 timeValue: [new Date(new Date(new Date().toLocaleDateString()).getTime()), new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)],
                 points: null,
                 feature: null,
-                drawType: 'drawRect',
+                drawType: '',
+                checked: false,
             },
             //画框类型
             options: [{
+                value: '',
+                label: ''
+            },
+            {
                 value: 'drawCircle',
                 label: '圆'
             },
@@ -25,11 +31,10 @@
                 value: 'drawRect',
                 label: '矩形'
             }],
-            //设备对象
-            device: {
-                //设备列表
-                list: [],
-            },
+            //设备列表
+            deviceList: [],
+            //signalConnection
+            signalConnection: undefined,
         },
         methods: {
             //初始化地图
@@ -63,6 +68,29 @@
                     }
                 });
             },
+            //marker的popup
+            getGpsInfoWinContent(title, gpsData) {
+                //车牌号、所属单位、识别码、时间、速度、方向、状态
+                var device = this.getDeviceByMac(gpsData.mac);
+                if (device) {
+                    var tmpArr = [
+                        "<tr><td>单位：</td><td>" + device.unitname + "</td></tr>",
+                        "<tr><td>识别码：</td><td>" + device.mac + "</td></tr>",
+                        "<tr><td>时间：</td><td>" + gpsData.gnsstime + "</td></tr>",
+                        "<tr><td>速度：</td><td>" + gpsData.speed + "</td></tr>",
+                        "<tr><td>方向：</td><td>" + gpsData.headingStr + "</td></tr>",
+                        "<tr><td>状态：</td><td>" + gpsData.status_Str + "</td></tr>",
+                    ];
+                    var openedHtml = "";
+                    if (gpsData.mac.length == 8) {
+                        openedHtml += "<tr><td>对讲机：</td><td>" + title + "</td></tr>";
+                    } else {
+                        openedHtml += "<tr><td>车牌号：</td><td>" + title + "</td></tr>";
+                    }
+                    return "<table style='text-align:left; line-height:22px;'>" + openedHtml + tmpArr.join(' ') + "<table>";
+                }
+                return "";
+            },
             //初始化设备列表
             initDeviceList() {
                 axios.post('../RealTimeMap/QueryDeviceList', Qs.stringify()).then((response) => {
@@ -71,12 +99,23 @@
                     console.log(error);
                 });
             },
+            getDeviceByMac(mac) {
+                if (Array.isArray(this.deviceList)) {
+                    for (var i = 0; i < this.deviceList.length; i++) {
+                        if (this.deviceList[i].mac === mac) {
+                            return this.deviceList[i];
+                        }
+                    }
+                }
+            },
             //画框
             drawAction() {
                 this.map.changeDragMode(vmLbsAlarm.search.drawType, function (/** feature为Ez.g.*要素类 */feature) {
                     /** 一般鼠标右键结束绘制,回调参数为动态绘制的要素,可以在回调中进行余下操作,例如，增加绘制要素到地图上. */
                     vmLbsAlarm.map.addOverlay(feature);
-                    vmLbsAlarm.search.points = feature.getPoints()[0];
+                    if (vmLbsAlarm.search.drawType == 'drawRect') {
+                        vmLbsAlarm.search.points = feature.getPoints()[0];
+                    }
                     vmLbsAlarm.search.feature = feature;
                     vmLbsAlarm.searchAction();
                 });
@@ -88,6 +127,13 @@
                     return;
                 }
                 this.map.clear();
+                //清除所有设备的marker
+                for (var i = 0; i < this.deviceList.length; i++) {
+                    var device = this.deviceList[i];
+                    if (device.marker) {
+                        device.marker = null;
+                    }
+                }
                 const loading = this.$loading({
                     lock: true,
                     text: 'Loading',
@@ -99,6 +145,22 @@
                         var listAlarm = response.data;
                         if (listAlarm && Array.isArray(listAlarm)) {
                             listAlarm.forEach((alarm) => {
+                                var flag = false;
+                                if (vmLbsAlarm.search.drawType != '') {
+                                    //判断点是否在多边形内
+                                    if (vmLbsAlarm.search.drawType == 'drawPolygon' || vmLbsAlarm.search.drawType == 'drawRect') {
+                                        var points = vmLbsAlarm.search.feature.getPoints()[0]
+                                        flag = MapLib.pointInsidePolygon(points, [alarm.jd, alarm.wd]);
+                                    }
+                                    //判断点是否在圆内
+                                    if (vmLbsAlarm.search.drawType == 'drawCircle') {
+                                        var center = vmLbsAlarm.search.feature.getCenter();
+                                        var radius = vmLbsAlarm.search.feature.getRadius();
+                                        flag = MapLib.pointInsideCircle([alarm.jd, alarm.wd], center.coordinate_, radius);
+                                    }
+                                } else {
+                                    flag = true;
+                                }
                                 var icon = new EzIcon({
                                     src: '../../plugins/ezMap/images/red.png',
                                     anchor: [0.5, 1],
@@ -118,10 +180,14 @@
                                     "<div style='margin-top:15px;'>接警单位：" + alarm.jjdw.unitname + "</div>",
                                 ];
                                 marker.openedHtml = "<div style='text-align:left;'>" + tmparr.join(' ') + "</div>";
-                                this.map.addOverlay(marker);
+                                if (flag) {
+                                    this.map.addOverlay(marker);
+                                }
                             });
                         }
                         this.search.points = null;
+                        //启动signalR
+                        this.startSignalR();
                         loading.close();
                     }
                 }).catch((error) => {
@@ -131,14 +197,104 @@
             },
             //启动signalr
             startSignalR() {
-                const connection = new signalR.HubConnectionBuilder()
-                    .withUrl("../mapHub")
-                    .configureLogging(signalR.LogLevel.Information)
-                    .build();
-                connection.start().then(() => { }).catch(err => console.error(err.toString()));
-                connection.on("UpdateMapData", function (data) {
-
+                if (!this.signalConnection) {
+                    this.signalConnection = new signalR.HubConnectionBuilder()
+                        .withUrl("../../mapHub")
+                        .configureLogging(signalR.LogLevel.Information)
+                        .build();
+                    this.signalConnection.start().then(() => { }).catch(err => console.error(err.toString()));
+                    this.signalConnection.on("UpdateMapData", function (data) {
+                        if (data.gpsData != null) {
+                            var gpsData = data.gpsData;
+                            gpsData.mac = data.mac;
+                            gpsData.gnsstime = gpsData.gnssTime;
+                            vmLbsAlarm.updateGpsData(gpsData);
+                        }
+                    });
+                }
+            },
+            //更新设备位置
+            updateGpsData(lastTrackData) {
+                if (!this.search.checked) {
+                    return;
+                }
+                if (!checkLoLa(lastTrackData.longitude, lastTrackData.latitude)) return;
+                var flag = false;
+                if (this.search.drawType != '') {
+                    //判断点是否在多边形内
+                    if ((this.search.drawType == 'drawPolygon' || this.search.drawType == 'drawRect')
+                        && this.search.feature && (this.search.feature instanceof Polygon || this.search.feature instanceof Rectangle)) {
+                        var points = this.search.feature.getPoints()[0]
+                        flag = MapLib.pointInsidePolygon(points, [lastTrackData.longitude, lastTrackData.latitude]);
+                    }
+                    //判断点是否在圆内
+                    if (this.search.drawType == 'drawCircle' && this.search.feature && this.search.feature instanceof Circle) {
+                        var center = this.search.feature.getCenter();
+                        var radius = this.search.feature.getRadius();
+                        flag = MapLib.pointInsideCircle([lastTrackData.longitude, lastTrackData.latitude], center.coordinate_, radius);
+                    }
+                } else {
+                    flag = true;
+                }
+                var device = this.getDeviceByMac(lastTrackData.mac);
+                var newpos = new EzCoord(lastTrackData.longitude, lastTrackData.latitude);
+                var icon = new EzIcon({
+                    src: '../../plugins/ezMap/images/' + getCarStateIcon(lastTrackData),//item.iconImage
+                    anchor: [0.5, 1],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'fraction',
+                    opacity: 1
                 });
+                if (!device) {
+                    return;
+                }
+                if (device.marker) {
+                    device.lastTrackData = lastTrackData;
+                    device.marker.show();
+                    device.marker.showTitle();
+                    device.marker.setIcon(icon);
+                    device.marker.setPoint(newpos);
+                    device.marker.title.setPosition(newpos);
+                    device.marker.title.setOffset([0, -40]);
+                } else {
+                    /**
+                    * 通过marker添加Title到地图
+                    */
+                    var title = new EzTitle(device.license, {
+                        "fontSize": 12,
+                        "fontColor": "#FFFFFF",
+                        "fillColor": "#00CDFF",
+                        "isStroke": true,
+                        "strokeColor": "#FFFFFF",
+                        "strokeWidth": 1,
+                        "lineHeight": 2.2,
+                        "paddingH": 15,
+                        "offset": [0, -40]
+                    });
+                    var marker = new EzMarker(newpos, icon, title);
+                    if (flag) {
+                        this.map.addOverlay(marker);
+                    }
+                    marker.showTitle();
+                    device.marker = marker;
+                    device.marker.title = title;
+                    device.marker.lastTrackData = lastTrackData;
+                    //通过单击marker时打开popup
+                    var strHtml = this.getGpsInfoWinContent(device.license, lastTrackData);
+                    device.marker.openedHtml = strHtml;
+                }
+            },
+            //清除车辆图标
+            clearCar(value, e) {
+                if (!this.search.checked) {
+                    //清除所有设备的marker
+                    for (var i = 0; i < this.deviceList.length; i++) {
+                        var device = this.deviceList[i];
+                        if (device.marker) {
+                            device.marker = null;
+                        }
+                    }
+                }
             }
         },
         mounted() {

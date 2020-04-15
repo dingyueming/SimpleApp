@@ -287,3 +287,57 @@ function stringIsNullOrEmpty(str) {
 function isString(value) {
     return value && typeof value === 'string';
 }
+
+/**
+ * 
+ * @method 判断一个坐标点是否在不规则多边形内部的算法
+ * @param {int} nvert 多边形有几个点
+ * @param {Array} vertx 横坐标数组
+ * @param {Array} verty 纵坐标数组
+ * @param {float} testx 横坐标
+ * @param {float} testy 纵坐标
+ * @return {boolean} 我也不知道
+ */
+function pnpoly(nvert, vertx, verty, testx, testy) {
+    var i, j, c = 0;
+    for (i = 0, j = nvert - 1; i < nvert; j = i++) {
+        if (((verty[i] > testy) != (verty[j] > testy)) &&
+            (testx < (vertx[j] - vertx[i]) * (testy - verty[i]) / (verty[j] - verty[i]) + vertx[i]))
+            c = !c;
+    }
+    return c;
+}
+
+/** 
+    *  判断一个点是否在多边形内部 
+    *  @param points 多边形坐标集合 
+    *  @param testPoint 测试点坐标 
+    *  返回true为真，false为假 
+    *  */
+function insidePolygon(points, testPoint) {
+    var x = testPoint[0], y = testPoint[1];
+    var inside = false;
+    for (var i = 0, j = points.length - 1; i < points.length; j = i++) {
+        var xi = points[i][0], yi = points[i][1];
+        var xj = points[j][0], yj = points[j][1];
+
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+/** 
+     *  判断一个点是否在圆的内部 
+     *  @param point  点坐标 
+     *  @param circle 圆心坐标 
+     *  @param r 圆半径 
+     *  返回true为真，false为假 
+     *  */
+function pointInsideCircle(point, circle, r) {
+    if (r === 0) return false
+    var dx = circle[0] - point[0]
+    var dy = circle[1] - point[1]
+    return dx * dx + dy * dy <= r * r
+}
