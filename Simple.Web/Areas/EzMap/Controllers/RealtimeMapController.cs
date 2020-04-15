@@ -23,6 +23,7 @@ namespace Simple.Web.Areas.EzMap.Controllers
 
         public override IActionResult Index()
         {
+            ViewBag.SignalrUrl = configuration["LocalUrl"] + "/mapHub";
             return base.Index();
         }
 

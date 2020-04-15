@@ -501,7 +501,7 @@
 <!--Signal-->
 <script>
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("../../mapHub")
+        .withUrl("@ViewBag.SignalrUrl")
         .configureLogging(signalR.LogLevel.Information)
         .build();
     connection.start().then(() => { }).catch(err => console.error(err.toString()));
