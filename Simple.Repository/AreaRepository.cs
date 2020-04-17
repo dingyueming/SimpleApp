@@ -29,7 +29,7 @@ namespace Simple.Repository
             List<AreaEntity> areaList = new List<AreaEntity>();
             var list = await Connection.QueryAsync<AreaEntity, AreaDetailEntity, AreaEntity>(sql, (a, b) =>
             {
-                var currentArea = areaList.Find(x => x.AREAID == a.AREAID);
+                var currentArea = areaList.FirstOrDefault(x => x.AREAID == a.AREAID);
                 if (currentArea == null)
                 {
                     a.AreaDetails.Add(b);

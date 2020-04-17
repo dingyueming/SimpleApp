@@ -1,4 +1,5 @@
 ﻿using Simple.ExEntity.DM;
+using Simple.ExEntity.IM;
 using Simple.ExEntity.Map;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using System;
@@ -10,6 +11,7 @@ namespace Simple.IDomain
 {
     public interface IIfDomainService
     {
+        #region 接口
         Task<LastLocatedExEntity> GetLastLocatedByMac(string mac);
 
         Task<LastLocatedExEntity> GetLastLocated(string keyword);
@@ -21,5 +23,16 @@ namespace Simple.IDomain
         Task<List<ViewAllTargetExEntity>> GetViewAllTargetListByOrgcode(string code);
 
         Task<List<Sjgx110AlarmExEntity>> GetAlarmPositionList(DateTime startTime, DateTime endTime);
+        #endregion
+
+        #region 接口信息管理
+
+        Task AddInterface(InterfaceExEntity exEntity);
+        Task DeleteInterface(List<InterfaceExEntity> exEntities);
+        Task UpdateInterface(InterfaceExEntity exEntity);
+        Task<Pagination<InterfaceExEntity>> GetInterfacePage(Pagination<InterfaceExEntity> param);
+
+        #endregion
+
     }
 }

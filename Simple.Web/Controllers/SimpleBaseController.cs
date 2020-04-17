@@ -15,6 +15,7 @@ using Simple.IApplication.SM;
 using Simple.Web.Other.ServiceExpend;
 using Microsoft.Extensions.Caching.Memory;
 using Simple.ExEntity.SM;
+using Simple.Infrastructure.ControllerExtension;
 
 namespace Simple.Web.Controllers
 {
@@ -153,10 +154,20 @@ namespace Simple.Web.Controllers
         /// 格式化返回JSON
         /// </summary>
         /// <param name="data"></param>
-        /// <returns>返回值不会修改属性的大小写</returns>
+        /// <returns>返回扩展实体一模一样的大小写</returns>
         internal JsonResult FormerJson(object data)
         {
             return Json(data, new Newtonsoft.Json.JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() });
+        }
+
+        /// <summary>
+        /// 格式化返回JSON
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>返回扩展实体一模一样的大小写</returns>
+        internal JsonResult LowerJson(object data)
+        {
+            return Json(data, new Newtonsoft.Json.JsonSerializerSettings() { ContractResolver = new LowerContractResolver() });
         }
 
         #endregion

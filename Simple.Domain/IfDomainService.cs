@@ -2,8 +2,10 @@
 using AutoMapper;
 using Simple.Entity;
 using Simple.ExEntity.DM;
+using Simple.ExEntity.IM;
 using Simple.ExEntity.Map;
 using Simple.IDomain;
+using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Infrastructure.Tools;
 using Simple.IRepository;
 using System;
@@ -19,6 +21,7 @@ namespace Simple.Domain
     /// </summary>
     public class IfDomainService : IIfDomainService
     {
+        private readonly IInterfaceRepository interfaceRepository;
         private readonly ISjgx110AlarmRepository sjgx110AlarmRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IViewAllTargetRepository viewAllTargetRepository;
@@ -26,9 +29,11 @@ namespace Simple.Domain
         private readonly INewtrackRepository newtrackRepository;
         private readonly IMapper mapper;
 
-        public IfDomainService(ISjgx110AlarmRepository sjgx110AlarmRepository, IUnitRepository unitRepository, IViewAllTargetRepository viewAllTargetRepository,
+        public IfDomainService(IInterfaceRepository interfaceRepository,
+        ISjgx110AlarmRepository sjgx110AlarmRepository, IUnitRepository unitRepository, IViewAllTargetRepository viewAllTargetRepository,
             INewtrackRepository newtrackRepository, ILastLocatedRepository lastLocatedRepository, IMapper mapper)
         {
+            this.interfaceRepository = interfaceRepository;
             this.sjgx110AlarmRepository = sjgx110AlarmRepository;
             this.unitRepository = unitRepository;
             this.viewAllTargetRepository = viewAllTargetRepository;
@@ -37,6 +42,7 @@ namespace Simple.Domain
             this.mapper = mapper;
         }
 
+        #region 接口
         public async Task<LastLocatedExEntity> GetLastLocatedByMac(string mac)
         {
             var entity = await lastLocatedRepository.GetEntityByMac(mac);
@@ -74,6 +80,33 @@ namespace Simple.Domain
             var list = await sjgx110AlarmRepository.GetAlarmEntities(startTime, endTime, null, null);
             return mapper.Map<List<Sjgx110AlarmExEntity>>(list);
         }
+        #endregion
+
+        #region 接口信息管理
+
+        public async Task AddInterface(InterfaceExEntity exEntity)
+        {
+            var entity = mapper.Map<InterfaceEntity>(exEntity);
+            await interfaceRepository.InsertAsync(entity);
+        }
+        public async Task DeleteInterface(List<InterfaceExEntity> exEntities)
+        {
+            var entities = mapper.Map<List<InterfaceEntity>>(exEntities);
+            await interfaceRepository.DeleteAsync(entities);
+        }
+        public async Task UpdateInterface(InterfaceExEntity exEntity)
+        {
+            var entity = mapper.Map<InterfaceEntity>(exEntity);
+            await interfaceRepository.InsertAsync(entity);
+        }
+        public async Task<Pagination<InterfaceExEntity>> GetInterfacePage(Pagination<InterfaceExEntity> param)
+        {
+            var pagination = await interfaceRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<InterfaceExEntity>>(pagination);
+        }
+
+        #endregion
+
 
         #region 私有方法
 

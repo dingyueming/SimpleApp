@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "接口信息管理";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Version"] = "20200417";
+}
+
+@section style{
+
+}
+@section script{
+
+}
+<div class="box" id="vmBox">
+    <table style="margin-left:5px;">
+        <tr>
+            <th>应用名称:</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <input type="text" class="form-control" v-model="where.appName">
+                </div>
+            </td>
+            <td>
+                <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
+                <button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;"  data-toggle="modal" v-on:click="add">新增</button>
+                <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
+            </td>
+        </tr>
+    </table>
+    <v-table is-vertical-resize
+             :vertical-resize-offset='60'
+             is-horizontal-resize
+             style="width:100%"
+             :multiple-sort="false"
+             :min-height="350"
+             even-bg-color="#f2f2f2"
+             :title-rows="tableConfig.titleRows"
+             :columns="tableConfig.columns"
+             :table-data="tableConfig.tableData"
+             row-hover-color="#eee"
+             row-click-color="#edf7ff"
+             :select-all="selectALL"
+             :select-change="selectChange"
+             v-on:sort-change="sortChange"
+             :paging-index="(pageIndex-1)*pageSize"></v-table>
+    <div style="margin-top:5px;">
+        <v-pagination v-on:page-change="pageChange" v-on:page-size-change="pageSizeChange" :page-size-option="[15,20,30]" :total="total" :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next', 'sizer', 'jumper']"></v-pagination>
+    </div>
+    <!--模态窗口-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">接口信息管理</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="myForm">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="license">应用名称</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" v-model="row.app_Name" id="app_name" name="app_name" type="text" placeholder="应用名称" />
+                            </div>
+                            <label class="col-sm-2 control-label" for="password">密码</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="password" name="password" v-model="row.password" type="text" placeholder="密码" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="ip">IP</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="ip" name="ip" v-model="row.ip" type="text" placeholder="IP" />
+                            </div>
+                            <label class="col-sm-2 control-label" for="port">端口</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="port" name="port" v-model="row.port" type="text" placeholder="端口" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="orgcode">组织机构</label>
+                            <div class="col-sm-4">
+                                <el-select style="width:100%;" v-model="row.orgcode" multiple placeholder="请选择">
+                                    <el-option v-for="item in options"
+                                               :key="item.value"
+                                               :label="item.label"
+                                               :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                            <label class="col-sm-2 control-label" for="int_type">接口类型</label>
+                            <div class="col-sm-4">
+                                <select id="int_type" v-model="row.int_Type" field="int_type" name="int_type" class="form-control">
+                                    <option value="1">接入</option>
+                                    <option value="2">转发</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ter_type" class="col-sm-2 control-label">终端类型</label>
+                            <div class="col-sm-4">
+                                <select id="ter_type" v-model="row.ter_Type" field="ter_type" name="ter_type" class="form-control">
+                                    <option value="1">车辆</option>
+                                    <option value="2">对讲机</option>
+                                </select>
+
+                            </div>
+                            <label class="col-sm-2 control-label" for="run_status">运行状态</label>
+                            <div class="col-sm-4">
+                                <select id="run_status" v-model="row.run_Status" field="run_status" name="run_status" class="form-control">
+                                    <option value="1">正常</option>
+                                    <option value="2">异常</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="proto_type" class="col-sm-2 control-label">接口标准</label>
+                            <div class="col-sm-4">
+                                <select id="proto_type" v-model="row.proto_Type" field="proto_type" name="proto_type" class="form-control">
+                                    <option value="1">省市平台接口标准</option>
+                                    <option value="2">其他警种转发标准</option>
+                                    <option value="3">定制标准</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label" for="chassisno">状态</label>
+                            <div class="col-sm-4">
+                                <select id="status" v-model="row.status" field="status" name="status" class="form-control">
+                                    <option value="1">启用</option>
+                                    <option value="2">停用</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" v-on:click="saveData">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Controllers/IM/InterfaceManagerController.js?r=@Guid.NewGuid()"></script>
+
