@@ -62,9 +62,9 @@
                             <div class="col-sm-4">
                                 <input class="form-control" v-model="row.app_Name" id="app_name" name="app_name" type="text" placeholder="应用名称" />
                             </div>
-                            <label class="col-sm-2 control-label" for="password">密码</label>
+                            <label class="col-sm-2 control-label" for="password">认证编码</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="password" name="password" v-model="row.password" type="text" placeholder="密码" />
+                                <input class="form-control" id="password" name="password" disabled="disabled" v-model="row.password" type="text" placeholder="自动生成" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="orgcode">组织机构</label>
+                            <label class="col-sm-2 control-label" for="orgcode">单位</label>
                             <div class="col-sm-4">
                                 <el-select style="width:100%;" v-model="row.orgcode" multiple placeholder="请选择">
                                     <el-option v-for="item in options"
@@ -102,14 +102,14 @@
                                 <select id="ter_type" v-model="row.ter_Type" field="ter_type" name="ter_type" class="form-control">
                                     <option value="1">车辆</option>
                                     <option value="2">对讲机</option>
+                                    <option value="15">全部</option>
                                 </select>
-
                             </div>
-                            <label class="col-sm-2 control-label" for="run_status">运行状态</label>
+                            <label class="col-sm-2 control-label" for="chassisno">状态</label>
                             <div class="col-sm-4">
-                                <select id="run_status" v-model="row.run_Status" field="run_status" name="run_status" class="form-control">
-                                    <option value="1">正常</option>
-                                    <option value="2">异常</option>
+                                <select id="status" v-model="row.status" field="status" name="status" class="form-control">
+                                    <option value="1">启用</option>
+                                    <option value="2">停用</option>
                                 </select>
                             </div>
                         </div>
@@ -122,13 +122,7 @@
                                     <option value="3">定制标准</option>
                                 </select>
                             </div>
-                            <label class="col-sm-2 control-label" for="chassisno">状态</label>
-                            <div class="col-sm-4">
-                                <select id="status" v-model="row.status" field="status" name="status" class="form-control">
-                                    <option value="1">启用</option>
-                                    <option value="2">停用</option>
-                                </select>
-                            </div>
+                            
                         </div>
                     </form>
                 </div>

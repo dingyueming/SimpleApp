@@ -149,7 +149,7 @@ namespace Simple.Web.Controllers
         }
 
         /// <summary>
-        /// 查询单位树
+        /// 查询单位
         /// </summary>
         /// <returns></returns>
         public async Task<JsonResult> Query1And2Unit()
@@ -159,7 +159,7 @@ namespace Simple.Web.Controllers
             var list = new List<ExEntity.DM.UnitExEntity>();
             if (data != null)
             {
-                list.AddRange(data.Where(x => x.PID == 0 || x.PID == 1));
+                list.AddRange(data.Where(x => x.ORG_CODE == "520100000000" || x.P_ORG_CODE == "520100000000"));
             }
             return LowerJson(list.OrderBy(x => x.UNITID));
         }

@@ -57,9 +57,9 @@
                             return '<span style="color:red;font-weight: bold;">' + (currentIndex + 1) + '</span>';
                         }, isFrozen: false
                     },
-                    { field: 'app_Name', title: '应用名称', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'password', title: '密码', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'ip', title: 'IP', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'app_Name', title: '应用名称', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'password', title: '认证编码', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'ip', title: 'IP', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'port', title: '端口', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'int_TypeShow', title: '接口类型', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'ter_TypeShow', title: '终端类型', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
@@ -90,7 +90,6 @@
                 var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: ' and a.app_name like \'%' + this.where.appName + '%\'', orderBy: '' };
                 axios.post('Query', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
-                    console.log(pagination);
                     vm.tableConfig.tableData = pagination.data;
                     vm.total = pagination.total;
                 }).catch(function (error) {
@@ -133,7 +132,7 @@
             selectGroupChange(selection) {
             },
             add() {
-                this.row = { password: this.uuid(8), int_Type: 1, ter_Type: 1, run_Status: 1, proto_Type: 1, status: 1 };
+                this.row = { int_Type: 1, ter_Type: 1, run_Status: 2, proto_Type: 1, status: 1 };
                 $('#myModal').modal({ backdrop: 'static' });
             },
             select() {
@@ -186,33 +185,6 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
-            },
-            uuid(len, radix) {
-                var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-                var uuid = [], i;
-                radix = radix || chars.length;
-
-                if (len) {
-                    // Compact form
-                    for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
-                } else {
-                    // rfc4122, version 4 form
-                    var r;
-
-                    // rfc4122 requires these characters
-                    uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
-                    uuid[14] = '4';
-
-                    // Fill in random data.  At i==19 set the high bits of clock sequence as
-                    // per rfc4122, sec. 4.1.5
-                    for (i = 0; i < 36; i++) {
-                        if (!uuid[i]) {
-                            r = 0 | Math.random() * 16;
-                            uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
-                        }
-                    }
-                }
-                return uuid.join('');
             },
             getUnit() {
                 axios.post('Query1And2Unit').then(function (response) {

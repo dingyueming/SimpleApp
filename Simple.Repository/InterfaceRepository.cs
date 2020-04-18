@@ -97,7 +97,7 @@ namespace Simple.Repository
             try
             {
                 #region 数据校验
-                var count = await Connection.ExecuteScalarAsync<int>("select count(1) from tbl_interface t where t.app_name=:app_name", new { entity.App_Name }, trans);
+                var count = await Connection.ExecuteScalarAsync<int>("select count(1) from tbl_interface t where t.app_name=:app_name and t.app_id != :app_id", new { entity.App_Name, entity.App_Id }, trans);
                 if (count > 0)
                 {
                     throw new Exception("应用名称重复！");
