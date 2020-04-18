@@ -26,9 +26,8 @@
                 this.$emit('on-custom-comp', params);
             },
             deleteRow() {
-                vm.row = this.rowData;
-                vm.pageMode = "delete";
-                vm.operateData(vm.row);
+                vm.selectedRows.push(this.rowData);
+                vm.deleteSelect();
                 // 参数根据业务场景随意构造
                 let params = { type: 'delete', index: this.index };
                 this.$emit('on-custom-comp', params);
@@ -62,16 +61,23 @@
                     { field: 'password', title: '密码', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'ip', title: 'IP', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'port', title: '端口', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'int_Type', title: '接口类型', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'ter_Type', title: '终端类型', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'app_Id', title: '状态', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'status', title: '运行状态', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'run_Status', title: '接口标准', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    //{
-                    //    field: 'user.usersName', title: '创建人', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true,
-                    //    formatter: function (rowData, index, pagingIndex) { return rowData.user.usersName; }
-                    //},
-                    //{ field: 'remark', title: '备注', width: 150, titleAlign: 'center', columnAlign: 'left', isResize: true },
+                    { field: 'int_TypeShow', title: '接口类型', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'ter_TypeShow', title: '终端类型', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'statusShow', title: '状态', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'run_StatusShow', title: '运行状态', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'proto_TypeShow', title: '接口标准', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    {
+                        field: 'unit', title: '单位', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true,
+                        formatter: function (rowData, index, pagingIndex) {
+                            var unitHtml = "";
+                            if (Array.isArray(rowData.right)) {
+                                rowData.right.forEach((x) => {
+                                    unitHtml += x.unit.unitname + ",";
+                                })
+                            }
+                            return "<div title='" + unitHtml + "'>" + unitHtml + "</div>";
+                        }
+                    },
                     { field: 'custome-adv', title: '操作', width: 100, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
                 ],
                 titleRows: [],
@@ -127,7 +133,7 @@
             selectGroupChange(selection) {
             },
             add() {
-                this.row = {};
+                this.row = { password: this.uuid(8), int_Type: 1, ter_Type: 1, run_Status: 1, proto_Type: 1, status: 1 };
                 $('#myModal').modal({ backdrop: 'static' });
             },
             select() {
@@ -137,7 +143,7 @@
             deleteSelect() {
                 if (Array.isArray(this.selectedRows) && this.selectedRows.length > 0) {
                     if (confirm('确认删除吗')) {
-                        axios.post('@Url.Action("BatchDelete")', Qs.stringify({ exEntities: this.selectedRows })).then(function (response) {
+                        axios.post('Delete', Qs.stringify({ exEntities: this.selectedRows })).then(function (response) {
                             var commonResult = response.data;
                             if (commonResult.isSuccess) {
                                 $('#myModal').modal('hide');
@@ -152,6 +158,23 @@
                 }
             },
             saveData() {
+                //数据校验
+                if ($.trim(this.row.app_Name) == '') {
+                    this.$message.error('应用名称不能为空');
+                    return;
+                }
+                if ($.trim(this.row.ip) == '') {
+                    this.$message.error('ip不能为空');
+                    return;
+                }
+                if ($.trim(this.row.port) == '') {
+                    this.$message.error('端口不能为空');
+                    return;
+                }
+                this.row.right = [];
+                if (this.row.orgcode && Array.isArray(this.row.orgcode)) {
+                    this.row.orgcode.forEach((x) => { this.row.right.push({ org_code: x }); });
+                }
                 axios.post('SaveData', Qs.stringify({ exEntity: this.row })).then(function (response) {
                     var commonResult = response.data;
                     if (commonResult.isSuccess) {
@@ -164,9 +187,47 @@
                     console.log(error);
                 });
             },
+            uuid(len, radix) {
+                var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+                var uuid = [], i;
+                radix = radix || chars.length;
+
+                if (len) {
+                    // Compact form
+                    for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
+                } else {
+                    // rfc4122, version 4 form
+                    var r;
+
+                    // rfc4122 requires these characters
+                    uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+                    uuid[14] = '4';
+
+                    // Fill in random data.  At i==19 set the high bits of clock sequence as
+                    // per rfc4122, sec. 4.1.5
+                    for (i = 0; i < 36; i++) {
+                        if (!uuid[i]) {
+                            r = 0 | Math.random() * 16;
+                            uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+                        }
+                    }
+                }
+                return uuid.join('');
+            },
+            getUnit() {
+                axios.post('Query1And2Unit').then(function (response) {
+                    var data = response.data;
+                    data.forEach((x) => {
+                        vm.options.push({ value: x.org_code, label: x.unitname });
+                    });
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
         },
         mounted: function () {
             this.getTableData();
+            this.getUnit();
         }
     });
 })();

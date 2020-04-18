@@ -148,6 +148,22 @@ namespace Simple.Web.Controllers
             return Json(trees);
         }
 
+        /// <summary>
+        /// 查询单位树
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> Query1And2Unit()
+        {
+            var pagination = await unitService.GetPage(new Infrastructure.InfrastructureModel.Paionation.Pagination<ExEntity.DM.UnitExEntity>() { PageSize = 10000 });
+            var data = pagination.Data;
+            var list = new List<ExEntity.DM.UnitExEntity>();
+            if (data != null)
+            {
+                list.AddRange(data.Where(x => x.PID == 0 || x.PID == 1));
+            }
+            return LowerJson(list.OrderBy(x => x.UNITID));
+        }
+
         #region 重载Json方法
 
         /// <summary>

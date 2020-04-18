@@ -97,7 +97,7 @@ namespace Simple.Domain
         public async Task UpdateInterface(InterfaceExEntity exEntity)
         {
             var entity = mapper.Map<InterfaceEntity>(exEntity);
-            await interfaceRepository.InsertAsync(entity);
+            await interfaceRepository.UpdateAsync(entity);
         }
         public async Task<Pagination<InterfaceExEntity>> GetInterfacePage(Pagination<InterfaceExEntity> param)
         {

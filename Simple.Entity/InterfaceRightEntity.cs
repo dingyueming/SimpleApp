@@ -13,11 +13,14 @@ namespace Simple.Entity
         /// <summary>
         /// 接口应用id
         /// </summary>
-        public virtual int AppId { get; set; }
+        public virtual int App_Id { get; set; }
         /// <summary>
         /// 组织机构代码
         /// </summary>
-        public virtual string OrgCode { get; set; }
+        public virtual string Org_Code { get; set; }
+        [Computed]
+        public virtual UnitEntity Unit { get; set; }
+
         #endregion
     }
 }

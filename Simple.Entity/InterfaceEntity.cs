@@ -8,6 +8,11 @@ namespace Simple.Entity
     [Table("tbl_interface")]
     public class InterfaceEntity
     {
+        public InterfaceEntity()
+        {
+            Right = new List<InterfaceRightEntity>();
+        }
+
         #region Model
         /// <summary>
         /// 应用名称
@@ -55,7 +60,7 @@ namespace Simple.Entity
         /// 组织机构编码集合
         /// </summary>
         [Computed]
-        public List<InterfaceRightEntity> RightEntities { get; set; } = new List<InterfaceRightEntity>();
+        public List<InterfaceRightEntity> Right { get; set; }
         #endregion
     }
 }

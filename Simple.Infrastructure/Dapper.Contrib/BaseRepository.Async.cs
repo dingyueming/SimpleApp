@@ -81,6 +81,16 @@ namespace Simple.Infrastructure.Dapper.Contrib
         }
 
         /// <summary>
+        /// 更新对象属性到数据库中
+        /// </summary>
+        /// <param name="info">指定的对象</param>
+        /// <returns></returns>
+        public virtual async Task<bool> UpdateAsync(T info, IDbTransaction trans = null)
+        {
+            return await Connection.UpdateAsync(info, trans);
+        }
+
+        /// <summary>
         /// 更新指定对象集合到数据库中
         /// </summary>
         /// <param name="list">指定的对象集合</param>
