@@ -11,16 +11,25 @@ namespace Simple.Web.ApiControllers
     public class LastlocatedController : ControllerBase
     {
         private readonly ILastLocatedService lastLocatedService;
-
-        public LastlocatedController(ILastLocatedService lastLocatedService)
+        private readonly IInterfaceService interfaceService;
+        public LastlocatedController(IInterfaceService interfaceService, ILastLocatedService lastLocatedService)
         {
+            this.interfaceService = interfaceService;
             this.lastLocatedService = lastLocatedService;
         }
-
-        public async Task<LastLocatedModel> Get(string mac)
+        public async Task<LastLocatedModel> Get(string auth, string mac)
         {
             try
             {
+                #region 认证编码验证
+
+                var pagination = await interfaceService.GetPage(new Infrastructure.InfrastructureModel.Paionation.Pagination<ExEntity.IM.InterfaceExEntity>() { Where = $" and a.password='{auth}'" });
+                if (pagination.Total == 0)
+                {
+                    return null;
+                }
+
+                #endregion
                 var entity = await lastLocatedService.GetLastLocatedByMac(mac);
                 if (entity != null)
                 {

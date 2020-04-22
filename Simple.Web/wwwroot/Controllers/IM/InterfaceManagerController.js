@@ -64,7 +64,7 @@
                     { field: 'int_TypeShow', title: '接口类型', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'ter_TypeShow', title: '终端类型', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'statusShow', title: '状态', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'run_StatusShow', title: '运行状态', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    //{ field: 'run_StatusShow', title: '运行状态', width: 40, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'proto_TypeShow', title: '接口标准', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     {
                         field: 'unit', title: '单位', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true,

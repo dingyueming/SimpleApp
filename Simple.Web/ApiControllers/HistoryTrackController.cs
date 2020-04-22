@@ -13,17 +13,28 @@ namespace Simple.Web.ApiControllers
     [ApiController]
     public class HistoryTrackController : ControllerBase
     {
+        private readonly IInterfaceService interfaceService;
         private readonly INewTrackService newTrackService;
 
-        public HistoryTrackController(INewTrackService newTrackService)
+        public HistoryTrackController(IInterfaceService interfaceService, INewTrackService newTrackService)
         {
+            this.interfaceService = interfaceService;
             this.newTrackService = newTrackService;
         }
-
-        public async Task<dynamic> Get(string keyword, string startTime, string endTime)
+        public async Task<dynamic> Get(string auth, string keyword, string startTime, string endTime)
         {
             try
             {
+                #region 认证编码验证
+
+                var pagination = await interfaceService.GetPage(new Infrastructure.InfrastructureModel.Paionation.Pagination<ExEntity.IM.InterfaceExEntity>() { Where = $" and a.password='{auth}'" });
+                if (pagination.Total == 0)
+                {
+                    return null;
+                }
+
+                #endregion
+
                 var timespan = DateTime.Parse(endTime) - DateTime.Parse(startTime);
                 if (timespan.TotalDays > 3)
                 {

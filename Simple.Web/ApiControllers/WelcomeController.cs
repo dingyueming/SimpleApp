@@ -16,10 +16,10 @@ namespace Simple.Web.ApiControllers
         {
             return "success";
         }
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{id}/{name}")]
+        public string Get(int id, string name)
         {
-            return $"success{id}";
+            return $"success{id},{name}";
         }
     }
 }

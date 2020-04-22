@@ -14,14 +14,26 @@ namespace Simple.Web.ApiControllers
     public class AlarmLocationController : ControllerBase
     {
         private ISjgx110AlarmService sjgx110AlarmService;
-        public AlarmLocationController(ISjgx110AlarmService sjgx110AlarmService)
+        private IInterfaceService interfaceService;
+        public AlarmLocationController(ISjgx110AlarmService sjgx110AlarmService, IInterfaceService interfaceService)
         {
+            this.interfaceService = interfaceService;
             this.sjgx110AlarmService = sjgx110AlarmService;
         }
-        public async Task<List<AlarmLocationModel>> Get(string startTime, string endTime)
+        public async Task<List<AlarmLocationModel>> Get(string auth, string startTime, string endTime)
         {
             try
             {
+                #region 认证编码验证
+
+                var pagination = await interfaceService.GetPage(new Infrastructure.InfrastructureModel.Paionation.Pagination<ExEntity.IM.InterfaceExEntity>() { Where = $" and a.password='{auth}'" });
+                if (pagination.Total == 0)
+                {
+                    return null;
+                }
+
+                #endregion
+
                 var list = new List<AlarmLocationModel>();
                 var exEntities = await sjgx110AlarmService.GetAlarmPositionList(DateTime.Parse(startTime), DateTime.Parse(endTime));
                 if (exEntities != null && exEntities.Count > 0)

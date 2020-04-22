@@ -13,15 +13,26 @@ namespace Simple.Web.ApiControllers
     [ApiController]
     public class DeviceDetailController : ControllerBase
     {
+        private IInterfaceService interfaceService;
         private IViewAllTargetService viewAllTargetService;
-        public DeviceDetailController(IViewAllTargetService viewAllTargetService)
+        public DeviceDetailController(IInterfaceService interfaceService, IViewAllTargetService viewAllTargetService)
         {
+            this.interfaceService = interfaceService;
             this.viewAllTargetService = viewAllTargetService;
         }
-        public async Task<DeviceModel> Get(string keyword)
+        public async Task<DeviceModel> Get(string auth, string keyword)
         {
             try
             {
+                #region 认证编码验证
+
+                var pagination = await interfaceService.GetPage(new Infrastructure.InfrastructureModel.Paionation.Pagination<ExEntity.IM.InterfaceExEntity>() { Where = $" and a.password='{auth}'" });
+                if (pagination.Total == 0)
+                {
+                    return null;
+                }
+
+                #endregion
                 var exEntity = await viewAllTargetService.GetViewAllTarget(keyword);
                 if (exEntity != null)
                 {

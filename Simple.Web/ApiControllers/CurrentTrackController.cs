@@ -10,17 +10,28 @@ namespace Simple.Web.ApiControllers
     [ApiController]
     public class CurrentTrackController : ControllerBase
     {
+        private IInterfaceService interfaceService;
         private readonly ILastLocatedService lastLocatedService;
 
-        public CurrentTrackController(ILastLocatedService lastLocatedService)
+        public CurrentTrackController(IInterfaceService interfaceService, ILastLocatedService lastLocatedService)
         {
+            this.interfaceService = interfaceService;
             this.lastLocatedService = lastLocatedService;
         }
 
-        public async Task<LastLocatedModel> Get(string keyword)
+        public async Task<LastLocatedModel> Get(string auth, string keyword)
         {
             try
             {
+                #region 认证编码验证
+
+                var pagination = await interfaceService.GetPage(new Infrastructure.InfrastructureModel.Paionation.Pagination<ExEntity.IM.InterfaceExEntity>() { Where = $" and a.password='{auth}'" });
+                if (pagination.Total == 0)
+                {
+                    return null;
+                }
+
+                #endregion
                 var entity = await lastLocatedService.GetLastLocated(keyword);
                 if (entity != null)
                 {
