@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Simple.Application;
 using Simple.Infrastructure;
 using Simple.Web.Other;
-using Simple.Web.Other.ServiceExpend;
+using Simple.Web.Extension.ServiceExpend;
 using System;
 using System.IO;
 using System.Threading.Tasks;

@@ -12,10 +12,12 @@ using Newtonsoft.Json.Serialization;
 using Simple.ExEntity;
 using Simple.IApplication.DM;
 using Simple.IApplication.SM;
-using Simple.Web.Other.ServiceExpend;
+using Simple.Web.Extension.ServiceExpend;
 using Microsoft.Extensions.Caching.Memory;
 using Simple.ExEntity.SM;
-using Simple.Infrastructure.ControllerExtension;
+using Simple.Web.Extension.ControllerEx;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace Simple.Web.Controllers
 {
@@ -87,6 +89,7 @@ namespace Simple.Web.Controllers
                     //user.Email = authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
                     user.UsersId = int.Parse(authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
                     user.UsersName = authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
+                    user.RealName = authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName).Value;
                 }
                 return user;
             }
@@ -163,6 +166,32 @@ namespace Simple.Web.Controllers
             }
             return LowerJson(list.OrderBy(x => x.UNITID));
         }
+
+        #region 记录操作日志
+
+        internal async Task RecordLog(string modelName, object operateModel, Infrastructure.Enums.OperateTypeEnum operateType)
+        {
+            try
+            {
+                var serviceProvider = ServiceLocator.Services;
+                var logService = serviceProvider.GetService<IOperateLogService>();
+                await logService.AddLog(new OperateLogExEntity()
+                {
+                    Ip = HttpContext.Connection.RemoteIpAddress.ToString(),
+                    Loginname = LoginUser.UsersName,
+                    Realname = LoginUser.RealName,
+                    Modelname = modelName,
+                    Operatetype = (int)operateType,
+                    Remark = JsonConvert.SerializeObject(operateModel),
+                });
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        #endregion
 
         #region 重载Json方法
 

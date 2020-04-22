@@ -38,7 +38,7 @@ namespace Simple.Web.Controllers
                 {
                     new Claim(ClaimTypes.Name,loginUser.UsersName),
                     new Claim(ClaimTypes.NameIdentifier,loginUser.UsersId.ToString()),
-                    //new Claim(ClaimTypes.Email,loginUser.Email)
+                    new Claim(ClaimTypes.GivenName,loginUser.RealName)
                 };
 
                 //使用证件单元创建一张cookie身份证

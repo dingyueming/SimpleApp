@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Simple.ExEntity.SM;
 using Simple.IApplication.SM;
-using Simple.Infrastructure.ControllerFilter;
+using Simple.Web.Extension.ControllerEx;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
 

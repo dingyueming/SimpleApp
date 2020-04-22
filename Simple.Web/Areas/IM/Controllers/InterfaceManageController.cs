@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Simple.ExEntity.IM;
 using Simple.IApplication.Dwjk;
-using Simple.Infrastructure.ControllerFilter;
+using Simple.Web.Extension.ControllerEx;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
 using System.Security.Cryptography;

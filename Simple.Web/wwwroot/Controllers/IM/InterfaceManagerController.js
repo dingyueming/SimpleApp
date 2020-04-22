@@ -19,7 +19,7 @@
         },
         methods: {
             update() {
-                vm.row = this.rowData;
+                vm.row = JSON.parse(JSON.stringify(this.rowData));
                 $('#myModal').modal({ backdrop: 'static', keyboard: false });
                 // 参数根据业务场景随意构造
                 let params = { type: 'edit', index: this.index, rowData: this.rowData };

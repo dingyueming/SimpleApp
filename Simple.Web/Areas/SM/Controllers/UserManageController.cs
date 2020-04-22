@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Simple.IDomain;
-using Simple.Infrastructure.ControllerFilter;
+using Simple.Web.Extension.ControllerEx;
 
 namespace Simple.Web.Areas.SM.Controllers
 {

@@ -1,29 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Simple.Infrastructure.InfrastructureModel;
-using Newtonsoft.Json;
+using System;
 
-namespace Simple.Infrastructure.ControllerFilter
+namespace Simple.Web.Extension.ControllerEx
 {
     public class SimpleActionAttribute : Attribute, IActionFilter
     {
-        public override bool IsDefaultAttribute()
-        {
-            return base.IsDefaultAttribute();
-        }
-
         /// <summary>
         /// 提示消息
         /// </summary>
-        public string Message { get; set; } = "";
+        public string Message { get; set; } = "Success";
+
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            //等Controll er的Action方法执行完后，通过更改ActionExecutedContext类的Result属性，来替换Action方法返回的Json对象
+            //等Controller的Action方法执行完后，通过更改ActionExecutedContext类的Result属性，来替换Action方法返回的Json对象
             //判断是否为正常执行结束,如果不为空为异常执行结束.
-            var result = new JsonResult("");
+            var result = new JsonResult(null);
             if (context.Exception == null)
             {
                 //返回JsonResult结果信息

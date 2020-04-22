@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.Infrastructure.ControllerExtension
+namespace Simple.Web.Extension.ControllerEx
 {
     public class LowerContractResolver : Newtonsoft.Json.Serialization.DefaultContractResolver
     {

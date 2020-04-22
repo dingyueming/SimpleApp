@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Simple.ExEntity.DM;
 using Simple.IApplication.DM;
-using Simple.Infrastructure.ControllerFilter;
+using Simple.Web.Extension.ControllerEx;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
 
@@ -33,6 +33,7 @@ namespace Simple.Web.Areas.DM.Controllers
         [SimpleAction]
         public async Task<bool> Update(CarExEntity exEntity)
         {
+            //await RecordLog("车辆", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.RECORDDATE = DateTime.Now;
             exEntity.RECMAN = LoginUser.UsersId;
             return await carService.Update(exEntity);

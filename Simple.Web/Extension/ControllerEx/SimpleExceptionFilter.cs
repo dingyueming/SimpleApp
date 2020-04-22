@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simple.Infrastructure.ControllerFilter
+namespace Simple.Web.Extension.ControllerEx
 {
     public class SimpleExceptionFilter : IExceptionFilter
     {
