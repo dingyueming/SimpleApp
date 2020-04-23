@@ -62,7 +62,7 @@ namespace Simple.ExEntity.SM
         /// <summary>
         /// 时间
         /// </summary>
-        public virtual DateTime Operatetime => DateTime.Now;
+        public virtual DateTime Operatetime { get; set; } = DateTime.Now;
         /// <summary>
         /// 日志对象名
         /// </summary>
@@ -70,7 +70,7 @@ namespace Simple.ExEntity.SM
         /// <summary>
         /// 备注
         /// </summary>
-        public virtual string Remark { get; set; }
+        public virtual object Remark { get; set; }
         #endregion
     }
 }

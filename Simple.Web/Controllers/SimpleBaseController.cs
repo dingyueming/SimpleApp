@@ -182,7 +182,7 @@ namespace Simple.Web.Controllers
                     Realname = LoginUser.RealName,
                     Modelname = modelName,
                     Operatetype = (int)operateType,
-                    Remark = JsonConvert.SerializeObject(operateModel),
+                    Remark = operateModel == null ? null : JsonConvert.SerializeObject(operateModel),
                 });
             }
             catch (Exception e)

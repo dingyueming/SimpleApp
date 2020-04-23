@@ -41,7 +41,7 @@ namespace Simple.Entity
         /// <summary>
         /// 备注
         /// </summary>
-        public virtual string Remark { get; set; }
+        public virtual object Remark { get; set; }
         #endregion
     }
 }

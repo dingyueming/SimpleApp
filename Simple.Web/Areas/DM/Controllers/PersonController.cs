@@ -28,20 +28,24 @@ namespace Simple.Web.Areas.DM.Controllers
         [SimpleAction]
         public async Task<bool> Add(PersonExEntity exEntity)
         {
+            await RecordLog("对讲机", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
             return await personService.Add(exEntity);
         }
         [SimpleAction]
         public async Task<bool> Update(PersonExEntity exEntity)
         {
+            await RecordLog("对讲机", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             return await personService.Update(exEntity);
         }
         [SimpleAction]
         public async Task<bool> Delete(PersonExEntity exEntity)
         {
+            await RecordLog("对讲机", exEntity, Infrastructure.Enums.OperateTypeEnum.删除);
             return await personService.Delete(new List<PersonExEntity>() { exEntity });
         }
         public async Task<bool> BatchDelete(List<PersonExEntity> exEntities)
         {
+            await RecordLog("对讲机", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             return await personService.Delete(exEntities);
         }
     }

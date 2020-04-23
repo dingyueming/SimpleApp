@@ -356,10 +356,12 @@
                 $('#myModal').modal({ backdrop: 'static' });
             },
             operateData() {
-                $('#myForm').data('bootstrapValidator').validate();//启用验证
-                var flag = $('#myForm').data('bootstrapValidator').isValid()//验证是否通过true/false
-                if (!flag) {
-                    return;
+                if (this.pageMode !="delete") {
+                    $('#myForm').data('bootstrapValidator').validate();//启用验证
+                    var flag = $('#myForm').data('bootstrapValidator').isValid()//验证是否通过true/false
+                    if (!flag) {
+                        return;
+                    }
                 }
                 var url = '';
                 switch (this.pageMode) {
@@ -487,10 +489,6 @@
             this.getTableData();
             this.queryUnitTree();
             this.queryAlarmArea();
-            //模态框 关闭前事件
-            $('#myModal').on('hide.bs.modal', function () {
-                $("#myForm").data('bootstrapValidator').destroy();
-            });
         },
     });
 </script>

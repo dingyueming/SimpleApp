@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = ViewData["Title"] ?? "操作日志";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Version"] = "20200423";
 }
 <div class="box" id="vmBox">
     <table style="margin-left:5px;">
@@ -16,7 +17,7 @@
             <td>
                 <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
                 @*<button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;" data-toggle="modal" v-on:click="add">新增</button>
-                <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>*@
+                    <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>*@
             </td>
         </tr>
     </table>

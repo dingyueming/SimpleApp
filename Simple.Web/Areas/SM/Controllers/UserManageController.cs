@@ -36,6 +36,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> Add(UsersExEntity exEntity)
         {
+            await RecordLog("用户", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             exEntity.Creator = LoginUser.UsersId;
@@ -45,6 +46,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> Update(UsersExEntity exEntity)
         {
+            await RecordLog("用户", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             return await userService.UpdateUser(exEntity);
@@ -52,6 +54,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> Delete(UsersExEntity exEntity)
         {
+            await RecordLog("用户", exEntity, Infrastructure.Enums.OperateTypeEnum.删除);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             return await userService.DeleteUser(new List<UsersExEntity>() { exEntity });
@@ -59,6 +62,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> BatchDelete(List<UsersExEntity> exEntities)
         {
+            await RecordLog("用户", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             exEntities.ForEach(x => { x.Modifier = LoginUser.UsersId; x.ModifyTime = DateTime.Now; });
             return await userService.DeleteUser(exEntities);
         }
@@ -70,6 +74,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> SaveUsersRole(UserRoleExEntity userRoleExEntity)
         {
+            await RecordLog("用户的角色", userRoleExEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             userRoleExEntity.Createtime = DateTime.Now;
             userRoleExEntity.Creator = LoginUser.UsersId;
             return await userService.UpdateUsersRole(userRoleExEntity);
@@ -87,6 +92,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> SaveUsersDevice(List<ElementTreeModel> nodes, int userId)
         {
+            await RecordLog("设备分配", nodes, Infrastructure.Enums.OperateTypeEnum.修改);
             return await dmDomainService.UpdateAuthLimits(nodes, userId);
         }
     }

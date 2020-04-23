@@ -46,5 +46,11 @@ namespace Simple.Repository
                 throw e;
             }
         }
+        public async override Task<bool> DeleteAsync(CarAreaEntity entity)
+        {
+            var sql = "delete from car_area t where t.carid=:carid and t.areaid=:areaid";
+            var count = await Connection.ExecuteAsync(sql, new { carid = entity.CARID, areaid = entity.AREAID });
+            return count > 0;
+        }
     }
 }

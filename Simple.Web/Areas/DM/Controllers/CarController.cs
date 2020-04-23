@@ -28,23 +28,27 @@ namespace Simple.Web.Areas.DM.Controllers
         [SimpleAction]
         public async Task<bool> Add(CarExEntity exEntity)
         {
+            await RecordLog("车辆", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
             return await carService.Add(exEntity);
         }
         [SimpleAction]
         public async Task<bool> Update(CarExEntity exEntity)
         {
-            //await RecordLog("车辆", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
+            await RecordLog("车辆", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.RECORDDATE = DateTime.Now;
             exEntity.RECMAN = LoginUser.UsersId;
             return await carService.Update(exEntity);
         }
+        [SimpleAction]
         public async Task<bool> Delete(CarExEntity exEntity)
         {
+            await RecordLog("车辆", exEntity, Infrastructure.Enums.OperateTypeEnum.删除);
             return await carService.Delete(new List<CarExEntity>() { exEntity });
         }
         [SimpleAction]
         public async Task<bool> BatchDelete(List<CarExEntity> exEntities)
         {
+            await RecordLog("车辆", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             return await carService.Delete(exEntities);
         }
         public async Task<JsonResult> QueryAlarmArea()

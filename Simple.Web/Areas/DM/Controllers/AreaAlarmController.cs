@@ -35,6 +35,7 @@ namespace Simple.Web.Areas.DM.Controllers
         [SimpleAction]
         public async Task Add(AreaExEntity exEntitiy, List<List<double[]>> points)
         {
+            await RecordLog("报警区域", exEntitiy, Infrastructure.Enums.OperateTypeEnum.增加);
             exEntitiy.USERID = LoginUser.UsersId;
             //圆的计算方式和其他不一样
             if (exEntitiy.AREATYPE == 2 && points.Count == 1 && points[0].Count == 2)
@@ -75,19 +76,21 @@ namespace Simple.Web.Areas.DM.Controllers
         [SimpleAction]
         public async Task BatchDelete(List<AreaExEntity> exEntities)
         {
+            await RecordLog("报警区域", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             await areaAlarmService.DeleteAreaAlarm(exEntities);
         }
 
         [SimpleAction]
-        public async Task RemoveBind(int carId)
+        public async Task RemoveBind(CarAreaExEntity exEntitiy)
         {
-            var exCarArea = new CarAreaExEntity() { CARID = carId };
-            await areaAlarmService.DeleteCarArea(exCarArea);
+            await RecordLog("解除区域绑定", exEntitiy, Infrastructure.Enums.OperateTypeEnum.修改);
+            await areaAlarmService.DeleteCarArea(exEntitiy);
         }
 
         [SimpleAction]
         public async Task BindCars(List<CarExEntity> cars, int areaId, int alarmType)
         {
+            await RecordLog("报警区域车辆绑定", cars, Infrastructure.Enums.OperateTypeEnum.增加);
             var list = new List<CarAreaExEntity>();
             cars.ToList().ForEach(x =>
             {

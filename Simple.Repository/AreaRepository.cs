@@ -67,6 +67,7 @@ namespace Simple.Repository
             var sql = "select * from area a where a.areaname = :areaname";
             return await Connection.QueryFirstOrDefaultAsync<AreaEntity>(sql, new { areaname = entity.AREANAME });
         }
+
         public async Task InsertAlarmArea(AreaEntity entity)
         {
             var insertAreaSql = @"insert into area

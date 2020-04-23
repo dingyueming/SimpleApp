@@ -27,20 +27,24 @@ namespace Simple.Web.Areas.DM.Controllers
 
         public async Task<bool> Add(UnitExEntity exEntity)
         {
+            await RecordLog("单位", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
             return await unitService.Add(exEntity);
         }
         public async Task<bool> Update(UnitExEntity exEntity)
         {
+            await RecordLog("单位", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.RECDATE = DateTime.Now;
             exEntity.RECMAN = (uint)LoginUser.UsersId;
             return await unitService.Update(exEntity);
         }
         public async Task<bool> Delete(UnitExEntity exEntity)
         {
+            await RecordLog("单位", exEntity, Infrastructure.Enums.OperateTypeEnum.删除);
             return await unitService.Delete(new List<UnitExEntity>() { exEntity });
         }
         public async Task<bool> BatchDelete(List<UnitExEntity> exEntities)
         {
+            await RecordLog("单位", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             return await unitService.Delete(exEntities);
         }
     }

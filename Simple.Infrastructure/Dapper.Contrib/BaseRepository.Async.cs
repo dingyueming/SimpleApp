@@ -67,6 +67,17 @@ namespace Simple.Infrastructure.Dapper.Contrib
                 return await dbConnection.InsertAsync(list) > 0;
             }
         }
+
+        /// <summary>
+        /// 插入指定对象集合到数据库中
+        /// </summary>
+        /// <param name="list">指定的对象集合</param>
+        /// <returns></returns>
+        public virtual async Task<bool> InsertAsync(IEnumerable<T> list, IDbTransaction trans = null)
+        {
+            return await Connection.InsertAsync(list) > 0;
+        }
+
         /// <summary>
         /// 更新对象属性到数据库中
         /// </summary>

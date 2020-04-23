@@ -26,6 +26,7 @@ namespace Simple.Web.Areas.SM.Controllers
 
         public async Task<bool> Add(MenusExEntity exEntity)
         {
+            await RecordLog("菜单", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             exEntity.Creator = LoginUser.UsersId;
@@ -34,18 +35,21 @@ namespace Simple.Web.Areas.SM.Controllers
         }
         public async Task<bool> Update(MenusExEntity exEntity)
         {
+            await RecordLog("菜单", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             return await menusService.UpdateMenu(exEntity);
         }
         public async Task<bool> Delete(MenusExEntity exEntity)
         {
+            await RecordLog("菜单", exEntity, Infrastructure.Enums.OperateTypeEnum.删除);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             return await menusService.DeleteMenu(new List<MenusExEntity>() { exEntity });
         }
         public async Task<bool> BatchDelete(List<MenusExEntity> exEntities)
         {
+            await RecordLog("菜单", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             exEntities.ForEach(x => { x.Modifier = LoginUser.UsersId; x.ModifyTime = DateTime.Now; });
             return await menusService.DeleteMenu(exEntities);
         }

@@ -88,7 +88,7 @@
                                 <td>{{item.LICENSE}}</td>
                                 <td>{{item.MAC}}</td>
                                 <td>{{item.UNITNAME}}</td>
-                                <td><a href="javascript:void();" v-on:click="removeBind(item.CARID)">解除绑定</a></td>
+                                <td><a href="javascript:void();" v-on:click="removeBind(item.CARID,item.LICENSE)">解除绑定</a></td>
                             </tr>
                         </table>
                     </div>
@@ -421,8 +421,10 @@
                     console.log(error);
                 });
             },
-            removeBind(carId) {
-                axios.post('@Url.Action("RemoveBind")', Qs.stringify({ carId: carId})).then(function (response) {
+            removeBind(carId, license) {
+                vm.row.carId = carId;
+                vm.row.license = license;
+                axios.post('@Url.Action("RemoveBind")', Qs.stringify({ exEntitiy: vm.row })).then(function (response) {
                     var commonResult = response.data;
                     if (commonResult.isSuccess) {
                         $('#myModal2').modal('hide');

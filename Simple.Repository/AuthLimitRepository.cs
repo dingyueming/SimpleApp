@@ -20,7 +20,7 @@ namespace Simple.Repository
             {
                 var delSql = "delete from auth_limits t where t.userid=:userid";
                 await Connection.ExecuteAsync(delSql, new { userid = userId });
-                await this.InsertAsync(entities);
+                await InsertAsync(entities, trans);
                 trans.Commit();
                 return true;
             }

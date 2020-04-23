@@ -38,10 +38,12 @@ namespace Simple.Web.Areas.IM.Controllers
                     var strResult = BitConverter.ToString(result);
                     exEntity.Password = strResult.Replace("-", "");
                 }
+                await RecordLog("接口管理", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
                 await interfaceService.Add(exEntity);
             }
             else
             {
+                await RecordLog("接口管理", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
                 await interfaceService.Update(exEntity);
             }
 
@@ -49,6 +51,7 @@ namespace Simple.Web.Areas.IM.Controllers
         [SimpleAction]
         public async Task Delete(List<InterfaceExEntity> exEntities)
         {
+            await RecordLog("接口管理", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             await interfaceService.Delete(exEntities);
         }
     }

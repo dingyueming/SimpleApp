@@ -32,6 +32,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> Add(RolesExEntity exEntity)
         {
+            await RecordLog("角色", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.Modifytime = DateTime.Now;
             exEntity.Creator = LoginUser.UsersId;
@@ -41,6 +42,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> Update(RolesExEntity exEntity)
         {
+            await RecordLog("角色", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.Modifytime = DateTime.Now;
             return await rolesService.UpdateRole(exEntity);
@@ -48,6 +50,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> Delete(RolesExEntity exEntity)
         {
+            await RecordLog("角色", exEntity, Infrastructure.Enums.OperateTypeEnum.删除);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.Modifytime = DateTime.Now;
             return await rolesService.DeleteRole(new List<RolesExEntity>() { exEntity });
@@ -55,6 +58,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> BatchDelete(List<RolesExEntity> exEntities)
         {
+            await RecordLog("角色", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             exEntities.ForEach(x => { x.Modifier = LoginUser.UsersId; x.Modifytime = DateTime.Now; });
             return await rolesService.DeleteRole(exEntities);
         }
@@ -67,6 +71,7 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> SaveRolesMenu(List<MenusExEntity> menus, decimal rolesId)
         {
+            await RecordLog("角色拥有的菜单", menus, Infrastructure.Enums.OperateTypeEnum.修改);
             var list = new List<RoleMenuExEntity>();
             menus.ForEach(x =>
             {
