@@ -17,5 +17,7 @@ namespace Simple.Infrastructure.InfrastructureModel.Paionation
         public string OrderBy { get; set; }
 
         public List<T> Data { get; set; }
+
+        public T SearchData { get; set; }
     }
 }

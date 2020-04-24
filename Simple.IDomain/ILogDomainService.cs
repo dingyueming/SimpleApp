@@ -16,5 +16,9 @@ namespace Simple.IDomain
 
         #endregion
 
+        #region 系统日志
+        Task<Pagination<SysLogExEntity>> GetSysLogPage(Pagination<SysLogExEntity> param);
+        #endregion
+
     }
 }
