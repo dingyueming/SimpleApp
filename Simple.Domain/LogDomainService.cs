@@ -17,10 +17,12 @@ namespace Simple.Domain
     public class LogDomainService : ILogDomainService
     {
         private readonly IOperateLogRepository operateLogRepository;
+        private readonly ISysLogRepository sysLogRepository;
         private readonly IMapper mapper;
 
-        public LogDomainService(IOperateLogRepository operateLogRepository, IMapper mapper)
+        public LogDomainService(ISysLogRepository sysLogRepository, IOperateLogRepository operateLogRepository, IMapper mapper)
         {
+            this.sysLogRepository = sysLogRepository;
             this.operateLogRepository = operateLogRepository;
             this.mapper = mapper;
         }
@@ -45,6 +47,18 @@ namespace Simple.Domain
         public Task UpdateOperateLog(OperateLogExEntity exEntity)
         {
             throw new NotImplementedException();
+        }
+        #endregion
+
+        #region 系统日志
+        public async Task<Pagination<SysLogExEntity>> GetSysLogPage(Pagination<SysLogExEntity> param)
+        {
+            if (param.SearchData.DateTimes != null)
+            {
+                param.Where = $" and a.logtime between to_date('{param.SearchData.DateTimes[0]}','yyyy-mm-dd hh24:mi:ss') and to_date('{param.SearchData.DateTimes[1]}','yyyy-mm-dd hh24:mi:ss')";
+            }
+            var pagination = await sysLogRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<SysLogExEntity>>(pagination);
         }
         #endregion
 
