@@ -1,28 +1,25 @@
 ﻿using AutoMapper;
 using Simple.Entity;
 using Simple.ExEntity.DM;
+using Simple.ExEntity.Map;
 using Simple.IDomain;
-using Simple.Infrastructure.InfrastructureModel.Element;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
-using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
-using Simple.Infrastructure.InfrastructureModel.ZTree;
-using Simple.Infrastructure.Tools;
 using Simple.IRepository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Simple.Domain
 {
     public class AlarmDomainService : IAlarmDomainService
     {
+        private readonly INewAlarmInfoRepository newAlarmInfoRepository;
         private readonly ICarAreaRepository carAreaRepository;
         private readonly IAreaRepository areaRepository;
         private readonly IMapper mapper;
-        public AlarmDomainService(ICarAreaRepository carAreaRepository, IAreaRepository areaRepository, IMapper mapper)
+        public AlarmDomainService(INewAlarmInfoRepository newAlarmInfoRepository, ICarAreaRepository carAreaRepository, IAreaRepository areaRepository, IMapper mapper)
         {
+            this.newAlarmInfoRepository = newAlarmInfoRepository;
             this.carAreaRepository = carAreaRepository;
             this.areaRepository = areaRepository;
             this.mapper = mapper;
@@ -74,5 +71,18 @@ namespace Simple.Domain
             var entity = await areaRepository.GetAreaEntityById(areaId);
             return mapper.Map<AreaExEntity>(entity);
         }
+
+        public async Task<Pagination<NewAlarmInfoExEntity>> GetNewAlarmInfoPage(Pagination<NewAlarmInfoExEntity> param)
+        {
+            if (param.SearchData.DateTimes != null)
+            {
+                param.Where = $" and a.gnsstime between to_date('{param.SearchData.DateTimes[0]}','yyyy-mm-dd hh24:mi:ss') and to_date('{param.SearchData.DateTimes[1]}','yyyy-mm-dd hh24:mi:ss')";
+                param.Where += $"and b.license like '%{param.SearchData.License}%'";
+            }
+            var pagination = await newAlarmInfoRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<NewAlarmInfoExEntity>>(pagination);
+        }
+
+
     }
 }

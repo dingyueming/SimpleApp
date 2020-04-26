@@ -21,6 +21,7 @@ namespace Simple.Domain
     /// </summary>
     public class IfDomainService : IIfDomainService
     {
+        private readonly IInterfaceLogRepository interfaceLogRepository;
         private readonly IInterfaceRepository interfaceRepository;
         private readonly ISjgx110AlarmRepository sjgx110AlarmRepository;
         private readonly IUnitRepository unitRepository;
@@ -29,10 +30,11 @@ namespace Simple.Domain
         private readonly INewtrackRepository newtrackRepository;
         private readonly IMapper mapper;
 
-        public IfDomainService(IInterfaceRepository interfaceRepository,
+        public IfDomainService(IInterfaceRepository interfaceRepository, IInterfaceLogRepository interfaceLogRepository,
         ISjgx110AlarmRepository sjgx110AlarmRepository, IUnitRepository unitRepository, IViewAllTargetRepository viewAllTargetRepository,
             INewtrackRepository newtrackRepository, ILastLocatedRepository lastLocatedRepository, IMapper mapper)
         {
+            this.interfaceLogRepository = interfaceLogRepository;
             this.interfaceRepository = interfaceRepository;
             this.sjgx110AlarmRepository = sjgx110AlarmRepository;
             this.unitRepository = unitRepository;
@@ -107,6 +109,19 @@ namespace Simple.Domain
 
         #endregion
 
+        #region 接口日志管理
+
+        public async Task<Pagination<InterfaceLogExEntity>> GetInterfaceLogPage(Pagination<InterfaceLogExEntity> param)
+        {
+            if (param.SearchData.DateTimes != null)
+            {
+                param.Where = $" and a.stat_time between to_date('{param.SearchData.DateTimes[0]}','yyyy-mm-dd hh24:mi:ss') and to_date('{param.SearchData.DateTimes[1]}','yyyy-mm-dd hh24:mi:ss')";
+            }
+            var pagination = await interfaceLogRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<InterfaceLogExEntity>>(pagination);
+        }
+
+        #endregion
 
         #region 私有方法
 

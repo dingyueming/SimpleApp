@@ -34,5 +34,11 @@ namespace Simple.IDomain
 
         #endregion
 
+        #region 接口日志管理
+
+        Task<Pagination<InterfaceLogExEntity>> GetInterfaceLogPage(Pagination<InterfaceLogExEntity> param);
+
+        #endregion
+
     }
 }
