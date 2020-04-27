@@ -40,7 +40,7 @@ namespace Simple.Domain
 
         public async Task<Pagination<OperateLogExEntity>> GetLogPage(Pagination<OperateLogExEntity> param)
         {
-            var pagination = await operateLogRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            var pagination = await operateLogRepository.GetSingleTbPage("tb_operatelog", param.PageSize, param.PageIndex, param.Where, param.OrderBy);
             return mapper.Map<Pagination<OperateLogExEntity>>(pagination);
         }
 

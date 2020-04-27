@@ -180,9 +180,9 @@ namespace Simple.Web.Controllers
                     Ip = HttpContext.Connection.RemoteIpAddress.ToString(),
                     Loginname = LoginUser.UsersName,
                     Realname = LoginUser.RealName,
-                    Modelname = modelName,
+                    Modelname = modelName ?? "",
                     Operatetype = (int)operateType,
-                    Remark = operateModel == null ? null : JsonConvert.SerializeObject(operateModel),
+                    Remark = operateModel == null ? "" : JsonConvert.SerializeObject(operateModel),
                 });
             }
             catch (Exception e)

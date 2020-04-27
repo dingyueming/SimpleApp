@@ -36,7 +36,7 @@
         },
         methods: {
             getTableData() {
-                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: ' and a.loginname like \'%' + this.where.appName + '%\'', orderBy: 'a.loginname,a.operatetime desc,a.logid desc' };
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: ' and a.loginname like \'%' + this.where.appName + '%\'', orderBy: 'a.operatetime desc,a.loginname,a.logid desc' };
                 axios.post('Query', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
                     vm.tableConfig.tableData = pagination.data;

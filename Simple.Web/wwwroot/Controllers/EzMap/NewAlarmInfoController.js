@@ -32,7 +32,7 @@
                     { field: 'headingshow', title: '方向', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'speed', title: '速度', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'statusshow', title: '状态', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'locateshow', title: '定位', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'locateshow', title: '定位状态', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'locatemodeshow', title: '定位模式', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'alarmshow', title: '报警', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'record_time', title: '记录时间', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
