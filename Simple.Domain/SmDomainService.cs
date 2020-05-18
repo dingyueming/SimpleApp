@@ -166,8 +166,8 @@ namespace Simple.Domain
             exList.ForEach(x =>
             {
                 x.ChildMenus = exList.Where(o => o.ParentId == x.MenusId).ToList().OrderBy(o => o.OrderIndex).ToList();
-                var localUrl = configuration["localUrl"];
-                x.MenusUrl = localUrl + x.MenusUrl;
+                //var localUrl = configuration["localUrl"];
+                //x.MenusUrl = $"~/" + x.MenusUrl;
             });
             return exList.Where(x => x.ParentId == 0).ToList();
         }

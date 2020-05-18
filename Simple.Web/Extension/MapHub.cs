@@ -25,7 +25,7 @@ namespace Simple.Web.Other
 
         public MapHub(IConfiguration configuration)
         {
-            fileProvider = new PhysicalFileProvider(configuration["DataCenterRoot"]);
+            //fileProvider = new PhysicalFileProvider(configuration["DataCenterRoot"]);
             //this.httpContextAccessor = httpContextAccessor;
         }
 

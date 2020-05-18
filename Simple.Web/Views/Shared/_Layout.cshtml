@@ -130,14 +130,14 @@ desired effect
                                 <li class="user-body">
                                     <div class="row">
                                         @*<div class="col-xs-4 text-center">
-                                            <a href="#">Followers</a>
-                                        </div>
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Sales</a>
-                                        </div>
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Friends</a>
-                                        </div>*@
+                                                <a href="#">Followers</a>
+                                            </div>
+                                            <div class="col-xs-4 text-center">
+                                                <a href="#">Sales</a>
+                                            </div>
+                                            <div class="col-xs-4 text-center">
+                                                <a href="#">Friends</a>
+                                            </div>*@
                                     </div>
                                     <!-- /.row -->
                                 </li>
@@ -178,15 +178,15 @@ desired effect
                     </div>*@
                 <!-- search form (Optional) -->
                 @*<form action="#" method="get" class="sidebar-form">
-                    <div class="input-group">
-                        <input type="text" name="q" class="form-control" placeholder="Search...">
-                        <span class="input-group-btn">
-                            <button type="submit" name="search" id="search-btn" class="btn btn-flat">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </span>
-                    </div>
-                </form>*@
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Search...">
+                            <span class="input-group-btn">
+                                <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </form>*@
                 <!-- /.search form -->
                 <!-- Sidebar Menu -->
                 <ul class="sidebar-menu" data-widget="tree" id="vmMenu">
@@ -337,7 +337,7 @@ desired effect
                         var arrUrl = [];
                         if (menu.childMenus != null) {
                             menu.childMenus.forEach(function (childMenu, index) {
-                                if (childMenu.menusUrl == param) {
+                                if ((param.toLowerCase().indexOf(childMenu.menusUrl.toLowerCase()))>-1) {
                                     childMenu.isActive = true;
                                 }
                                 arrUrl.push(childMenu.menusUrl);
@@ -355,7 +355,7 @@ desired effect
             }
         },
         mounted: function () {
-            this.QueryMenus(window.location.href);
+            this.QueryMenus(window.location.pathname);
         }
     });
 </script>
