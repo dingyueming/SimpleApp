@@ -70,8 +70,8 @@ namespace Simple.Domain
         public async Task<ElementTreeModel[]> GetUnitAndDeviceTree()
         {
             var allUnits = await unitRepository.GetAllAsync();
-            var allDevices = await viewAllTargetRepository.GetAllDevice();
-            var elementModels = GetUnitTreeModels(allUnits.ToList(), null, allDevices);
+            var allDevices = await carRepository.GetAllAsync();
+            var elementModels = GetUnitTreeModels(allUnits.ToList(), null, allDevices.ToList());
             return elementModels.ToArray();
         }
         #endregion
@@ -197,7 +197,7 @@ namespace Simple.Domain
         public async Task<string[]> GetDeviceIdsByUser(int userId)
         {
             var list = new List<string>();
-            var devices = await viewAllTargetRepository.GetDevicesByUser(userId);
+            var devices = await carRepository.GetCarEntitiesByUser(userId);
             var deviceIds = devices.Select(x => x.CARID).ToList();
             devices.ForEach((x) =>
             {
@@ -233,7 +233,7 @@ namespace Simple.Domain
             var list = new List<VueTreeSelectModel>();
             if (node == null)
             {
-                var unit = allNodes.FirstOrDefault(x => x.PID == 0);
+                var unit = allNodes.FirstOrDefault(x => x.PID == -1);
                 var nodeChildren = GetUnitTreeSelectModels(allNodes, unit);
                 var firstNode = new VueTreeSelectModel() { id = unit.UNITID.ToString(), label = unit.UNITNAME, Tag = unit.ORG_CODE, children = nodeChildren?.ToArray() };
                 list.Add(firstNode);
@@ -257,12 +257,12 @@ namespace Simple.Domain
 
             return list;
         }
-        public static List<ElementTreeModel> GetUnitTreeModels(List<UnitEntity> allNodes, UnitEntity node, List<ViewAllTargetEntity> allDevice)
+        public static List<ElementTreeModel> GetUnitTreeModels(List<UnitEntity> allNodes, UnitEntity node, List<CarEntity> allDevice)
         {
             var list = new List<ElementTreeModel>();
             if (node == null)
             {
-                var unit = allNodes.FirstOrDefault(x => x.PID == 0);
+                var unit = allNodes.FirstOrDefault(x => x.PID == -1);
                 var nodeChildren = GetUnitTreeModels(allNodes, unit, allDevice);
                 if (nodeChildren != null && nodeChildren.Count > 0)
                 {

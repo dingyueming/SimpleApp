@@ -11,6 +11,8 @@ using Simple.ExEntity.SM;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Simple.Domain
 {
@@ -28,8 +30,10 @@ namespace Simple.Domain
         private readonly IRolesRepository rolesRepository;
         private readonly IConfiguration configuration;
         private readonly IMapper mapper;
+        private readonly IHostingEnvironment env;
 
-        public SmDomainService(IUsersRoleRepository usersRoleRepository, IRoleMenuRepository roleMenuRepository, IRolesRepository rolesRepository, IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository)
+        public SmDomainService(IUsersRoleRepository usersRoleRepository, IRoleMenuRepository roleMenuRepository, IRolesRepository rolesRepository,
+            IHostingEnvironment env, IMapper mapper, IConfiguration configuration, IUserRepository userRepository, IMenusRepository menusRepository)
         {
             this.usersRoleRepository = usersRoleRepository;
             this.roleMenuRepository = roleMenuRepository;
@@ -38,6 +42,7 @@ namespace Simple.Domain
             this.userRepository = userRepository;
             this.menusRepository = menusRepository;
             this.configuration = configuration;
+            this.env = env;
         }
 
         #endregion
@@ -166,8 +171,8 @@ namespace Simple.Domain
             exList.ForEach(x =>
             {
                 x.ChildMenus = exList.Where(o => o.ParentId == x.MenusId).ToList().OrderBy(o => o.OrderIndex).ToList();
-                //var localUrl = configuration["localUrl"];
-                //x.MenusUrl = $"~/" + x.MenusUrl;
+                var localUrl = env.IsDevelopment() ? "http://localhost:6542" : configuration["localUrl"];
+                x.MenusUrl = localUrl + x.MenusUrl;
             });
             return exList.Where(x => x.ParentId == 0).ToList();
         }

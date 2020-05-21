@@ -337,7 +337,7 @@ desired effect
                         var arrUrl = [];
                         if (menu.childMenus != null) {
                             menu.childMenus.forEach(function (childMenu, index) {
-                                if ((param.toLowerCase().indexOf(childMenu.menusUrl.toLowerCase()))>-1) {
+                                if (childMenu.menusUrl == param) {
                                     childMenu.isActive = true;
                                 }
                                 arrUrl.push(childMenu.menusUrl);
@@ -355,7 +355,7 @@ desired effect
             }
         },
         mounted: function () {
-            this.QueryMenus(window.location.pathname);
+            this.QueryMenus(window.location.href);
         }
     });
 </script>

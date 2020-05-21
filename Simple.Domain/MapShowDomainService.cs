@@ -48,7 +48,7 @@ namespace Simple.Domain
             //获取所有单位
             var allUnits = await unitRepository.GetAllAsync();
             //获取当前用户所拥有的设备
-            var devices = await viewAllTargetRepository.GetDevicesByUser(userId);
+            var devices = await carRepository.GetCarEntitiesByUser(userId);
             //组织tree
             var listNode = new List<TreeNode>();
             foreach (var unit in allUnits)
@@ -73,25 +73,11 @@ namespace Simple.Domain
             {
                 var treeNode = new TreeNode()
                 {
-                    name = device.LICENSE,
+                    name = device.CARNO,
                     pId = $"unit-{device.UNITID}",
-                    id = $"car-{ device.CARID }"
+                    id = $"car-{ device.CARID }",
+                    iconSkin = "gray_car"
                 };
-                switch (device.TARGET_TYPE)
-                {
-                    case "车辆":
-                        treeNode.iconSkin = "gray_car";
-                        break;
-                    case "人员":
-                        treeNode.iconSkin = "red_person";
-                        break;
-                    case "对讲机":
-                        treeNode.iconSkin = "blue_phone";
-                        break;
-                    default:
-                        treeNode.iconSkin = "red_person";
-                        break;
-                }
                 listNode.Add(treeNode);
             }
             foreach (var item in listNode)

@@ -5,16 +5,41 @@
     ViewData["Version"] = "20200518";
 }
 @section style{
-
+    <!--ztree-->
+    <link rel="stylesheet" href="~/lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <style>
+        .input-card {
+            height: 50px;
+            top: 120px;
+            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 0.75rem 1.25rem;
+        }
+    </style>
 }
 
 @section script{
-
+    <!--引入高德地图JSAPI -->
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=07daf7aebe56f6b49516fa87628a06e4"></script>
+    <!--引入UI组件库（1.1版本） -->
+    <script src="//webapi.amap.com/ui/1.1/main.js"></script>
+    <!--引入本地地图工具 -->
+    <script src="~/plugins/amap/js/mapTools.js"></script>
+    <!--ztree-->
+    <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.core.js"></script>
+    <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.exhide.js"></script>
+    <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.excheck.js"></script>
+    <script type="text/javascript" src="~/lib/ztree/js/jquery.ztree.exedit.js"></script>
+    <script type="text/javascript" src="~/lib/ztree/demo/js/fuzzysearch.js"></script>
 }
 
 <div id="vmContent">
     <div class="row">
-        <div class="col-md-2" id="vmDeviceTree">
+        <div class="col-md-2">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h4 class="box-title">设备列表</h4>
@@ -46,7 +71,12 @@
                             <div class="pad">
                                 <!-- Map will be created here -->
                                 <!-- 提供地图容器，其中地图容器必须提供id号，用于生成地图 -->
-                                <div id="map" style="width:100%;height:455px;"></div>
+                                <div id="container" style="width:100%;height:455px; position:relative;"></div>
+                                @*<div class="input-card" style="width: auto;">
+                                        <div class="input-item">
+                                            <button class="btn" onclick="toggle()">显示/隐藏实时路况</button>
+                                        </div>
+                                    </div>*@
                             </div>
                         </div>
                     </div>
@@ -148,4 +178,4 @@
         </div>
     </div>
 </div>
-<script ></script>
+<script src="~/Controllers/AMap/RealTimeMapController.js?r=@Guid.NewGuid()"></script>

@@ -82,25 +82,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\plugins\ezMap\images\car-gray.png">
+    <Content Update="wwwroot\plugins\amap\images\car-gray.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\plugins\ezMap\images\car-green.png">
+    <Content Update="wwwroot\plugins\amap\images\car-green.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\plugins\ezMap\images\car-red.png">
+    <Content Update="wwwroot\plugins\amap\images\car-red.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\plugins\ezMap\images\car-white.png">
+    <Content Update="wwwroot\plugins\amap\images\car-white.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\plugins\ezMap\images\car-yellow.png">
+    <Content Update="wwwroot\plugins\amap\images\car-yellow.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\plugins\ezMap\images\person-gray.png">
+    <Content Update="wwwroot\plugins\amap\images\person-gray.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\plugins\ezMap\images\phone-blue.png">
+    <Content Update="wwwroot\plugins\amap\images\phone-blue.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
