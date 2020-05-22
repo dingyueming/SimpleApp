@@ -4,8 +4,6 @@ namespace Simple.ExEntity.Map
 {
     public partial class NEWTRACK
     {
-        private DateTime _gnsstime;
-
         /// <summary>
         /// CARID
         /// </summary>

@@ -29,7 +29,7 @@ namespace Simple.Web.Models
         /// <summary>
         /// 定位时间
         /// </summary>
-        public string GnssTime { get; set; }
+        public string Gnsstime { get; set; }
         /// <summary>
         /// 经度
         /// </summary>

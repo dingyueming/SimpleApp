@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "vue-easytable@1.7.2",
+      "destination": "wwwroot/lib/vue-easytable/",
+      "files": [
+        "umd/css/index.css",
+        "umd/font/fontello.eot",
+        "umd/font/fontello.svg",
+        "umd/font/fontello.ttf",
+        "umd/font/fontello.woff",
+        "umd/font/fontello.woff2",
+        "umd/js/index.js"
+      ]
+    }
+  ]
+}

@@ -117,7 +117,7 @@
                                 <th>经度</th>
                                 <th>纬度</th>
                             </tr>
-                            <tr v-for="(newtrack,index) in newtracks" v-on:dblclick="dbclickLocationTable(newtrack.mac)">
+                            <tr v-for="(newtrack,index) in gpsDatas" v-on:dblclick="dbclickLocationTable(newtrack.mac)">
                                 <td>{{newtrack.license}}</td>
                                 <td>{{newtrack.mac}}</td>
                                 <td>{{newtrack.sim}}</td>
