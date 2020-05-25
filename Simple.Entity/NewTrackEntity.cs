@@ -88,6 +88,6 @@ namespace Simple.Entity
         /// 设备实体
         /// </summary>
         [Computed]
-        public ViewAllTargetEntity Device { get; set; }
+        public CarEntity Device { get; set; }
     }
 }

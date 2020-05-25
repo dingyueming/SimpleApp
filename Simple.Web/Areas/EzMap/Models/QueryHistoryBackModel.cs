@@ -17,5 +17,7 @@ namespace Simple.Web.Areas.EzMap.Models
 
         public bool ZeroSpeed { get; set; }
 
+        public DateTime[] TimeValue { get; set; }
+
     }
 }

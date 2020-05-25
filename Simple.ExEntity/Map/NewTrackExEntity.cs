@@ -13,7 +13,7 @@ namespace Simple.ExEntity.Map
         /// <summary>
         /// mac
         /// </summary>
-        public ViewAllTargetExEntity Device { get; set; }
+        public CarExEntity Device { get; set; }
         /// <summary>
         /// 时间
         /// </summary>		

@@ -16,14 +16,10 @@ namespace Simple.Repository
         public async Task<List<NewTrackEntity>> GetNewtracksByDeviceId(dynamic queryModel)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("SELECT * from newtrack t join view_all_target v on t.carid =v.carid where 1=1 and t.carid=:deviceid and t.gnsstime between :starttime and :endtime and t.speed>:minspeed");
-            if ((bool)queryModel.ZeroSpeed)
-            {
-                sb.Append(" and t.speed<>0");
-            }
+            sb.Append("SELECT * from newtrack t join cars v on t.carid =v.carid where 1=1 and t.carid=:deviceid and t.gnsstime between :starttime and :endtime and t.speed>=:minspeed");
             sb.Append(" order by t.gnsstime");
-            var command = new CommandDefinition(sb.ToString(), new { deviceid = queryModel.DeviceId, starttime = queryModel.StartTime, endtime = queryModel.EndTime, minspeed = queryModel.MinSpeed });
-            var list = await Connection.QueryAsync<NewTrackEntity, ViewAllTargetEntity, NewTrackEntity>(command, (a, b) =>
+            var command = new CommandDefinition(sb.ToString(), new { deviceid = queryModel.DeviceId, starttime = (DateTime)queryModel.TimeValue[0], endtime = (DateTime)queryModel.TimeValue[1], minspeed = queryModel.MinSpeed });
+            var list = await Connection.QueryAsync<NewTrackEntity, CarEntity, NewTrackEntity>(command, (a, b) =>
             {
                 a.Device = b;
                 return a;
@@ -35,7 +31,7 @@ namespace Simple.Repository
         {
             var sql = $"select t.*,v.* from newtrack t join view_all_target v on t.carid =v.carid where t.gnsstime between :starttime and :endtime and (v.mac=:keyword or v.license=:keyword)";
             var command = new CommandDefinition(sql, new { startTime, endTime, keyword });
-            var list = await Connection.QueryAsync<NewTrackEntity, ViewAllTargetEntity, NewTrackEntity>(command, (a, b) =>
+            var list = await Connection.QueryAsync<NewTrackEntity, CarEntity, NewTrackEntity>(command, (a, b) =>
             {
                 a.Device = b;
                 return a;
