@@ -66,7 +66,15 @@
                         }
                     }
                 }
-            }
+            },
+            //全屏
+            isFullScreen: false,
+            fullScreenStyle: {
+                colmd10: 'col-md-10',
+                colmd12: 'col-md-12',
+                fullHeight: document.documentElement.clientHeight - 210,
+                normalHeight: document.documentElement.clientHeight - 480
+            },
         },
         methods: {
             //实例化地图
