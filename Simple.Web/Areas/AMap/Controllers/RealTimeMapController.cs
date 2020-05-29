@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Protobuf;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Simple.IApplication.MapShow;
@@ -15,10 +16,10 @@ namespace Simple.Web.Areas.AMap.Controllers
     {
 
         private IRealTimeMapService realTimeMapService;
-        private IConfiguration configuration;
-        public RealTimeMapController(IConfiguration configuration, IRealTimeMapService realTimeMapService)
+        private IMapSearchService mapSearchService;
+        public RealTimeMapController(IMapSearchService mapSearchService, IRealTimeMapService realTimeMapService)
         {
-            this.configuration = configuration;
+            this.mapSearchService = mapSearchService;
             this.realTimeMapService = realTimeMapService;
         }
 
@@ -54,6 +55,15 @@ namespace Simple.Web.Areas.AMap.Controllers
         {
             var locatedData = await realTimeMapService.GetLastLocatedByUser(LoginUser.UsersId);
             return Json(locatedData);
+        }
+        /// <summary>
+        /// 查询所有的执勤力量
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> QueryXfKeyUnit()
+        {
+            var list = await mapSearchService.GetXfKeyUnitExEntities();
+            return LowerJson(list);
         }
     }
 }

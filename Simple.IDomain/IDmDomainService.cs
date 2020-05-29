@@ -19,6 +19,7 @@ namespace Simple.IDomain
         Task<Pagination<UnitExEntity>> GetUnitPage(Pagination<UnitExEntity> param);
         Task<VueTreeSelectModel[]> GetUnitTree();
         Task<ElementTreeModel[]> GetUnitAndDeviceTree();
+        Task<List<UnitExEntity>> GetAllUnitExEntities();
 
 
         #endregion

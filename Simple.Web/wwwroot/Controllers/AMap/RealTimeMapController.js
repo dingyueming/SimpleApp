@@ -37,31 +37,7 @@
                     callback: {
                         onDblClick: function (event, treeId, treeNode) {
                             if (treeNode != null) {
-                                //给所有的marker的Title变成白色字体
-                                vm.deviceList.forEach(function (value) {
-                                    if (value.marker) {
-                                        value.marker.setLabel({
-                                            offset: new AMap.Pixel(0, 0),
-                                            content: "<div style='color:#000000;' >" + value.carno + "</div>", //设置文本标注内容
-                                            direction: value.lastTrackData.heading //设置文本标注方位
-                                        });
-                                    }
-                                });
-                                var device = vm.getDevice(treeNode.id.replace('car-', ''));
-                                if (device && device.lastTrackData) {
-                                    //设置中心点
-                                    var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                                    //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
-                                    vm.map.setZoomAndCenter(16, destPoint);
-                                    //设置title变红
-                                    device.marker.setLabel({
-                                        offset: new AMap.Pixel(0, 0),
-                                        content: "<div style='color:#FF0000;' >" + device.carno + "</div>", //设置文本标注内容
-                                        direction: device.lastTrackData.heading //设置文本标注方位
-                                    });
-                                    device.marker.show();
-                                    device.marker.setTop(true);
-                                }
+                                vm.dbclickLocationTable(treeNode.id.replace('car-', ''));
                             }
                         }
                     }
@@ -72,9 +48,18 @@
             fullScreenStyle: {
                 colmd10: 'col-md-10',
                 colmd12: 'col-md-12',
-                fullHeight: document.documentElement.clientHeight - 210,
-                normalHeight: document.documentElement.clientHeight - 480
+                fullHeight: document.documentElement.clientHeight - 146,
+                normalHeight: document.documentElement.clientHeight - 430
             },
+            //其他数据
+            otherData: {
+                isShowUnits: false,
+                unitMarkers: [],
+                powers: [],//执勤力量
+                units: [],//重点单位
+                xhs: []//消火栓
+            },
+
         },
         methods: {
             //实例化地图
@@ -89,13 +74,7 @@
 
                     //图层切换控件
                     vm.map.addControl(new BasicControl.LayerSwitcher({
-                        position: 'rt' //right top，右上角
-                    }));
-
-                    //实时交通控件
-                    vm.map.addControl(new BasicControl.Traffic({
-                        position: 'lb',//left bottom, 左下角
-                        open: false,
+                        position: 'lb' //right top，右上角
                     }));
                 });
             },
@@ -133,7 +112,7 @@
                                 topWhenClick: true,
                                 title: device.license + ' ' + device.carno,
                                 clickable: true,
-                                label: { content: device.carno, direction: value.heading, offset: new AMap.Pixel(0, 0) },
+                                label: { content: device.license, direction: value.heading, offset: new AMap.Pixel(0, 0) },
                                 extData: device,
                             });
                             device.marker = baseMarker;
@@ -144,6 +123,7 @@
                             device.marker.on('click', (e) => {
                                 var device = e.target.getExtData();
                                 var tmpArr = [
+                                    "<tr><td>车辆编号：</td><td>" + device.license + "</td></tr>",
                                     "<tr><td>车牌号：</td><td>" + device.carno + "</td></tr>",
                                     //"<tr><td>单位：</td><td>" + device.unitname + "</td></tr>",
                                     "<tr><td>识别码：</td><td>" + device.mac + "</td></tr>",
@@ -176,11 +156,14 @@
                         //更新设备图标
                         if (device.marker && device.marker.getIcon() != iconUrl) {
                             device.marker.setIcon(iconUrl);
+                            device.marker.show();
                         }
                         //更新设备位置
                         if (device.lastTrackData) {
                             var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                            device.marker.setPosition(destPoint);
+                            if (device.marker) {
+                                device.marker.setPosition(destPoint);
+                            }
                         }
                         //更新树图标
                         if (treeObj && treeObj != null) {
@@ -194,11 +177,15 @@
                         if (iconUrl.indexOf("off") > -1 && device.marker) {
                             device.marker.hide();
                         }
+                        //去掉定位表格里的离线数据
+                        //this.gpsData
                     }
                     //计算车辆在线数;
-                    var nodes = treeObj.getNodes();
-                    nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
-                }, 5 * 1000);
+                    if (treeObj) {
+                        var nodes = treeObj.getNodes();
+                        nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
+                    }
+                }, 1 * 1000);
             },
             //计算车辆在线数量
             recusiveUnit(treeObj, node) {
@@ -233,18 +220,45 @@
             //SignalR 通信
             initSignalR() {
                 const connection = new signalR.HubConnectionBuilder()
-                    .withUrl("@ViewBag.SignalrUrl")
+                    .withUrl("../../maphub")
                     .configureLogging(signalR.LogLevel.Information)
                     .build();
                 connection.start().then(() => { }).catch(err => console.error(err.toString()));
                 connection.on("UpdateMapData", function (data) {
-                    if (data.gpsData != null) {
-                        updateGpsData(data.mac, data.gpsData);
+                    if (data != null && data.gpsData != null) {
+                        vm.updateGpsData(data.mac, data.gpsData);
                     }
-                    if (data.alarmData != null) {
-                        updateAlarmTable(data.mac, data.alarmData);
+                    if (data != null && data.alarmData != null) {
+                        vm.updateAlarmTable(data.mac, data.alarmData);
                     }
                 });
+            },
+            dbclickLocationTable(mac) {
+                //给所有的marker的Title变成白色字体
+                vm.deviceList.forEach(function (value) {
+                    if (value.marker) {
+                        value.marker.setLabel({
+                            offset: new AMap.Pixel(0, 0),
+                            content: "<div style='color:#000000;' >" + value.carno + "</div>", //设置文本标注内容
+                            direction: value.lastTrackData.heading //设置文本标注方位
+                        });
+                    }
+                });
+                var device = vm.getDevice(mac);
+                if (device && device.lastTrackData) {
+                    //设置中心点
+                    var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                    //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
+                    vm.map.setZoomAndCenter(16, destPoint);
+                    //设置title变红
+                    device.marker.setLabel({
+                        offset: new AMap.Pixel(0, 0),
+                        content: "<div style='color:#FF0000;' >" + device.carno + "</div>", //设置文本标注内容
+                        direction: device.lastTrackData.heading //设置文本标注方位
+                    });
+                    device.marker.show();
+                    device.marker.setTop(true);
+                }
             },
             //更新实时定位数据
             updateGpsData(mac, gpsData) {
@@ -275,7 +289,7 @@
                         newRow.position = device.lastTrackData.position;
                         newRow.longitude = device.lastTrackData.longitude;
                         newRow.latitude = device.lastTrackData.latitude;
-                        this.gpsDatas.push(newRow);
+                        this.gpsDatas.unshift(newRow);
 
                     } else {
                         for (var i = 0; i < list.length; i++) {
@@ -325,7 +339,7 @@
                         alarmRow.position = alarmData.position;
                         alarmRow.longitude = alarmData.longitude;
                         alarmRow.latitude = alarmData.latitude;
-                        this.alarmDatas.push(alarmRow);
+                        this.alarmDatas.unshift(alarmRow);
                     }
                 } else {
                     for (var i = 0; i < list.length; i++) {
@@ -347,12 +361,57 @@
                     }
                 }
             },
+            //初始化其他数据(重点单位，执勤力量，消火栓)
+            initOtherData() {
+                //重点单位
+                axios.post('QueryAllUnit').then(function (response) {
+                    vm.otherData.units = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+                //执勤力量
+                axios.post('QueryXfKeyUnit').then(function (response) {
+                    vm.otherData.powers = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            //切换显示重点单位
+            switchUnit() {
+                if (!this.otherData.isShowUnits) {
+                    this.otherData.units.forEach((value) => {
+                        var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
+                        var unitMarker = new AMap.Marker({
+                            map: vm.map,
+                            position: destPoint,
+                            icon: "../../plugins/amap/images/yingfang.png",
+                            anchor: 'center',
+                            offset: new AMap.Pixel(0, 0),
+                            //angle: value.heading,
+                            topWhenClick: true,
+                            title: value.unitname,
+                            clickable: true,
+                            label: { content: value.unitname, direction: 90, offset: new AMap.Pixel(0, 0) },
+                        });
+                        vm.otherData.unitMarkers.push(unitMarker);
+                    });
+                } else {
+                    this.otherData.unitMarkers.forEach((x) => {
+                        x.hide();
+                    });
+                }
+                this.otherData.isShowUnits = !this.otherData.isShowUnits;
+            },
+            handleSelect() { },
+            querySearch(queryString, cb) { },
         },
         mounted() {
             this.initMap();
             this.initDeviceTree();
             this.initData();
             this.initTimer();
+            this.initSignalR();
+            this.initOtherData();
         }
     });
     //----------------//

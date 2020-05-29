@@ -19,6 +19,7 @@ namespace Simple.Domain
     /// </summary>
     public class MapShowDomainService : IMapShowDomainService
     {
+        private readonly IXfKeyUnitRepository xfKeyUnitRepository;
         private readonly ISjtlAttendancePositionRepository sjtlAttendancePositionRepository;
         private readonly ISjgx110AlarmRepository sjgx110AlarmRepository;
         private readonly INewtrackRepository newtrackRepository;
@@ -28,10 +29,12 @@ namespace Simple.Domain
         private readonly IPersonRepository personRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IMapper mapper;
-        public MapShowDomainService(ISjtlAttendancePositionRepository sjtlAttendancePositionRepository, ISjgx110AlarmRepository sjgx110AlarmRepository,
+        public MapShowDomainService(IXfKeyUnitRepository xfKeyUnitRepository,
+            ISjtlAttendancePositionRepository sjtlAttendancePositionRepository, ISjgx110AlarmRepository sjgx110AlarmRepository,
             INewtrackRepository newtrackRepository, IViewAllTargetRepository viewAllTargetRepository, ILastLocatedRepository lastLocatedRepository,
             IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.xfKeyUnitRepository = xfKeyUnitRepository;
             this.sjtlAttendancePositionRepository = sjtlAttendancePositionRepository;
             this.sjgx110AlarmRepository = sjgx110AlarmRepository;
             this.newtrackRepository = newtrackRepository;
@@ -180,6 +183,12 @@ namespace Simple.Domain
         {
             var entities = await sjtlAttendancePositionRepository.GetEntities(qm.DateTimes[0], qm.DateTimes[1], qm.Points.Count == 4 ? qm.Points[0] : null, qm.Points.Count == 4 ? qm.Points[2] : null, qm.NameOrPoliceCode);
             return mapper.Map<List<SjtlAttendancePositionExEntity>>(entities);
+        }
+
+        public async Task<List<XfKeyUnitExEntity>> GetXfKeyUnitExEntities()
+        {
+            var entities = await xfKeyUnitRepository.GetAllAsync();
+            return mapper.Map<List<XfKeyUnitExEntity>>(entities);
         }
 
     }

@@ -74,6 +74,12 @@ namespace Simple.Domain
             var elementModels = GetUnitTreeModels(allUnits.ToList(), null, allDevices.ToList());
             return elementModels.ToArray();
         }
+
+        public async Task<List<UnitExEntity>> GetAllUnitExEntities()
+        {
+            var entities = await unitRepository.GetAllAsync();
+            return mapper.Map<List<UnitExEntity>>(entities);
+        }
         #endregion
 
         #region 车辆管理
@@ -235,7 +241,7 @@ namespace Simple.Domain
             {
                 var unit = allNodes.FirstOrDefault(x => x.PID == -1);
                 var nodeChildren = GetUnitTreeSelectModels(allNodes, unit);
-                var firstNode = new VueTreeSelectModel() { id = unit.UNITID.ToString(), label = unit.UNITNAME, Tag = unit.ORG_CODE, children = nodeChildren?.ToArray() };
+                var firstNode = new VueTreeSelectModel() { id = unit.UNITID.ToString(), label = unit.UNITNAME, Tag = unit.URL, children = nodeChildren?.ToArray() };
                 list.Add(firstNode);
             }
             else
@@ -246,7 +252,7 @@ namespace Simple.Domain
                     nodes.ForEach((x) =>
                     {
                         var nodeChildren = GetUnitTreeSelectModels(allNodes, x);
-                        list.Add(new VueTreeSelectModel() { id = x.UNITID.ToString(), label = x.UNITNAME, Tag = x.ORG_CODE, children = nodeChildren?.ToArray() });
+                        list.Add(new VueTreeSelectModel() { id = x.UNITID.ToString(), label = x.UNITNAME, Tag = x.URL, children = nodeChildren?.ToArray() });
                     });
                 }
                 else
