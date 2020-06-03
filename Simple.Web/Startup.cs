@@ -118,11 +118,11 @@ namespace Simple.Web
             //IServiceProvider
             ServiceLocator.SetServices(autofacServicePorovider);
 
-            //启动推送消息
             Task.Run(async () =>
             {
                 var hub = autofacServicePorovider.GetService<MapHub>();
-                await hub.SendMsg();
+                //监听位置信息
+                await hub.GetData();
             });
 
             return autofacServicePorovider;

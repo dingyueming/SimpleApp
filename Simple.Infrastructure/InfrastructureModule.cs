@@ -13,6 +13,7 @@ namespace Simple.Infrastructure
         {
             builder.RegisterType<ConnectionFactory>().PropertiesAutowired();
             builder.RegisterType<RedisHelper>().SingleInstance().PropertiesAutowired();
+            builder.RegisterType<DigitalQueueHelper>().SingleInstance().PropertiesAutowired();
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Simple.Domain
     /// </summary>
     public class MapShowDomainService : IMapShowDomainService
     {
+        private readonly IXfSyxxRepository xfSyxxRepository;
         private readonly IXfKeyUnitRepository xfKeyUnitRepository;
         private readonly ISjtlAttendancePositionRepository sjtlAttendancePositionRepository;
         private readonly ISjgx110AlarmRepository sjgx110AlarmRepository;
@@ -29,11 +30,12 @@ namespace Simple.Domain
         private readonly IPersonRepository personRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IMapper mapper;
-        public MapShowDomainService(IXfKeyUnitRepository xfKeyUnitRepository,
+        public MapShowDomainService(IXfKeyUnitRepository xfKeyUnitRepository, IXfSyxxRepository xfSyxxRepository,
             ISjtlAttendancePositionRepository sjtlAttendancePositionRepository, ISjgx110AlarmRepository sjgx110AlarmRepository,
             INewtrackRepository newtrackRepository, IViewAllTargetRepository viewAllTargetRepository, ILastLocatedRepository lastLocatedRepository,
             IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.xfSyxxRepository = xfSyxxRepository;
             this.xfKeyUnitRepository = xfKeyUnitRepository;
             this.sjtlAttendancePositionRepository = sjtlAttendancePositionRepository;
             this.sjgx110AlarmRepository = sjgx110AlarmRepository;
@@ -191,5 +193,10 @@ namespace Simple.Domain
             return mapper.Map<List<XfKeyUnitExEntity>>(entities);
         }
 
+        public async Task<List<XfSyxxExEntity>> GetXfSyxxExEntities()
+        {
+            var entities = await xfSyxxRepository.GetAllAsync();
+            return mapper.Map<List<XfSyxxExEntity>>(entities);
+        }
     }
 }

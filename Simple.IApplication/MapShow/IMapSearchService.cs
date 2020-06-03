@@ -10,5 +10,6 @@ namespace Simple.IApplication.MapShow
     public interface IMapSearchService
     {
         Task<List<XfKeyUnitExEntity>> GetXfKeyUnitExEntities();
+        Task<List<XfSyxxExEntity>> GetXfSyxxExEntities();
     }
 }

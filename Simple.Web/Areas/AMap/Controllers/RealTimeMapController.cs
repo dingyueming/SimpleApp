@@ -65,5 +65,15 @@ namespace Simple.Web.Areas.AMap.Controllers
             var list = await mapSearchService.GetXfKeyUnitExEntities();
             return LowerJson(list);
         }
+
+        /// <summary>
+        /// 查询所有的执勤力量
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> QueryXfsyxx()
+        {
+            var list = await mapSearchService.GetXfSyxxExEntities();
+            return LowerJson(list);
+        }
     }
 }

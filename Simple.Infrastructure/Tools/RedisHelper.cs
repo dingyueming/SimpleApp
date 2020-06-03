@@ -216,6 +216,18 @@ namespace Simple.Infrastructure.Tools
         }
 
         /// <summary>
+        /// insert list value to redis from right
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void SetListValue<T>(string key, T value)
+        {
+            var s = JsonConvert.SerializeObject(value); //序列化
+            db.ListRightPush(key, s); //要一个个的插入
+        }
+
+        /// <summary>
         /// get list by gb2312 encoding 
         /// </summary>
         /// <typeparam name="T"></typeparam>

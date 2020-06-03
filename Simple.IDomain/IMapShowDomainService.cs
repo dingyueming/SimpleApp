@@ -32,5 +32,7 @@ namespace Simple.IDomain
         Task<List<SjtlAttendancePositionExEntity>> GetSjtlAttenPosExEnties(SjtlAttPosQm qm);
 
         Task<List<XfKeyUnitExEntity>> GetXfKeyUnitExEntities();
+
+        Task<List<XfSyxxExEntity>> GetXfSyxxExEntities();
     }
 }

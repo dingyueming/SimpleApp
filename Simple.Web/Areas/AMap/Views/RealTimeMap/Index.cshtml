@@ -16,6 +16,14 @@
             /*box-shadow: 0 1px 5px rgba(0,0,0,.4);
             background: #fff;*/
         }
+
+        .el-row {
+            margin: 5px;
+        }
+
+        .el-col {
+            padding-right:5px;
+        }
     </style>
 }
 
@@ -42,7 +50,11 @@
                 <div class="box-body  no-padding">
                     <div class="pad">
                         <input type="text" id="key" value="" style="width:100%;" class="empty" placeholder="请输入关键字" /><br />
-                        <ul id="treeDemo" class="ztree" style="border:0px; height:458px;width:100%; margin-top:3px; overflow:auto;"></ul>
+                        <ul id="treeDemo" class="ztree" style="        border: 0px;
+        height: 458px;
+        width: 100%;
+        margin-top: 3px;
+        overflow: auto;"></ul>
                     </div>
                 </div>
             </div>
@@ -55,19 +67,17 @@
                         <!-- 提供地图容器，其中地图容器必须提供id号，用于生成地图 -->
                         <div id="container" :style="{height:(isFullScreen?fullScreenStyle.fullHeight+'px':fullScreenStyle.normalHeight+'px')}"></div>
                         <div class="toolbar">
-                            @*<el-autocomplete class="inline-input"
-                                size="mini"
-                                v-model="isFullScreen"
-                                :fetch-suggestions="querySearch"
-                                placeholder="请入消火栓或单位名称"
-                                :trigger-on-focus="false"
-                                v-on:select="handleSelect"></el-autocomplete>*@
                             <el-popover placement="left-start"
-                                        width="400"
+                                        width="auto"
                                         trigger="click">
-                                <el-button size="mini" icon="el-icon-location" v-on:click="switchUnit">位置查询</el-button>
-                                <el-button size="mini" icon="el-icon-s-flag" v-on:click="switchUnit">执勤力量</el-button>
-                                <el-button size="mini" icon="el-icon-house" v-on:click="switchUnit">{{!otherData.isShowUnits?"显示":"隐藏"}}重点单位</el-button>
+                                <el-row>
+                                    <el-col :span="12"><el-button size="mini" icon="el-icon-location" v-on:click="locationQuery">位置查询</el-button></el-col>
+                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-shop" v-on:click="switchUnit">重点单位</el-button></el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-flag" v-on:click="drawRectangle(1)">执勤力量</el-button></el-col>
+                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-open" v-on:click="drawRectangle(2)">消火栓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</el-button></el-col>
+                                </el-row>
                                 <el-button slot="reference" icon="el-icon-platform-eleme" size="mini"></el-button>
                             </el-popover>
                             <el-button icon="el-icon-full-screen" size="mini" v-on:click="isFullScreen=!isFullScreen"></el-button>
@@ -162,7 +172,12 @@
                             <tr>
                                 <th>序号</th>
                                 <th>内容</th>
-                                <th>时间</th>
+                                @*<th>时间</th>*@
+                            </tr>
+                            <tr v-for="(msgData,index) in  msgDatas">
+                                <th>{{index}}</th>
+                                <th>{{msgData.msg}}</th>
+                                @*<th>时间</th>*@
                             </tr>
                         </table>
                     </div>

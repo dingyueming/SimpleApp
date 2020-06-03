@@ -10,15 +10,22 @@
             deviceList: [],
             //最后定位数据
             lastLocatedData: [],
+            //signalR链接
+            conn: undefined,
             //实时定位数据
             gpsDatas: [],
             //实时报警数据
             alarmDatas: [],
+            //短报文数据
+            msgDatas: [],
             //z-tree
             zTree: {
+                treeObj: {},
                 treeData: {},
+                selectNode: undefined,
                 setting: {
                     check: {
+                        //chkStyle: "radio",
                         enable: true//checkbox
                     },
                     view: {
@@ -39,6 +46,18 @@
                             if (treeNode != null) {
                                 vm.dbclickLocationTable(treeNode.id.replace('car-', ''));
                             }
+                        },
+                        beforeCheck: function (treeId, treeNode) {
+                            //设置父节点不能被选择
+                            if (treeNode.children) {
+                                return false;
+                            }
+                            vm.zTree.selectNode = undefined;
+                            vm.zTree.treeObj.checkAllNodes(false);
+                            return true;
+                        },
+                        onCheck: function (e, treeId, treeNode) {
+                            vm.zTree.selectNode = treeNode;
                         }
                     }
                 }
@@ -53,11 +72,15 @@
             },
             //其他数据
             otherData: {
+                drawType: 1,//画图类型
                 isShowUnits: false,
+                units: [],//重点单位
                 unitMarkers: [],
                 powers: [],//执勤力量
-                units: [],//重点单位
-                xhs: []//消火栓
+                powerMarkers: [],
+                xhs: [],//消火栓
+                xhsMarkers: [],
+                rectangleObj: null,
             },
 
         },
@@ -82,7 +105,7 @@
             initDeviceTree() {
                 axios.post('QueryDeviceTree').then(function (response) {
                     vm.zTree.treeData = response.data;
-                    $.fn.zTree.init($("#treeDemo"), vm.zTree.setting, vm.zTree.treeData);
+                    vm.zTree.treeObj = $.fn.zTree.init($("#treeDemo"), vm.zTree.setting, vm.zTree.treeData);
                     fuzzySearch('treeDemo', '#key', null, true); //初始化模糊搜索方法
                 }).catch(function (error) {
                     console.log(error);
@@ -232,6 +255,10 @@
                         vm.updateAlarmTable(data.mac, data.alarmData);
                     }
                 });
+                connection.on("ShowCommandMsg", function (data) {
+                    vm.$message.success(data);
+                });
+                this.conn = connection;
             },
             dbclickLocationTable(mac) {
                 //给所有的marker的Title变成白色字体
@@ -375,6 +402,12 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
+                //消火栓
+                axios.post('QueryXfsyxx').then(function (response) {
+                    vm.otherData.xhs = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
             },
             //切换显示重点单位
             switchUnit() {
@@ -384,7 +417,7 @@
                         var unitMarker = new AMap.Marker({
                             map: vm.map,
                             position: destPoint,
-                            icon: "../../plugins/amap/images/yingfang.png",
+                            icon: "../../plugins/amap/images/zddw.png",
                             anchor: 'center',
                             offset: new AMap.Pixel(0, 0),
                             //angle: value.heading,
@@ -397,13 +430,111 @@
                     });
                 } else {
                     this.otherData.unitMarkers.forEach((x) => {
-                        x.hide();
+                        vm.map.remove(x);
                     });
                 }
                 this.otherData.isShowUnits = !this.otherData.isShowUnits;
             },
-            handleSelect() { },
-            querySearch(queryString, cb) { },
+            locationQuery() {
+                if (this.zTree.selectNode && this.conn) {
+                    var device = this.getDevice(this.zTree.selectNode.id.replace('car-', ''));
+                    this.conn.invoke("LocationQuery", device.mac, device.mtype, device.ctype).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                } else {
+                    vm.$message.warning('请选择车辆');
+                }
+            },
+            drawRectangle(type) {
+                this.otherData.drawType = type;
+                if (this.otherData.drawType == 1 && this.otherData.powerMarkers.length > 0) {
+                    this.otherData.powerMarkers.forEach((x) => {
+                        vm.map.remove(x);
+                    });
+                    this.otherData.powerMarkers = [];
+                }
+                if (this.otherData.drawType == 2 && this.otherData.xhsMarkers.length > 0) {
+                    this.otherData.xhsMarkers.forEach((x) => {
+                        vm.map.remove(x);
+                    });
+                    this.otherData.xhsMarkers = [];
+                }
+                if (this.otherData.rectangleObj != null) {
+                    this.map.remove(this.otherData.rectangleObj);
+                }
+
+                this.map.plugin(["AMap.MouseTool"], function () {
+                    var mouseTool = new AMap.MouseTool(vm.map);
+                    // 使用鼠标工具，在地图上画框
+                    mouseTool.rectangle({
+                        strokeColor: 'red',
+                        strokeOpacity: 0.5,
+                        strokeWeight: 2,
+                        strokeStyle: 'solid',
+                    });
+                    //设置鼠标为十字
+                    vm.map.setDefaultCursor("crosshair");
+                    mouseTool.on('draw', function (event) {
+                        // event.obj 为绘制出来的覆盖物对象
+                        vm.otherData.rectangleObj = event.obj;
+                        var bounds = event.obj.getBounds();
+
+                        if (vm.otherData.drawType == 1) {
+                            vm.otherData.powers.forEach((value) => {
+                                var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
+                                destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
+                                var isContains = bounds.contains(destPoint);
+                                if (isContains) {
+                                    var powerMarker = new AMap.Marker({
+                                        map: vm.map,
+                                        position: destPoint,
+                                        icon: "../../plugins/amap/images/zqll.png",
+                                        anchor: 'center',
+                                        offset: new AMap.Pixel(0, 0),
+                                        //angle: value.heading,
+                                        topWhenClick: true,
+                                        title: value.name,
+                                        clickable: true,
+                                        label: { content: value.name, direction: 90, offset: new AMap.Pixel(0, 0) },
+                                        //extData: device,
+                                    });
+                                    vm.otherData.powerMarkers.push(powerMarker);
+                                }
+                            });
+                        }
+
+                        if (vm.otherData.drawType == 2) {
+                            vm.otherData.xhs.forEach((value) => {
+                                var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
+                                destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
+                                var isContains = bounds.contains(destPoint);
+                                if (isContains) {
+                                    var xhsMarker = new AMap.Marker({
+                                        map: vm.map,
+                                        position: destPoint,
+                                        icon: "../../plugins/amap/images/xhs.png",
+                                        anchor: 'center',
+                                        offset: new AMap.Pixel(0, 0),
+                                        //angle: value.heading,
+                                        topWhenClick: true,
+                                        title: value.symc,
+                                        label: { content: value.symc, direction: 90,},
+                                        //extData: device,
+                                    });
+                                    vm.otherData.xhsMarkers.push(xhsMarker);
+                                }
+                            });
+                        }
+                        mouseTool.close();
+                        vm.map.setDefaultCursor("default");
+                    });
+                });
+            },
+            openSelectWindow() {
+                this.$alert('<strong>这是 <i>HTML</i> 片段</strong>', 'HTML 片段', {
+                    dangerouslyUseHTMLString: true
+                });
+            },
         },
         mounted() {
             this.initMap();

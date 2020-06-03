@@ -43,17 +43,6 @@ namespace Simple.Web.Controllers
         public virtual IActionResult Index()
         {
             ViewBag.UserName = LoginUser.UsersName;
-            var strMapJsUrl = configuration.GetSection("MapConfig")["MapJsUrl"];
-            if (!string.IsNullOrEmpty(strMapJsUrl))
-            {
-                ViewBag.MapJs = strMapJsUrl.Split('|').ToList();
-            }
-            var strMapCssUrl = configuration.GetSection("MapConfig")["MapCssUrl"];
-            if (!string.IsNullOrEmpty(strMapCssUrl))
-            {
-                ViewBag.MapCss = strMapCssUrl.Split('|').ToList();
-            }
-
             //根据当前页面url设置页面的title
             var path = HttpContext.Request.Path;
             if (path.HasValue)

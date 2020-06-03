@@ -20,5 +20,10 @@ namespace Simple.Application.MapShow
         {
             return await mapShowDomainService.GetXfKeyUnitExEntities();
         }
+
+        public async Task<List<XfSyxxExEntity>> GetXfSyxxExEntities()
+        {
+            return await mapShowDomainService.GetXfSyxxExEntities();
+        }
     }
 }
