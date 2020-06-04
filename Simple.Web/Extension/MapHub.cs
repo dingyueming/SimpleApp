@@ -123,6 +123,68 @@ namespace Simple.Web.Other
         }
 
         /// <summary>
+        /// 设置回传间隔
+        /// </summary>
+        /// <returns></returns>
+        public async Task SetReturnInterval(string mac, int mtype, int ctype, int minutes)
+        {
+            var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var outPutModel = new BaseCommand<SetReturnInterval>()
+            {
+                Mac = mac,
+                Head = new CommandHead()
+                {
+                    COMMAND_ID = 6,
+                    USERID = userId,
+                    MOBILE_TYPE = mtype,
+                    CI_SERVERNO = ctype,
+                    CMD_SEQ = digitalQueueHelper.NextNumber()
+                },
+                Content = new SetReturnInterval()
+                {
+                    Number = 1,
+                    Para = minutes,
+                    Type = 2
+                }
+            };
+            await Task.Run(() =>
+            {
+                redisHelper.SetListValue("CMD", outPutModel);
+            });
+        }
+
+        /// <summary>
+        /// 下发短报文
+        /// </summary>
+        /// <returns></returns>
+        public async Task Xfdbwen(string mac, int mtype, int ctype, string msg)
+        {
+            var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var outPutModel = new BaseCommand<UpMsgContent>()
+            {
+                Mac = mac,
+                Head = new CommandHead()
+                {
+                    COMMAND_ID = 6,
+                    USERID = userId,
+                    MOBILE_TYPE = mtype,
+                    CI_SERVERNO = ctype,
+                    CMD_SEQ = digitalQueueHelper.NextNumber()
+                },
+                Content = new UpMsgContent()
+                {
+                    Msg = msg,
+                    Type = 1
+                }
+            };
+            await Task.Run(() =>
+            {
+                redisHelper.SetListValue("CMD", outPutModel);
+            });
+        }
+
+
+        /// <summary>
         /// 新用户连接时
         /// </summary>
         /// <returns></returns>

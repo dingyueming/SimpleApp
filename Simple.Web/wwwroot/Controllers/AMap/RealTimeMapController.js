@@ -518,7 +518,7 @@
                                         //angle: value.heading,
                                         topWhenClick: true,
                                         title: value.symc,
-                                        label: { content: value.symc, direction: 90,},
+                                        label: { content: value.symc, direction: 90, },
                                         //extData: device,
                                     });
                                     vm.otherData.xhsMarkers.push(xhsMarker);
@@ -530,10 +530,25 @@
                     });
                 });
             },
-            openSelectWindow() {
-                this.$alert('<strong>这是 <i>HTML</i> 片段</strong>', 'HTML 片段', {
-                    dangerouslyUseHTMLString: true
-                });
+            setReturnInterval() {
+                if (this.zTree.selectNode && this.conn) {
+                    var device = this.getDevice(this.zTree.selectNode.id.replace('car-', ''));
+
+                    this.$prompt('请输入间隔时间（S）', '设置回传间隔', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        inputPattern: /^\d+$/,
+                        inputErrorMessage: '请输入数字'
+                    }).then(({ value }) => {
+                        this.conn.invoke("SetReturnInterval", device.mac, device.mtype, device.ctype, value).catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    }).catch(() => {
+                        
+                    });
+                } else {
+                    vm.$message.warning('请选择车辆');
+                }
             },
         },
         mounted() {

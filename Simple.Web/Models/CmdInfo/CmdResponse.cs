@@ -32,6 +32,9 @@ namespace Simple.Web.Models.CmdInfo
                     case 5:
                         msg = "位置查询";
                         break;
+                    case 6:
+                        msg = "设置回传间隔";
+                        break;
                     default:
                         msg = "命令反馈";
                         break;
