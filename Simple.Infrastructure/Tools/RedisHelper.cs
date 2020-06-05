@@ -16,6 +16,7 @@ namespace Simple.Infrastructure.Tools
         private IDatabase db { get; set; }
         public RedisHelper(IConfiguration configuration)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             redis = ConnectionMultiplexer.Connect(configuration["RedisConnectionStr"]);
             db = redis.GetDatabase();
         }
@@ -224,7 +225,10 @@ namespace Simple.Infrastructure.Tools
         public void SetListValue<T>(string key, T value)
         {
             var s = JsonConvert.SerializeObject(value); //序列化
-            db.ListRightPush(key, s); //要一个个的插入
+            
+            var rVal = Encoding.GetEncoding("gb2312").GetBytes(s);
+
+            db.ListRightPush(key, rVal); //要一个个的插入
         }
 
         /// <summary>
@@ -255,7 +259,7 @@ namespace Simple.Infrastructure.Tools
             if (!string.IsNullOrEmpty(rightvalue))
             {
                 //注册Nuget包System.Text.Encoding.CodePages中的编码到.NET Core
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
                 var str = Encoding.GetEncoding("gb2312").GetString(rightvalue);
                 return JsonConvert.DeserializeObject<T>(str); //反序列化
             }

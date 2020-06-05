@@ -47,18 +47,18 @@
                                 vm.dbclickLocationTable(treeNode.id.replace('car-', ''));
                             }
                         },
-                        beforeCheck: function (treeId, treeNode) {
-                            //设置父节点不能被选择
-                            if (treeNode.children) {
-                                return false;
-                            }
-                            vm.zTree.selectNode = undefined;
-                            vm.zTree.treeObj.checkAllNodes(false);
-                            return true;
-                        },
-                        onCheck: function (e, treeId, treeNode) {
-                            vm.zTree.selectNode = treeNode;
-                        }
+                        //beforeCheck: function (treeId, treeNode) {
+                        //    //设置父节点不能被选择
+                        //    if (treeNode.children) {
+                        //        return false;
+                        //    }
+                        //    //vm.zTree.selectNode = undefined;
+                        //    //vm.zTree.treeObj.checkAllNodes(false);
+                        //    return true;
+                        //},
+                        //onCheck: function (e, treeId, treeNode) {
+                        //    //vm.zTree.selectNode = treeNode;
+                        //}
                     }
                 }
             },
@@ -531,20 +531,48 @@
                 });
             },
             setReturnInterval() {
-                if (this.zTree.selectNode && this.conn) {
-                    var device = this.getDevice(this.zTree.selectNode.id.replace('car-', ''));
-
+                var nodes = this.zTree.treeObj.getCheckedNodes();
+                if (nodes.length > 0 && this.conn) {
                     this.$prompt('请输入间隔时间（S）', '设置回传间隔', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         inputPattern: /^\d+$/,
                         inputErrorMessage: '请输入数字'
                     }).then(({ value }) => {
-                        this.conn.invoke("SetReturnInterval", device.mac, device.mtype, device.ctype, value).catch(function (err) {
-                            return console.error(err.toString());
+                        nodes.forEach((x) => {
+                            var device = this.getDevice(x.id.replace('car-', ''));
+                            if (device) {
+                                this.conn.invoke("SetReturnInterval", device.mac, device.mtype, device.ctype, value).catch(function (err) {
+                                    return console.error(err.toString());
+                                });
+                            }
                         });
                     }).catch(() => {
-                        
+
+                    });
+                } else {
+                    vm.$message.warning('请选择车辆');
+                }
+            },
+            Xfdbwen() {
+                var nodes = this.zTree.treeObj.getCheckedNodes();
+                if (nodes.length > 0  && this.conn) {
+                    this.$prompt('请输入发送内容（S）', '发送短报文', {
+                        confirmButtonText: '发送',
+                        cancelButtonText: '取消',
+                        //inputPattern: /^\d+$/,
+                        //inputErrorMessage: '请输入数字'
+                    }).then(({ value }) => {
+                        nodes.forEach((x) => {
+                            var device = this.getDevice(x.id.replace('car-', ''));
+                            if (device) {
+                                this.conn.invoke("Xfdbwen", device.mac, device.mtype, device.ctype, value).catch(function (err) {
+                                    return console.error(err.toString());
+                                });
+                            }
+                        });
+                    }).catch(() => {
+
                     });
                 } else {
                     vm.$message.warning('请选择车辆');

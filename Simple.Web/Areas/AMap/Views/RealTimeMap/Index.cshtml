@@ -17,13 +17,6 @@
             background: #fff;*/
         }
 
-        .commonbar {
-            position: absolute;
-            bottom: 0px;
-            right: 0px;
-            z-index: 100;
-        }
-
         .el-row {
             margin: 5px;
         }
@@ -65,7 +58,7 @@
                                 <el-col :span="12"><el-button size="mini" icon="el-icon-s-shop" v-on:click="setReturnInterval">设置回传间隔</el-button></el-col>
                             </el-row>
                             <el-row>
-
+                                <el-col :span="12"><el-button size="mini" icon="el-icon-s-comment" v-on:click="Xfdbwen">发送报文</el-button></el-col>
                             </el-row>
                             <el-button slot="reference" icon="el-icon-platform-eleme" size="mini"></el-button>
                         </el-popover>
