@@ -34,7 +34,7 @@ namespace Simple.Web.Areas.DM.Controllers
         {
             await RecordLog("单位", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.RECDATE = DateTime.Now;
-            exEntity.RECMAN = (uint)LoginUser.UsersId;
+            exEntity.RECMAN = LoginUser.UsersId;
             return await unitService.Update(exEntity);
         }
         public async Task<bool> Delete(UnitExEntity exEntity)

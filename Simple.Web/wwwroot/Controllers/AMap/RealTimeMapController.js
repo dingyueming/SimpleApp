@@ -10,15 +10,22 @@
             deviceList: [],
             //最后定位数据
             lastLocatedData: [],
+            //signalR链接
+            conn: undefined,
             //实时定位数据
             gpsDatas: [],
             //实时报警数据
             alarmDatas: [],
+            //短报文数据
+            msgDatas: [],
             //z-tree
             zTree: {
+                treeObj: {},
                 treeData: {},
+                selectNode: undefined,
                 setting: {
                     check: {
+                        //chkStyle: "radio",
                         enable: true//checkbox
                     },
                     view: {
@@ -37,33 +44,21 @@
                     callback: {
                         onDblClick: function (event, treeId, treeNode) {
                             if (treeNode != null) {
-                                //给所有的marker的Title变成白色字体
-                                vm.deviceList.forEach(function (value) {
-                                    if (value.marker) {
-                                        value.marker.setLabel({
-                                            offset: new AMap.Pixel(0, 0),
-                                            content: "<div style='color:#000000;' >" + value.carno + "</div>", //设置文本标注内容
-                                            direction: value.lastTrackData.heading //设置文本标注方位
-                                        });
-                                    }
-                                });
-                                var device = vm.getDevice(treeNode.id.replace('car-', ''));
-                                if (device && device.lastTrackData) {
-                                    //设置中心点
-                                    var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                                    //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
-                                    vm.map.setZoomAndCenter(16, destPoint);
-                                    //设置title变红
-                                    device.marker.setLabel({
-                                        offset: new AMap.Pixel(0, 0),
-                                        content: "<div style='color:#FF0000;' >" + device.carno + "</div>", //设置文本标注内容
-                                        direction: device.lastTrackData.heading //设置文本标注方位
-                                    });
-                                    device.marker.show();
-                                    device.marker.setTop(true);
-                                }
+                                vm.dbclickLocationTable(treeNode.id.replace('car-', ''));
                             }
-                        }
+                        },
+                        //beforeCheck: function (treeId, treeNode) {
+                        //    //设置父节点不能被选择
+                        //    if (treeNode.children) {
+                        //        return false;
+                        //    }
+                        //    //vm.zTree.selectNode = undefined;
+                        //    //vm.zTree.treeObj.checkAllNodes(false);
+                        //    return true;
+                        //},
+                        //onCheck: function (e, treeId, treeNode) {
+                        //    //vm.zTree.selectNode = treeNode;
+                        //}
                     }
                 }
             },
@@ -72,9 +67,22 @@
             fullScreenStyle: {
                 colmd10: 'col-md-10',
                 colmd12: 'col-md-12',
-                fullHeight: document.documentElement.clientHeight - 210,
-                normalHeight: document.documentElement.clientHeight - 480
+                fullHeight: document.documentElement.clientHeight - 146,
+                normalHeight: document.documentElement.clientHeight - 430
             },
+            //其他数据
+            otherData: {
+                drawType: 1,//画图类型
+                isShowUnits: false,
+                units: [],//重点单位
+                unitMarkers: [],
+                powers: [],//执勤力量
+                powerMarkers: [],
+                xhs: [],//消火栓
+                xhsMarkers: [],
+                rectangleObj: null,
+            },
+
         },
         methods: {
             //实例化地图
@@ -89,13 +97,7 @@
 
                     //图层切换控件
                     vm.map.addControl(new BasicControl.LayerSwitcher({
-                        position: 'rt' //right top，右上角
-                    }));
-
-                    //实时交通控件
-                    vm.map.addControl(new BasicControl.Traffic({
-                        position: 'lb',//left bottom, 左下角
-                        open: false,
+                        position: 'lb' //right top，右上角
                     }));
                 });
             },
@@ -103,7 +105,7 @@
             initDeviceTree() {
                 axios.post('QueryDeviceTree').then(function (response) {
                     vm.zTree.treeData = response.data;
-                    $.fn.zTree.init($("#treeDemo"), vm.zTree.setting, vm.zTree.treeData);
+                    vm.zTree.treeObj = $.fn.zTree.init($("#treeDemo"), vm.zTree.setting, vm.zTree.treeData);
                     fuzzySearch('treeDemo', '#key', null, true); //初始化模糊搜索方法
                 }).catch(function (error) {
                     console.log(error);
@@ -133,7 +135,7 @@
                                 topWhenClick: true,
                                 title: device.license + ' ' + device.carno,
                                 clickable: true,
-                                label: { content: device.carno, direction: value.heading, offset: new AMap.Pixel(0, 0) },
+                                label: { content: device.license, direction: value.heading, offset: new AMap.Pixel(0, 0) },
                                 extData: device,
                             });
                             device.marker = baseMarker;
@@ -144,6 +146,7 @@
                             device.marker.on('click', (e) => {
                                 var device = e.target.getExtData();
                                 var tmpArr = [
+                                    "<tr><td>车辆编号：</td><td>" + device.license + "</td></tr>",
                                     "<tr><td>车牌号：</td><td>" + device.carno + "</td></tr>",
                                     //"<tr><td>单位：</td><td>" + device.unitname + "</td></tr>",
                                     "<tr><td>识别码：</td><td>" + device.mac + "</td></tr>",
@@ -176,11 +179,14 @@
                         //更新设备图标
                         if (device.marker && device.marker.getIcon() != iconUrl) {
                             device.marker.setIcon(iconUrl);
+                            device.marker.show();
                         }
                         //更新设备位置
                         if (device.lastTrackData) {
                             var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                            device.marker.setPosition(destPoint);
+                            if (device.marker) {
+                                device.marker.setPosition(destPoint);
+                            }
                         }
                         //更新树图标
                         if (treeObj && treeObj != null) {
@@ -194,11 +200,15 @@
                         if (iconUrl.indexOf("off") > -1 && device.marker) {
                             device.marker.hide();
                         }
+                        //去掉定位表格里的离线数据
+                        //this.gpsData
                     }
                     //计算车辆在线数;
-                    var nodes = treeObj.getNodes();
-                    nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
-                }, 5 * 1000);
+                    if (treeObj) {
+                        var nodes = treeObj.getNodes();
+                        nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
+                    }
+                }, 1 * 1000);
             },
             //计算车辆在线数量
             recusiveUnit(treeObj, node) {
@@ -233,18 +243,49 @@
             //SignalR 通信
             initSignalR() {
                 const connection = new signalR.HubConnectionBuilder()
-                    .withUrl("@ViewBag.SignalrUrl")
+                    .withUrl("../../maphub")
                     .configureLogging(signalR.LogLevel.Information)
                     .build();
                 connection.start().then(() => { }).catch(err => console.error(err.toString()));
                 connection.on("UpdateMapData", function (data) {
-                    if (data.gpsData != null) {
-                        updateGpsData(data.mac, data.gpsData);
+                    if (data != null && data.gpsData != null) {
+                        vm.updateGpsData(data.mac, data.gpsData);
                     }
-                    if (data.alarmData != null) {
-                        updateAlarmTable(data.mac, data.alarmData);
+                    if (data != null && data.alarmData != null) {
+                        vm.updateAlarmTable(data.mac, data.alarmData);
                     }
                 });
+                connection.on("ShowCommandMsg", function (data) {
+                    vm.$message.success(data);
+                });
+                this.conn = connection;
+            },
+            dbclickLocationTable(mac) {
+                //给所有的marker的Title变成白色字体
+                vm.deviceList.forEach(function (value) {
+                    if (value.marker) {
+                        value.marker.setLabel({
+                            offset: new AMap.Pixel(0, 0),
+                            content: "<div style='color:#000000;' >" + value.carno + "</div>", //设置文本标注内容
+                            direction: value.lastTrackData.heading //设置文本标注方位
+                        });
+                    }
+                });
+                var device = vm.getDevice(mac);
+                if (device && device.lastTrackData) {
+                    //设置中心点
+                    var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                    //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
+                    vm.map.setZoomAndCenter(16, destPoint);
+                    //设置title变红
+                    device.marker.setLabel({
+                        offset: new AMap.Pixel(0, 0),
+                        content: "<div style='color:#FF0000;' >" + device.carno + "</div>", //设置文本标注内容
+                        direction: device.lastTrackData.heading //设置文本标注方位
+                    });
+                    device.marker.show();
+                    device.marker.setTop(true);
+                }
             },
             //更新实时定位数据
             updateGpsData(mac, gpsData) {
@@ -275,7 +316,7 @@
                         newRow.position = device.lastTrackData.position;
                         newRow.longitude = device.lastTrackData.longitude;
                         newRow.latitude = device.lastTrackData.latitude;
-                        this.gpsDatas.push(newRow);
+                        this.gpsDatas.unshift(newRow);
 
                     } else {
                         for (var i = 0; i < list.length; i++) {
@@ -325,7 +366,7 @@
                         alarmRow.position = alarmData.position;
                         alarmRow.longitude = alarmData.longitude;
                         alarmRow.latitude = alarmData.latitude;
-                        this.alarmDatas.push(alarmRow);
+                        this.alarmDatas.unshift(alarmRow);
                     }
                 } else {
                     for (var i = 0; i < list.length; i++) {
@@ -347,12 +388,204 @@
                     }
                 }
             },
+            //初始化其他数据(重点单位，执勤力量，消火栓)
+            initOtherData() {
+                //重点单位
+                axios.post('QueryAllUnit').then(function (response) {
+                    vm.otherData.units = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+                //执勤力量
+                axios.post('QueryXfKeyUnit').then(function (response) {
+                    vm.otherData.powers = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+                //消火栓
+                axios.post('QueryXfsyxx').then(function (response) {
+                    vm.otherData.xhs = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            //切换显示重点单位
+            switchUnit() {
+                if (!this.otherData.isShowUnits) {
+                    this.otherData.units.forEach((value) => {
+                        var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
+                        var unitMarker = new AMap.Marker({
+                            map: vm.map,
+                            position: destPoint,
+                            icon: "../../plugins/amap/images/zddw.png",
+                            anchor: 'center',
+                            offset: new AMap.Pixel(0, 0),
+                            //angle: value.heading,
+                            topWhenClick: true,
+                            title: value.unitname,
+                            clickable: true,
+                            label: { content: value.unitname, direction: 90, offset: new AMap.Pixel(0, 0) },
+                        });
+                        vm.otherData.unitMarkers.push(unitMarker);
+                    });
+                } else {
+                    this.otherData.unitMarkers.forEach((x) => {
+                        vm.map.remove(x);
+                    });
+                }
+                this.otherData.isShowUnits = !this.otherData.isShowUnits;
+            },
+            locationQuery() {
+                if (this.zTree.selectNode && this.conn) {
+                    var device = this.getDevice(this.zTree.selectNode.id.replace('car-', ''));
+                    this.conn.invoke("LocationQuery", device.mac, device.mtype, device.ctype).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                } else {
+                    vm.$message.warning('请选择车辆');
+                }
+            },
+            drawRectangle(type) {
+                this.otherData.drawType = type;
+                if (this.otherData.drawType == 1 && this.otherData.powerMarkers.length > 0) {
+                    this.otherData.powerMarkers.forEach((x) => {
+                        vm.map.remove(x);
+                    });
+                    this.otherData.powerMarkers = [];
+                }
+                if (this.otherData.drawType == 2 && this.otherData.xhsMarkers.length > 0) {
+                    this.otherData.xhsMarkers.forEach((x) => {
+                        vm.map.remove(x);
+                    });
+                    this.otherData.xhsMarkers = [];
+                }
+                if (this.otherData.rectangleObj != null) {
+                    this.map.remove(this.otherData.rectangleObj);
+                }
+
+                this.map.plugin(["AMap.MouseTool"], function () {
+                    var mouseTool = new AMap.MouseTool(vm.map);
+                    // 使用鼠标工具，在地图上画框
+                    mouseTool.rectangle({
+                        strokeColor: 'red',
+                        strokeOpacity: 0.5,
+                        strokeWeight: 2,
+                        strokeStyle: 'solid',
+                    });
+                    //设置鼠标为十字
+                    vm.map.setDefaultCursor("crosshair");
+                    mouseTool.on('draw', function (event) {
+                        // event.obj 为绘制出来的覆盖物对象
+                        vm.otherData.rectangleObj = event.obj;
+                        var bounds = event.obj.getBounds();
+
+                        if (vm.otherData.drawType == 1) {
+                            vm.otherData.powers.forEach((value) => {
+                                var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
+                                destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
+                                var isContains = bounds.contains(destPoint);
+                                if (isContains) {
+                                    var powerMarker = new AMap.Marker({
+                                        map: vm.map,
+                                        position: destPoint,
+                                        icon: "../../plugins/amap/images/zqll.png",
+                                        anchor: 'center',
+                                        offset: new AMap.Pixel(0, 0),
+                                        //angle: value.heading,
+                                        topWhenClick: true,
+                                        title: value.name,
+                                        clickable: true,
+                                        label: { content: value.name, direction: 90, offset: new AMap.Pixel(0, 0) },
+                                        //extData: device,
+                                    });
+                                    vm.otherData.powerMarkers.push(powerMarker);
+                                }
+                            });
+                        }
+
+                        if (vm.otherData.drawType == 2) {
+                            vm.otherData.xhs.forEach((value) => {
+                                var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
+                                destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
+                                var isContains = bounds.contains(destPoint);
+                                if (isContains) {
+                                    var xhsMarker = new AMap.Marker({
+                                        map: vm.map,
+                                        position: destPoint,
+                                        icon: "../../plugins/amap/images/xhs.png",
+                                        anchor: 'center',
+                                        offset: new AMap.Pixel(0, 0),
+                                        //angle: value.heading,
+                                        topWhenClick: true,
+                                        title: value.symc,
+                                        label: { content: value.symc, direction: 90, },
+                                        //extData: device,
+                                    });
+                                    vm.otherData.xhsMarkers.push(xhsMarker);
+                                }
+                            });
+                        }
+                        mouseTool.close();
+                        vm.map.setDefaultCursor("default");
+                    });
+                });
+            },
+            setReturnInterval() {
+                var nodes = this.zTree.treeObj.getCheckedNodes();
+                if (nodes.length > 0 && this.conn) {
+                    this.$prompt('请输入间隔时间（S）', '设置回传间隔', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        inputPattern: /^\d+$/,
+                        inputErrorMessage: '请输入数字'
+                    }).then(({ value }) => {
+                        nodes.forEach((x) => {
+                            var device = this.getDevice(x.id.replace('car-', ''));
+                            if (device) {
+                                this.conn.invoke("SetReturnInterval", device.mac, device.mtype, device.ctype, value).catch(function (err) {
+                                    return console.error(err.toString());
+                                });
+                            }
+                        });
+                    }).catch(() => {
+
+                    });
+                } else {
+                    vm.$message.warning('请选择车辆');
+                }
+            },
+            Xfdbwen() {
+                var nodes = this.zTree.treeObj.getCheckedNodes();
+                if (nodes.length > 0  && this.conn) {
+                    this.$prompt('请输入发送内容（S）', '发送短报文', {
+                        confirmButtonText: '发送',
+                        cancelButtonText: '取消',
+                        //inputPattern: /^\d+$/,
+                        //inputErrorMessage: '请输入数字'
+                    }).then(({ value }) => {
+                        nodes.forEach((x) => {
+                            var device = this.getDevice(x.id.replace('car-', ''));
+                            if (device) {
+                                this.conn.invoke("Xfdbwen", device.mac, device.mtype, device.ctype, value).catch(function (err) {
+                                    return console.error(err.toString());
+                                });
+                            }
+                        });
+                    }).catch(() => {
+
+                    });
+                } else {
+                    vm.$message.warning('请选择车辆');
+                }
+            },
         },
         mounted() {
             this.initMap();
             this.initDeviceTree();
             this.initData();
             this.initTimer();
+            this.initSignalR();
+            this.initOtherData();
         }
     });
     //----------------//

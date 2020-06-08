@@ -161,6 +161,7 @@
             },
             //播放速度变化
             speedChange() {
+                clearInterval(vm.intervalIndex);
                 //打点播放
                 vm.intervalIndex = setInterval(this.play, 1000 - ((this.playSpeed - 1) * 250));
             },

@@ -43,17 +43,6 @@ namespace Simple.Web.Controllers
         public virtual IActionResult Index()
         {
             ViewBag.UserName = LoginUser.UsersName;
-            var strMapJsUrl = configuration.GetSection("MapConfig")["MapJsUrl"];
-            if (!string.IsNullOrEmpty(strMapJsUrl))
-            {
-                ViewBag.MapJs = strMapJsUrl.Split('|').ToList();
-            }
-            var strMapCssUrl = configuration.GetSection("MapConfig")["MapCssUrl"];
-            if (!string.IsNullOrEmpty(strMapCssUrl))
-            {
-                ViewBag.MapCss = strMapCssUrl.Split('|').ToList();
-            }
-
             //根据当前页面url设置页面的title
             var path = HttpContext.Request.Path;
             if (path.HasValue)
@@ -162,9 +151,19 @@ namespace Simple.Web.Controllers
             var list = new List<ExEntity.DM.UnitExEntity>();
             if (data != null)
             {
-                list.AddRange(data.Where(x => x.ORG_CODE == "520100000000" || x.P_ORG_CODE == "520100000000"));
+                //list.AddRange(data.Where(x => x.ORG_CODE == "520100000000" || x.P_ORG_CODE == "520100000000"));
             }
             return LowerJson(list.OrderBy(x => x.UNITID));
+        }
+
+        /// <summary>
+        /// 查询所有单位
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> QueryAllUnit()
+        {
+            var list = await unitService.GetAllUnitExEntities();
+            return LowerJson(list);
         }
 
         #region 记录操作日志

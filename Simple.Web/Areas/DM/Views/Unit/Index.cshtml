@@ -65,19 +65,29 @@
                             <div class="col-sm-4">
                                 <input class="form-control" v-model="row.unitname" id="unitname" type="text" placeholder="单位名称" />
                             </div>
-                            <label class="col-sm-2 control-label" for="orG_CODE">组织机构代码</label>
+                            <label class="col-sm-2 control-label" for="ondutycount">执勤人数</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="orG_CODE" v-model="row.orG_CODE" type="text" placeholder="组织机构代码" />
+                                <input class="form-control" id="ondutycount" v-model="row.ondutycount" type="text" placeholder="执勤人数" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="contactman">联系人</label>
+                            <label class="col-sm-2 control-label" for="principal">负责人</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="contactman" v-model="row.contactman" type="text" placeholder="联系人" />
+                                <input class="form-control" id="principal" v-model="row.principal" type="text" placeholder="负责人" />
                             </div>
-                            <label class="col-sm-2 control-label" for="telphone">单位电话</label>
+                            <label class="col-sm-2 control-label" for="dutyphone">值班电话</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="telphone" v-model="row.telphone" type="text" placeholder="单位电话" />
+                                <input class="form-control" id="dutyphone" v-model="row.dutyphone" type="text" placeholder="值班电话" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="ondutycar">执勤车辆</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="ondutycar" v-model="row.ondutycar" type="text" placeholder="执勤车辆" />
+                            </div>
+                            <label for="address" class="col-sm-2 control-label">地址</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="address" v-model="row.address" placeholder="地址" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -87,9 +97,13 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="remark" class="col-sm-2 control-label">备注</label>
-                            <div class="col-sm-10">
-                                <textarea class="form-control" id="remark" v-model="row.remark" placeholder="备注"></textarea>
+                            <label class="col-sm-2 control-label" for="giS_X">经度</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="giS_X" v-model="row.giS_X" type="text" placeholder="经度" />
+                            </div>
+                            <label for="giS_Y" class="col-sm-2 control-label">纬度</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="giS_Y" v-model="row.giS_Y" placeholder="纬度" />
                             </div>
                         </div>
                     </form>
@@ -164,7 +178,6 @@
                         }, isFrozen: false
                     },
                     { field: 'unitname', title: '单位名称', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'orG_CODE', title: '组织机构代码', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     {
                         field: 'parentUnit.unitname', title: '上级单位', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
                             if (rowData.parentUnit != null) {
@@ -173,9 +186,10 @@
                             return "";
                         }
                     },
-                    { field: 'p_ORG_CODE', title: '上级组织机构代码', width: 140, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'contactman', title: '联系人', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'telphone', title: '联系电话', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'address', title: '地址', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'dutyphone', title: '值班电话', width: 140, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'ondutycount', title: '执勤人数', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'principal', title: '负责人', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'custome-adv', title: '操作', width: 200, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
                 ],
                 titleRows: [

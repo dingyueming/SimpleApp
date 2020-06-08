@@ -12,7 +12,8 @@ namespace Simple.Infrastructure
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<ConnectionFactory>().PropertiesAutowired();
-            builder.RegisterType<RedisHelper>().PropertiesAutowired();
+            builder.RegisterType<RedisHelper>().SingleInstance().PropertiesAutowired();
+            builder.RegisterType<DigitalQueueHelper>().SingleInstance().PropertiesAutowired();
         }
     }
 }

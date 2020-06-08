@@ -14,99 +14,175 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Text;
+using Simple.Infrastructure.Tools;
+using Microsoft.AspNetCore.SignalR.Internal;
+using Simple.Web.Models.CmdInfo;
+using Microsoft.AspNetCore.Identity.UI.Pages.Account.Internal;
+using System.Security.Claims;
 
 namespace Simple.Web.Other
 {
     [Authorize]
     public class MapHub : Hub
     {
-        //private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly IFileProvider fileProvider;
+        private readonly RedisHelper redisHelper;
+        private readonly DigitalQueueHelper digitalQueueHelper;
 
-        public MapHub(IConfiguration configuration)
+        /// <summary>
+        /// 客户端连接id
+        /// </summary>
+        public List<string> ConnIds { get; set; }
+
+        public List<CmdByUser> CmdByUsers { get; set; }
+
+        public MapHub(RedisHelper redisHelper, DigitalQueueHelper digitalQueueHelper)
         {
-            //fileProvider = new PhysicalFileProvider(configuration["DataCenterRoot"]);
-            //this.httpContextAccessor = httpContextAccessor;
+            this.digitalQueueHelper = digitalQueueHelper;
+            this.redisHelper = redisHelper;
+            ConnIds = new List<string>();
+            CmdByUsers = new List<CmdByUser>();
         }
 
         /// <summary>
         /// 推送消息
         /// </summary>
         /// <returns></returns>
-        public async Task SendMsg()
+        public async Task GetData()
         {
             while (true)
             {
-                try
+                if (Clients != null && ConnIds.Count > 0)
                 {
-                    var directoryContents = fileProvider.GetDirectoryContents("");
-                    List<long> fileNameList = new List<long>();
-                    foreach (var item in directoryContents)
+                    //位置信息
+                    var gpsData = redisHelper.GetAndRemoveListValue<DataCenterModel>("TRACK");
+                    if (gpsData != null)
                     {
-                        //不是目录，并且存在
-                        if (!item.IsDirectory && item.Exists && item.Name.ToLower().EndsWith("json"))
-                        {
-                            if (item.Name.Length != 23)
-                            {
-                                continue;
-                            }
-                            var msgTimeString = item.Name.Substring(1, 14);
-                            var fileIndex = int.Parse(item.Name.Substring(15, 3));
-
-                            var time = DateTime.ParseExact(msgTimeString, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
-                            //时间大于等于当前时间减2分钟的数据，才进行发送
-                            if (time < DateTime.Now.AddMinutes(-2))
-                            {
-                                File.Delete(item.PhysicalPath);
-                                continue;
-                            }
-                            DateTime Jan1st1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local);
-                            var unixTime = (long)(time - Jan1st1970).TotalSeconds;
-                            fileNameList.Add(fileIndex + (unixTime * 1000));
-
-                        }
+                        var connClients = Clients.Clients(ConnIds);
+                        await connClients.SendAsync("UpdateMapData", gpsData);
                     }
-                    //重新排序
-                    var orderByFileName = fileNameList.OrderBy((x) => { return x; }).ToList();
-                    foreach (var item in orderByFileName)
+                    //短报文
+                    var msgData = redisHelper.GetAndRemoveListValue<UpMsg>("UPMSG");
+                    if (msgData != null)
                     {
-                        //时间戳
-                        var timeStr = item / 1000;
-                        //1970
-                        DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local);
-                        //文件序号字符串
-                        var indexFileStr = item.ToString().Substring(item.ToString().Length - 3, 3);
-                        //完整的文件名为：
-                        var fullFileName = $"r{time.AddSeconds(timeStr):yyyyMMddHHmmss}{indexFileStr}.json";
-                        var fileInfo = directoryContents.FirstOrDefault(x => x.Name == fullFileName);
-                        using (var stream = fileInfo.CreateReadStream())
+                        var connClients = Clients.Clients(ConnIds);
+                        await connClients.SendAsync("UpdateMsgData", msgData);
+                    }
+                    //命令反馈
+                    var ackData = redisHelper.GetAndRemoveListValue<BaseCommand<CmdResponse>>("CMDACK");
+                    if (ackData != null)
+                    {
+                        var listCmd = CmdByUsers.Where(x => x.USERID == ackData.Head.USERID).ToList();
+                        var needRemoveItme = new CmdByUser();
+                        foreach (var item in listCmd)
                         {
-                            byte[] result = new byte[stream.Length];
-                            await stream.ReadAsync(result, 0, (int)stream.Length);
-                            //注册Nuget包System.Text.Encoding.CodePages中的编码到.NET Core
-                            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                            var jsonStr = Encoding.GetEncoding("gb2312").GetString(result);
-                            var listCneterModel = JsonConvert.DeserializeObject<List<DataCenterModel>>(jsonStr);
-                            if (listCneterModel != null)
+                            if (item.Equals(ackData))
                             {
-                                foreach (var dataCenter in listCneterModel)
-                                {
-                                    if (Clients != null)
-                                    {
-                                        await Clients.All.SendAsync("UpdateMapData", dataCenter);
-                                    }
-                                }
+                                needRemoveItme = item;
                             }
                         }
-                        File.Delete(fileInfo.PhysicalPath);
+                        listCmd.Remove(needRemoveItme);
+                        var clientId = ConnIds.FirstOrDefault(x => x == needRemoveItme.ConnId);
+                        if (ackData.Content.Status == 0)
+                        {
+                            var connClients = Clients.Clients(clientId);
+                            await connClients.SendAsync("ShowCommandMsg", ackData.Content.ShowMsg);
+                        }
+                        else
+                        {
+                            //写入日志
+                        }
                     }
                 }
-                catch (Exception)
-                {
-                    await SendMsg();
-                }
+                Thread.Sleep(1000);
             }
         }
+
+        /// <summary>
+        /// 位置查询
+        /// </summary>
+        /// <returns></returns>
+        public async Task LocationQuery(string mac, int mtype, int ctype)
+        {
+            var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var outPutModel = new BaseCommand<LocationQuery>()
+            {
+                Mac = mac,
+                Head = new CommandHead()
+                {
+                    COMMAND_ID = 5,
+                    USERID = userId,
+                    MOBILE_TYPE = mtype,
+                    CI_SERVERNO = ctype,
+                    CMD_SEQ = digitalQueueHelper.NextNumber()
+                }
+            };
+            await Task.Run(() =>
+            {
+                redisHelper.SetListValue("CMD", outPutModel);
+            });
+        }
+
+        /// <summary>
+        /// 设置回传间隔
+        /// </summary>
+        /// <returns></returns>
+        public async Task SetReturnInterval(string mac, int mtype, int ctype, int minutes)
+        {
+            var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var outPutModel = new BaseCommand<SetReturnInterval>()
+            {
+                Mac = mac,
+                Head = new CommandHead()
+                {
+                    COMMAND_ID = 6,
+                    USERID = userId,
+                    MOBILE_TYPE = mtype,
+                    CI_SERVERNO = ctype,
+                    CMD_SEQ = digitalQueueHelper.NextNumber()
+                },
+                Content = new SetReturnInterval()
+                {
+                    Number = 1,
+                    Para = minutes,
+                    Type = 2
+                }
+            };
+            await Task.Run(() =>
+            {
+                redisHelper.SetListValue("CMD", outPutModel);
+            });
+        }
+
+        /// <summary>
+        /// 下发短报文
+        /// </summary>
+        /// <returns></returns>
+        public async Task Xfdbwen(string mac, int mtype, int ctype, string msg)
+        {
+            var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var outPutModel = new BaseCommand<UpMsgContent>()
+            {
+                Mac = mac,
+                Head = new CommandHead()
+                {
+                    COMMAND_ID = 6,
+                    USERID = userId,
+                    MOBILE_TYPE = mtype,
+                    CI_SERVERNO = ctype,
+                    CMD_SEQ = digitalQueueHelper.NextNumber()
+                },
+                Content = new UpMsgContent()
+                {
+                    Msg = msg,
+                    Type = 1
+                }
+            };
+            await Task.Run(() =>
+            {
+                redisHelper.SetListValue("CMD", outPutModel);
+            });
+        }
+
 
         /// <summary>
         /// 新用户连接时
@@ -114,6 +190,7 @@ namespace Simple.Web.Other
         /// <returns></returns>
         public override async Task OnConnectedAsync()
         {
+            ConnIds.Add(Context.ConnectionId);
             await base.OnConnectedAsync();
         }
 
@@ -124,6 +201,10 @@ namespace Simple.Web.Other
         /// <returns></returns>
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            if (ConnIds.Any(x => x == Context.ConnectionId))
+            {
+                ConnIds.Remove(Context.ConnectionId);
+            }
             await base.OnDisconnectedAsync(exception);
         }
     }

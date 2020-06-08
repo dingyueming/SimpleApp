@@ -15,5 +15,6 @@ namespace Simple.IApplication.DM
         Task<Pagination<UnitExEntity>> GetPage(Pagination<UnitExEntity> param);
         Task<VueTreeSelectModel[]> GetUnitTree();
         Task<ElementTreeModel[]> GetUnitAndDeviceTree();
+        Task<List<UnitExEntity>> GetAllUnitExEntities();
     }
 }

@@ -45,5 +45,10 @@ namespace Simple.Application.DM
         {
             return await dmDomainService.GetUnitAndDeviceTree();
         }
+
+        public async Task<List<UnitExEntity>> GetAllUnitExEntities()
+        {
+            return await dmDomainService.GetAllUnitExEntities();
+        }
     }
 }

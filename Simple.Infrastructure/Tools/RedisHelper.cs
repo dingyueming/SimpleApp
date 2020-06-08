@@ -16,6 +16,7 @@ namespace Simple.Infrastructure.Tools
         private IDatabase db { get; set; }
         public RedisHelper(IConfiguration configuration)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             redis = ConnectionMultiplexer.Connect(configuration["RedisConnectionStr"]);
             db = redis.GetDatabase();
         }
@@ -70,7 +71,7 @@ namespace Simple.Infrastructure.Tools
             {
                 return JsonConvert.DeserializeObject<T>(result);
             }
-            catch
+            catch (Exception ex)
             {
                 return null;
             }
@@ -96,7 +97,7 @@ namespace Simple.Infrastructure.Tools
         }
         #endregion
 
-        #region 哈希类型操作
+        #region hash类型操作
         /// <summary>
         /// set or update the HashValue for string key 
         /// </summary>
@@ -195,6 +196,79 @@ namespace Simple.Infrastructure.Tools
         {
             return db.HashDelete(key, hashkey);
         }
+        #endregion
+
+        #region list类型操作
+
+        /// <summary>
+        /// insert list value to redis from right
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void SetListValue<T>(string key, List<T> value)
+        {
+            //下面的database 是redis的数据库对象.
+            foreach (var single in value)
+            {
+                var s = JsonConvert.SerializeObject(single); //序列化
+                db.ListRightPush(key, s); //要一个个的插入
+            }
+        }
+
+        /// <summary>
+        /// insert list value to redis from right
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void SetListValue<T>(string key, T value)
+        {
+            var s = JsonConvert.SerializeObject(value); //序列化
+            
+            var rVal = Encoding.GetEncoding("gb2312").GetBytes(s);
+
+            db.ListRightPush(key, rVal); //要一个个的插入
+        }
+
+        /// <summary>
+        /// get list by gb2312 encoding 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        public List<T> GetListValue<T>(string key)
+        {
+            //ListRange返回的是一组字符串对象
+            //需要逐个反序列化成实体
+            var vList = db.ListRange(key);
+            List<T> result = new List<T>();
+            foreach (var item in vList)
+            {
+                //注册Nuget包System.Text.Encoding.CodePages中的编码到.NET Core
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                var str = Encoding.GetEncoding("gb2312").GetString(item);
+                var model = JsonConvert.DeserializeObject<T>(str); //反序列化
+                result.Add(model);
+            }
+            return result;
+        }
+
+        public T GetAndRemoveListValue<T>(string key)
+        {
+            var rightvalue = db.ListRightPop(key);
+            if (!string.IsNullOrEmpty(rightvalue))
+            {
+                //注册Nuget包System.Text.Encoding.CodePages中的编码到.NET Core
+                //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                var str = Encoding.GetEncoding("gb2312").GetString(rightvalue);
+                return JsonConvert.DeserializeObject<T>(str); //反序列化
+            }
+            else
+            {
+                return default;
+            }
+        }
+
         #endregion
     }
 }

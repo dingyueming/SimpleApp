@@ -73,7 +73,7 @@ namespace Simple.Domain
         {
             var allUnit = await unitRepository.GetAllAsync();
             var thisUnits = GetUnits(code, allUnit.ToList());
-            var list = await viewAllTargetRepository.GetViewAllTarget(thisUnits.Select(x => x.ORG_CODE).ToArray());
+            var list = await viewAllTargetRepository.GetViewAllTarget(thisUnits.Select(x => x.UNITID.ToString()).ToArray());
             return mapper.Map<List<ViewAllTargetExEntity>>(list);
         }
 
@@ -132,14 +132,14 @@ namespace Simple.Domain
         private List<UnitEntity> GetUnits(string code, List<UnitEntity> allUnit)
         {
             var list = new List<UnitEntity>();
-            var entity = allUnit.FirstOrDefault(x => x.ORG_CODE == code);
+            var entity = allUnit.FirstOrDefault(x => x.UNITID.ToString() == code);
             if (entity != null)
             {
                 list.Add(entity);
-                var children = allUnit.Where(x => x.P_ORG_CODE == entity.ORG_CODE).ToList();
+                var children = allUnit.Where(x => x.PID == entity.UNITID).ToList();
                 foreach (var item in children)
                 {
-                    list.AddRange(GetUnits(item.ORG_CODE, allUnit));
+                    list.AddRange(GetUnits(item.UNITID.ToString(), allUnit));
                 }
             }
             return list;
