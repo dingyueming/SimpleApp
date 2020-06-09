@@ -82,7 +82,14 @@
                 xhsMarkers: [],
                 rectangleObj: null,
             },
-
+            //导航点
+            dhd: {
+                map: undefined,
+                longitude: null,
+                laitude: null,
+                path: 0,
+                name: null,
+            }
         },
         methods: {
             //实例化地图
@@ -99,6 +106,17 @@
                     vm.map.addControl(new BasicControl.LayerSwitcher({
                         position: 'lb' //right top，右上角
                     }));
+                });
+                //实例化导航点地图
+                this.dhd.map = new AMap.Map('dhdmap', {
+                    center: [104.251709, 30.570383],//中心点坐标
+                    zoom: 12
+                });
+                this.dhd.map.on('click', (e) => {
+                    this.dhd.longitude = e.lnglat.getLng();
+                    this.dhd.laitude = e.lnglat.getLat();
+                    //var text = '您在 [ ' + e.lnglat.getLng() + ',' + e.lnglat.getLat() + ' ] 的位置单击了地图！';
+                    //console.log(text);
                 });
             },
             //实例化设备树
@@ -436,10 +454,15 @@
                 this.otherData.isShowUnits = !this.otherData.isShowUnits;
             },
             locationQuery() {
-                if (this.zTree.selectNode && this.conn) {
-                    var device = this.getDevice(this.zTree.selectNode.id.replace('car-', ''));
-                    this.conn.invoke("LocationQuery", device.mac, device.mtype, device.ctype).catch(function (err) {
-                        return console.error(err.toString());
+                var nodes = this.zTree.treeObj.getCheckedNodes();
+                if (nodes.length > 0 && this.conn) {
+                    nodes.forEach((x) => {
+                        var device = this.getDevice(x.id.replace('car-', ''));
+                        if (device) {
+                            this.conn.invoke("LocationQuery", device.mac, device.mtype, device.ctype).catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                        }
                     });
                 } else {
                     vm.$message.warning('请选择车辆');
@@ -554,9 +577,9 @@
                     vm.$message.warning('请选择车辆');
                 }
             },
-            Xfdbwen() {
+            xfdbwen() {
                 var nodes = this.zTree.treeObj.getCheckedNodes();
-                if (nodes.length > 0  && this.conn) {
+                if (nodes.length > 0 && this.conn) {
                     this.$prompt('请输入发送内容（S）', '发送短报文', {
                         confirmButtonText: '发送',
                         cancelButtonText: '取消',
@@ -577,6 +600,31 @@
                 } else {
                     vm.$message.warning('请选择车辆');
                 }
+            },
+            xfdhd() {
+                //$('#myModal').modal({ backdrop: 'static' });
+                var nodes = this.zTree.treeObj.getCheckedNodes();
+                if (nodes.length > 0 && this.conn) {
+                    $('#myModal').modal({ backdrop: 'static' });
+                } else {
+                    vm.$message.warning('请选择车辆');
+                }
+            },
+            tjdhd() {
+                if (this.dhd.longitude == null || this.dhd.laitude == null || this.dhd.name == null) {
+                    vm.$message.warning('请完整填写信息');
+                    return;
+                }
+                var nodes = this.zTree.treeObj.getCheckedNodes();
+                nodes.forEach((x) => {
+                    var device = this.getDevice(x.id.replace('car-', ''));
+                    if (device) {
+                        this.conn.invoke("Xfdhd", device.mac, device.mtype, device.ctype, this.dhd.longitude, this.dhd.laitude, this.dhd.name, this.dhd.path).catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    }
+                });
+                $('#myModal').modal('hide');
             },
         },
         mounted() {

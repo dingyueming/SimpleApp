@@ -165,7 +165,7 @@ namespace Simple.Web.Other
                 Mac = mac,
                 Head = new CommandHead()
                 {
-                    COMMAND_ID = 6,
+                    COMMAND_ID = 4,
                     USERID = userId,
                     MOBILE_TYPE = mtype,
                     CI_SERVERNO = ctype,
@@ -183,6 +183,38 @@ namespace Simple.Web.Other
             });
         }
 
+        /// <summary>
+        /// 下发导航点
+        /// </summary>
+        /// <returns></returns>
+        public async Task Xfdhd(string mac, int mtype, int ctype, double longitude, double laitude, string name, int path)
+        {
+            var userId = int.Parse(Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var outPutModel = new BaseCommand<SetPoint>()
+            {
+                Mac = mac,
+                Head = new CommandHead()
+                {
+                    COMMAND_ID = 36,
+                    USERID = userId,
+                    MOBILE_TYPE = mtype,
+                    CI_SERVERNO = ctype,
+                    CMD_SEQ = digitalQueueHelper.NextNumber()
+                },
+                Content = new SetPoint()
+                {
+                    Longitude = longitude,
+                    Laitude = laitude,
+                    Map_Type = 0,
+                    Path = path,
+                    Name = name
+                }
+            };
+            await Task.Run(() =>
+            {
+                redisHelper.SetListValue("CMD", outPutModel);
+            });
+        }
 
         /// <summary>
         /// 新用户连接时

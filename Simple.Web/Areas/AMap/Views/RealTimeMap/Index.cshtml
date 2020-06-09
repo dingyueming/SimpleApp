@@ -58,7 +58,8 @@
                                 <el-col :span="12"><el-button size="mini" icon="el-icon-s-shop" v-on:click="setReturnInterval">设置回传间隔</el-button></el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="12"><el-button size="mini" icon="el-icon-s-comment" v-on:click="Xfdbwen">发送报文</el-button></el-col>
+                                <el-col :span="12"><el-button size="mini" icon="el-icon-s-comment" v-on:click="xfdbwen">发送报文</el-button></el-col>
+
                             </el-row>
                             <el-button slot="reference" icon="el-icon-platform-eleme" size="mini"></el-button>
                         </el-popover>
@@ -84,7 +85,12 @@
                                 </el-row>
                                 <el-row>
                                     <el-col :span="12"><el-button size="mini" icon="el-icon-s-flag" v-on:click="drawRectangle(1)">执勤力量</el-button></el-col>
-                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-open" v-on:click="drawRectangle(2)">消火栓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</el-button></el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-open" v-on:click="drawRectangle(2)">消火栓&nbsp;&nbsp;&nbsp;&nbsp;</el-button></el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-comment" v-on:click="xfdhd">&nbsp;下发导航点&nbsp;</el-button></el-col>
                                 </el-row>
                                 <el-button slot="reference" icon="el-icon-platform-eleme" size="mini"></el-button>
                             </el-popover>
@@ -192,6 +198,57 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        下发导航点
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="myForm">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="jwd">经度</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="longitude" name="longitude" v-model="dhd.longitude" type="text" placeholder="经度" />
+                            </div>
+                            <label class="col-sm-2 control-label" for="jwd">纬度</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="laitude" name="laitude" v-model="dhd.laitude" type="text" placeholder="经度" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="path">路径选择</label>
+                            <div class="col-sm-4">
+                                <select class="form-control">
+                                    <option value="0">任意</option>
+                                    <option value="1">导航地图自定(推荐）</option>
+                                    <option value="2">最短路径</option>
+                                    <option value="3">最少收费(经济）</option>
+                                    <option value="4">高速优先（最快）</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label" for="mddname">目的地名称</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="mddname" name="mddname" v-model="dhd.name" type="text" placeholder="目的地名称" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div id="dhdmap" style="height:300px;width:100%"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" v-on:click="tjdhd">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
     </div>
 </div>
 <script src="~/Controllers/AMap/RealTimeMapController.js?r=@Guid.NewGuid()"></script>
