@@ -71,7 +71,7 @@ namespace Simple.Infrastructure.Tools
             {
                 return JsonConvert.DeserializeObject<T>(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
