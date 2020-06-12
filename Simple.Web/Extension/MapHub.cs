@@ -93,7 +93,6 @@ namespace Simple.Web.Other
                         }
                     }
                 }
-                Thread.Sleep(1000);
             }
         }
 

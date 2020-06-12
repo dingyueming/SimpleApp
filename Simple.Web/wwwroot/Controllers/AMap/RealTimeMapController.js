@@ -339,7 +339,7 @@
                     } else {
                         for (var i = 0; i < list.length; i++) {
                             var track = list[i];
-                            if (track.mac == device.lastTrackData.mac) {
+                            if (track.mac == mac) {
                                 track.gnsstime = device.lastTrackData.gnsstime;
                                 track.receive_time = device.lastTrackData.receive_time;
                                 track.speed = device.lastTrackData.speed;
