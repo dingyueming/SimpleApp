@@ -51,24 +51,25 @@ namespace Simple.Web.Other
         {
             while (true)
             {
+                //位置信息
+                var gpsData = redisHelper.GetAndRemoveListValue<DataCenterModel>("TRACK");
+                //短报文
+                var msgData = redisHelper.GetAndRemoveListValue<UpMsg>("UPMSG");
+                //命令反馈
+                var ackData = redisHelper.GetAndRemoveListValue<BaseCommand<CmdResponse>>("CMDACK");
                 if (Clients != null && ConnIds.Count > 0)
                 {
-                    //位置信息
-                    var gpsData = redisHelper.GetAndRemoveListValue<DataCenterModel>("TRACK");
                     if (gpsData != null)
                     {
                         var connClients = Clients.Clients(ConnIds);
                         await connClients.SendAsync("UpdateMapData", gpsData);
                     }
-                    //短报文
-                    var msgData = redisHelper.GetAndRemoveListValue<UpMsg>("UPMSG");
+                    
                     if (msgData != null)
                     {
                         var connClients = Clients.Clients(ConnIds);
                         await connClients.SendAsync("UpdateMsgData", msgData);
                     }
-                    //命令反馈
-                    var ackData = redisHelper.GetAndRemoveListValue<BaseCommand<CmdResponse>>("CMDACK");
                     if (ackData != null)
                     {
                         var listCmd = CmdByUsers.Where(x => x.USERID == ackData.Head.USERID).ToList();
@@ -93,7 +94,6 @@ namespace Simple.Web.Other
                         }
                     }
                 }
-                Thread.Sleep(1000);
             }
         }
 

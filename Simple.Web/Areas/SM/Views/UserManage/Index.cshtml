@@ -423,7 +423,7 @@
             saveUsersDevice() {
                 var checkedNodes = this.$refs.tree.getCheckedNodes();
                 if (checkedNodes.length > 0) {
-                    axios.post('@Url.Action("SaveUsersDevice")', Qs.stringify({ nodes: checkedNodes, userId: this.row.usersId })).then(response => {
+                    axios.post('@Url.Action("SaveUsersDevice")', { nodes: checkedNodes, userId: this.row.usersId }).then(response => {
                         var commonResult = response.data;
                         if (commonResult.isSuccess) {
                             $('#deviceModal').modal('hide');

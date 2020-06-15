@@ -117,6 +117,8 @@ namespace Simple.ExEntity.Map
                 return carStatus.ToString();
             }
         }
+
+        public CarExEntity Car { get; set; }
     }
 }
 

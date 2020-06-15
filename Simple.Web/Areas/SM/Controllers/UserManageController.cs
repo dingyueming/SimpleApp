@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Simple.IDomain;
 using Simple.Web.Extension.ControllerEx;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Simple.Web.Areas.SM.Controllers
 {
@@ -90,9 +92,12 @@ namespace Simple.Web.Areas.SM.Controllers
             return Json(list);
         }
         [SimpleAction]
-        public async Task<bool> SaveUsersDevice(List<ElementTreeModel> nodes, int userId)
+        public async Task<bool> SaveUsersDevice([FromBody]object json)
         {
-            await RecordLog("设备分配", nodes, Infrastructure.Enums.OperateTypeEnum.修改);
+            JObject jObject = JObject.Parse(json.ToString());
+            var nodes = JsonConvert.DeserializeObject<List<ElementTreeModel>>(jObject.SelectToken("nodes").ToString());
+            var userId = JsonConvert.DeserializeObject<int>(jObject.SelectToken("userId").ToString());
+            //await RecordLog("设备分配", nodes, Infrastructure.Enums.OperateTypeEnum.修改);
             return await dmDomainService.UpdateAuthLimits(nodes, userId);
         }
     }
