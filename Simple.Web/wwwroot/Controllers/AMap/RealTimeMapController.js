@@ -143,8 +143,9 @@
                             var destPoint = coordtransform.wgs84togcj02(value.longitude, value.latitude);
                             //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
                             var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(value);
+                            var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
                             var baseMarker = new AMap.Marker({
-                                //map: vm.map,
+                                map: vm.map,
                                 position: destPoint,
                                 icon: iconUrl,
                                 anchor: 'center',
@@ -153,7 +154,7 @@
                                 topWhenClick: true,
                                 title: device.license + ' ' + device.carno,
                                 clickable: true,
-                                label: { content: device.license + ' ' + device.tecH_PARAMETERS_BRIEF, direction: value.heading, offset: new AMap.Pixel(0, 0) },
+                                label: { content: labelTitle, direction: value.heading, offset: new AMap.Pixel(0, 0) },
                                 extData: device,
                             });
                             device.marker = baseMarker;
@@ -216,7 +217,7 @@
                         }
                         //隐藏地图上不在线的车辆
                         if (iconUrl.indexOf("off") > -1 && device.marker) {
-                            device.marker.hide();
+                            //device.marker.hide();
                         }
                         //去掉定位表格里的离线数据
                         //this.gpsData
