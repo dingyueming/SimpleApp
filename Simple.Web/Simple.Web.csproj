@@ -6,6 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\DM\Data\**" />
+    <Compile Remove="Areas\DM\Models\**" />
+    <Content Remove="Areas\DM\Data\**" />
+    <Content Remove="Areas\DM\Models\**" />
+    <EmbeddedResource Remove="Areas\DM\Data\**" />
+    <EmbeddedResource Remove="Areas\DM\Models\**" />
+    <None Remove="Areas\DM\Data\**" />
+    <None Remove="Areas\DM\Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="wwwroot\bower_components\bootstrap-daterangepicker\daterangepicker.css" />
     <Content Include="wwwroot\bower_components\bootstrap\dist\css\bootstrap-theme.css" />
     <Content Include="wwwroot\bower_components\bootstrap\dist\css\bootstrap-theme.min.css" />
@@ -41,8 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\DM\Data\" />
-    <Folder Include="Areas\DM\Models\" />
     <Folder Include="Areas\EzMap\Data\" />
     <Folder Include="Areas\IM\Data\" />
     <Folder Include="Areas\IM\Models\" />

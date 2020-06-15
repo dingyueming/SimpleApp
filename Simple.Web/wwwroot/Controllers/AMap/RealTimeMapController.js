@@ -144,16 +144,16 @@
                             //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
                             var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(value);
                             var baseMarker = new AMap.Marker({
-                                map: vm.map,
+                                //map: vm.map,
                                 position: destPoint,
                                 icon: iconUrl,
                                 anchor: 'center',
                                 offset: new AMap.Pixel(0, 0),
-                                angle: value.heading,
+                                //angle: value.heading,
                                 topWhenClick: true,
                                 title: device.license + ' ' + device.carno,
                                 clickable: true,
-                                label: { content: device.license, direction: value.heading, offset: new AMap.Pixel(0, 0) },
+                                label: { content: device.license + ' ' + device.tecH_PARAMETERS_BRIEF, direction: value.heading, offset: new AMap.Pixel(0, 0) },
                                 extData: device,
                             });
                             device.marker = baseMarker;
@@ -226,7 +226,7 @@
                         var nodes = treeObj.getNodes();
                         nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
                     }
-                }, 1 * 1000);
+                }, 2 * 1000);
             },
             //计算车辆在线数量
             recusiveUnit(treeObj, node) {
