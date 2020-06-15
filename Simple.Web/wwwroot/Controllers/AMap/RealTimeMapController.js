@@ -145,7 +145,7 @@
                             var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(value);
                             var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
                             var baseMarker = new AMap.Marker({
-                                map: vm.map,
+                                //map: vm.map,
                                 position: destPoint,
                                 icon: iconUrl,
                                 anchor: 'center',
@@ -159,6 +159,7 @@
                             });
                             device.marker = baseMarker;
                             if (iconUrl.indexOf('stop.png') > -1 || iconUrl.indexOf('run.png') > -1) {
+                                vm.map.add(device.marker);
                                 device.marker.setzIndex(1000); //前置
                             }
                             //监听marker点击
@@ -217,7 +218,7 @@
                         }
                         //隐藏地图上不在线的车辆
                         if (iconUrl.indexOf("off") > -1 && device.marker) {
-                            //device.marker.hide();
+                            device.marker.hide();
                         }
                         //去掉定位表格里的离线数据
                         //this.gpsData
@@ -311,6 +312,9 @@
                 var device = this.getDevice(mac);
                 if (device) {
                     device.lastTrackData = gpsData;
+                    if (!device.marker.getMap()) {
+                        this.map.add(device.marker);
+                    }
                     //更新table
                     var list = vm.gpsDatas;
                     var isTableData = false;//是否在列表中
