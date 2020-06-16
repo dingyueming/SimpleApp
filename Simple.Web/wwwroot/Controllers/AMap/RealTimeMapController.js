@@ -65,10 +65,10 @@
             //全屏
             isFullScreen: false,
             fullScreenStyle: {
-                colmd10: 'col-md-10',
-                colmd12: 'col-md-12',
+                colmd10: 'col-md-10 ',
+                colmd12: 'col-md-12 ',
                 fullHeight: document.documentElement.clientHeight - 146,
-                normalHeight: document.documentElement.clientHeight - 430
+                normalHeight: 485
             },
             //其他数据
             otherData: {

@@ -63,7 +63,7 @@ namespace Simple.Web.Controllers
 
                 if (returnUrl.IsNullOrEmpty())
                 {
-                    return Redirect("../AMap/RealtimeMap/index");
+                    return Redirect("../AMap/RealtimeMap/Index");
                 }
                 return Redirect(returnUrl);
             }
