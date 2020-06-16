@@ -52,6 +52,7 @@ namespace Simple.Domain
         {
             //获取所有单位
             var allUnits = await unitRepository.GetAllAsync();
+            allUnits = allUnits.OrderBy(x => x.UNITNAME).ToList();
             //获取当前用户所拥有的设备
             var devices = await carRepository.GetCarEntitiesByUser(userId);
             //组织tree

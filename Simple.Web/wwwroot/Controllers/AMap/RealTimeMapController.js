@@ -453,6 +453,7 @@
                             var infoWindow = new AMap.InfoWindow({
                                 content: openedHtml,
                                 anchor: 'bottom-left',
+                                autoMove: false,
                                 offset: new AMap.Pixel(10, -10)
                             });
                             // 打开信息窗体
@@ -560,21 +561,24 @@
                                     //监听marker点击
                                     powerMarker.on('click', (e) => {
                                         var tmpArr = [
-                                            "<tr><td style='width:100px;'>单位名称：</td><td>" + value.unitname + "</td></tr>",
-                                            "<tr><td>值班电话：</td><td>" + value.dutyphone + "</td></tr>",
-                                            "<tr><td>负责人：</td><td>" + value.principal + "</td></tr>",
-                                            "<tr><td>执勤人数：</td><td>" + value.ondutycount + "</td></tr>",
-                                            "<tr><td>执勤车辆：</td><td>" + value.ondutycar + "</td></tr>",
+                                            "<tr><td style='width:100px;'>单位名称：</td><td>" + value.name + "</td></tr>",
+                                            "<tr><td>单位地址：</td><td>" + value.address + "</td></tr>",
+                                            "<tr><td>单位类型：</td><td>" + value.unit_type + "</td></tr>",
+                                            "<tr><td>所属中队：</td><td>" + value.fire_brigade + "</td></tr>",
+                                            "<tr><td>层数：</td><td>" + value.building_storey + "</td></tr>",
+                                            "<tr><td>行驶路线：</td><td>" + value.driving_route + "</td></tr>",
+                                            "<tr><td>详细信息：</td><td><a href='../../" + value.name + ".htm' target='_blank'>详细信息</a></td></tr>",
                                         ];
                                         var openedHtml = "<table style='text-align:left; line-height:22px; width:400px;'>" + tmpArr.join(' ') + "<table>";
                                         // 创建 infoWindow 实例	
                                         var infoWindow = new AMap.InfoWindow({
                                             content: openedHtml,
                                             anchor: 'bottom-left',
+                                            autoMove: false,
                                             offset: new AMap.Pixel(10, -10)
                                         });
                                         // 打开信息窗体
-                                        infoWindow.open(vm.map, unitMarker.getPosition());
+                                        infoWindow.open(vm.map, powerMarker.getPosition());
                                     });
                                 }
                             });
@@ -599,6 +603,28 @@
                                         //extData: device,
                                     });
                                     vm.otherData.xhsMarkers.push(xhsMarker);
+                                    //监听marker点击
+                                    xhsMarker.on('click', (e) => {
+                                        var tmpArr = [
+                                            "<tr><td style='width:100px;'>名称：</td><td>" + value.symc + "</td></tr>",
+                                            "<tr><td>地址：</td><td>" + value.sydz + "</td></tr>",
+                                            "<tr><td>消火栓形式：</td><td>" + value.xhsxs + "</td></tr>",
+                                            "<tr><td>管网形式：</td><td>" + value.gwxs + "</td></tr>",
+                                            "<tr><td>压力（pa）：</td><td>" + value.yl + "</td></tr>",
+                                            "<tr><td>管径（mm）：</td><td>" + value.gj + "</td></tr>",
+                                            //"<tr><td>详细信息：</td><td><a href='../../" + value.name + ".htm' target='_blank'>详细信息</a></td></tr>",
+                                        ];
+                                        var openedHtml = "<table style='text-align:left; line-height:22px; width:300px;'>" + tmpArr.join(' ') + "<table>";
+                                        // 创建 infoWindow 实例	
+                                        var infoWindow = new AMap.InfoWindow({
+                                            content: openedHtml,
+                                            anchor: 'bottom-left',
+                                            autoMove: false,
+                                            offset: new AMap.Pixel(10, -10)
+                                        });
+                                        // 打开信息窗体
+                                        infoWindow.open(vm.map, xhsMarker.getPosition());
+                                    });
                                 }
                             });
                         }
