@@ -96,7 +96,7 @@
             initMap() {
                 //实例化地图
                 this.map = new AMap.Map('container', {
-                    center: [104.251709, 30.570383],//中心点坐标
+                    center: [104.066642, 30.656279],//中心点坐标
                     zoom: 12
                 });
                 //加载BasicControl，loadUI的路径参数为模块名中 'ui/' 之后的部分
@@ -109,7 +109,7 @@
                 });
                 //实例化导航点地图
                 this.dhd.map = new AMap.Map('dhdmap', {
-                    center: [104.251709, 30.570383],//中心点坐标
+                    center: [104.066642, 30.656279],//中心点坐标
                     zoom: 12
                 });
                 this.dhd.map.on('click', (e) => {
@@ -131,6 +131,12 @@
             },
             //实例化地图设备数据
             initData() {
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在初始化数据',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
                 let axiosList = [axios.post('QueryDeviceList'), axios.post('QueryLastLocatedData')];
                 axios.all(axiosList).then(function (response) {
                     vm.deviceList = response[0].data;//定位设备
@@ -187,6 +193,7 @@
                             }, device);
                         }
                     });
+                    loading.close();
                 })
             },
             //启动定时器，更新车辆状态,位置
@@ -413,13 +420,49 @@
             },
             //初始化其他数据(重点单位，执勤力量，消火栓)
             initOtherData() {
-                //重点单位
+                //执勤力量
                 axios.post('QueryAllUnit').then(function (response) {
                     vm.otherData.units = response.data;
+                    vm.otherData.units.forEach((value) => {
+                        var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
+                        var unitMarker = new AMap.Marker({
+                            map: vm.map,
+                            position: destPoint,
+                            icon: "../../plugins/amap/images/zddw.png",
+                            anchor: 'center',
+                            offset: new AMap.Pixel(0, 0),
+                            //angle: value.heading,
+                            topWhenClick: true,
+                            title: value.unitname,
+                            clickable: true,
+                            label: { content: value.unitname, direction: 90, offset: new AMap.Pixel(0, 0) },
+                        });
+                        unitMarker.hide();
+                        vm.otherData.unitMarkers.push(unitMarker);
+                        //监听marker点击
+                        unitMarker.on('click', (e) => {
+                            var tmpArr = [
+                                "<tr><td style='width:100px;'>单位名称：</td><td>" + value.unitname + "</td></tr>",
+                                "<tr><td>值班电话：</td><td>" + value.dutyphone + "</td></tr>",
+                                "<tr><td>负责人：</td><td>" + value.principal + "</td></tr>",
+                                "<tr><td>执勤人数：</td><td>" + value.ondutycount + "</td></tr>",
+                                "<tr><td>执勤车辆：</td><td>" + value.ondutycar + "</td></tr>",
+                            ];
+                            var openedHtml = "<table style='text-align:left; line-height:22px; width:400px;'>" + tmpArr.join(' ') + "<table>";
+                            // 创建 infoWindow 实例	
+                            var infoWindow = new AMap.InfoWindow({
+                                content: openedHtml,
+                                anchor: 'bottom-left',
+                                offset: new AMap.Pixel(10, -10)
+                            });
+                            // 打开信息窗体
+                            infoWindow.open(vm.map, unitMarker.getPosition());
+                        });
+                    });
                 }).catch(function (error) {
                     console.log(error);
                 });
-                //执勤力量
+                //重点单位
                 axios.post('QueryXfKeyUnit').then(function (response) {
                     vm.otherData.powers = response.data;
                 }).catch(function (error) {
@@ -435,25 +478,12 @@
             //切换显示重点单位
             switchUnit() {
                 if (!this.otherData.isShowUnits) {
-                    this.otherData.units.forEach((value) => {
-                        var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
-                        var unitMarker = new AMap.Marker({
-                            map: vm.map,
-                            position: destPoint,
-                            icon: "../../plugins/amap/images/zddw.png",
-                            anchor: 'center',
-                            offset: new AMap.Pixel(0, 0),
-                            //angle: value.heading,
-                            topWhenClick: true,
-                            title: value.unitname,
-                            clickable: true,
-                            label: { content: value.unitname, direction: 90, offset: new AMap.Pixel(0, 0) },
-                        });
-                        vm.otherData.unitMarkers.push(unitMarker);
+                    this.otherData.unitMarkers.forEach((x) => {
+                        x.show();
                     });
                 } else {
                     this.otherData.unitMarkers.forEach((x) => {
-                        vm.map.remove(x);
+                        x.hide();
                     });
                 }
                 this.otherData.isShowUnits = !this.otherData.isShowUnits;
@@ -527,6 +557,25 @@
                                         //extData: device,
                                     });
                                     vm.otherData.powerMarkers.push(powerMarker);
+                                    //监听marker点击
+                                    powerMarker.on('click', (e) => {
+                                        var tmpArr = [
+                                            "<tr><td style='width:100px;'>单位名称：</td><td>" + value.unitname + "</td></tr>",
+                                            "<tr><td>值班电话：</td><td>" + value.dutyphone + "</td></tr>",
+                                            "<tr><td>负责人：</td><td>" + value.principal + "</td></tr>",
+                                            "<tr><td>执勤人数：</td><td>" + value.ondutycount + "</td></tr>",
+                                            "<tr><td>执勤车辆：</td><td>" + value.ondutycar + "</td></tr>",
+                                        ];
+                                        var openedHtml = "<table style='text-align:left; line-height:22px; width:400px;'>" + tmpArr.join(' ') + "<table>";
+                                        // 创建 infoWindow 实例	
+                                        var infoWindow = new AMap.InfoWindow({
+                                            content: openedHtml,
+                                            anchor: 'bottom-left',
+                                            offset: new AMap.Pixel(10, -10)
+                                        });
+                                        // 打开信息窗体
+                                        infoWindow.open(vm.map, unitMarker.getPosition());
+                                    });
                                 }
                             });
                         }
