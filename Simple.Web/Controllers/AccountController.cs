@@ -31,7 +31,7 @@ namespace Simple.Web.Controllers
             if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
             {
                 var users = await userService.GetAllUsers();
-                var loginUser = users.FirstOrDefault(x => x.UsersName == userName && x.Password == password);
+                var loginUser = users.FirstOrDefault(x => x.UsersName == userName.Trim().ToLower() && x.Password == password.Trim().ToLower());
                 if (loginUser == null)
                 {
                     return View();
@@ -41,7 +41,7 @@ namespace Simple.Web.Controllers
                 {
                     new Claim(ClaimTypes.Name,loginUser.UsersName),
                     new Claim(ClaimTypes.NameIdentifier,loginUser.UsersId.ToString()),
-                    new Claim(ClaimTypes.GivenName,loginUser.RealName)
+                    //new Claim(ClaimTypes.GivenName,loginUser.RealName)
                 };
 
                 //使用证件单元创建一张cookie身份证
@@ -61,23 +61,9 @@ namespace Simple.Web.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), props);
 
-                #region 记录日志
-                var serviceProvider = ServiceLocator.Services;
-                var logService = serviceProvider.GetService<IOperateLogService>();
-                await logService.AddLog(new OperateLogExEntity()
-                {
-                    Ip = HttpContext.Connection.RemoteIpAddress.ToString(),
-                    Loginname = loginUser.UsersName,
-                    Realname = loginUser.RealName,
-                    Modelname = "",
-                    Operatetype = (int)Infrastructure.Enums.OperateTypeEnum.登陆,
-                    Remark = "",
-                });
-                #endregion
-
                 if (returnUrl.IsNullOrEmpty())
                 {
-                    return RedirectToAction("Index", "RealtimeMap", new { Area = "EzMap" });
+                    return Redirect("../AMap/RealtimeMap/index");
                 }
                 return Redirect(returnUrl);
             }
@@ -104,7 +90,6 @@ namespace Simple.Web.Controllers
         public async Task<IActionResult> Logout(string returnUrl)
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            await RecordLog(null, null, Infrastructure.Enums.OperateTypeEnum.退出);
             return Redirect(returnUrl ?? Url.Action("Login"));
         }
     }

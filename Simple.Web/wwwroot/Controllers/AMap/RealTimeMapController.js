@@ -217,7 +217,7 @@
                         }
                         //隐藏地图上不在线的车辆
                         if (iconUrl.indexOf("off") > -1 && device.marker) {
-                            //device.marker.hide();
+                            device.marker.hide();
                         }
                         //去掉定位表格里的离线数据
                         //this.gpsData
