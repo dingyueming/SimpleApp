@@ -14,10 +14,10 @@ using System.Text;
 namespace Simple.Web.Areas.IM.Controllers
 {
     [Area("IM")]
-    public class InterfaceManageController : SimpleBaseController
+    public class LastLocatedController : SimpleBaseController
     {
         private readonly IInterfaceService interfaceService;
-        public InterfaceManageController(IInterfaceService interfaceService)
+        public LastLocatedController(IInterfaceService interfaceService)
         {
             this.interfaceService = interfaceService;
         }

@@ -48,5 +48,14 @@ namespace Simple.IDomain
         Task<bool> UpdateAuthLimits(List<ElementTreeModel> nodes, int userId);
         #endregion
 
+        #region 车辆报备
+
+        Task<bool> AddCarMsgReport(CarMsgReportExEntity exEntity);
+        Task<bool> DeleteCarMsgReport(List<CarMsgReportExEntity> exEntities);
+        Task<bool> UpdateCarMsgReport(CarMsgReportExEntity exEntity);
+        Task<Pagination<CarMsgReportExEntity>> GetCarMsgReportPage(Pagination<CarMsgReportExEntity> param);
+
+        #endregion
+
     }
 }

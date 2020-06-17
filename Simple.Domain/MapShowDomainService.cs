@@ -130,7 +130,7 @@ namespace Simple.Domain
                     item.name = item.name.Remove(item.name.IndexOf("("), item.name.Length - item.name.IndexOf("("));
                 }
             }
-            var node = allNodes.FirstOrDefault(x => x.pId == "unit-0");
+            var node = allNodes.FirstOrDefault(x => x.id == "unit-0");
             var arrTreeSelectModel = TreeHelper.GetTreeSelectModels(allNodes.ToList(), node);
             return arrTreeSelectModel.ToArray();
         }

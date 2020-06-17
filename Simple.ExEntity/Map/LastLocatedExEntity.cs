@@ -119,6 +119,10 @@ namespace Simple.ExEntity.Map
         }
 
         public CarExEntity Car { get; set; }
+
+        #region searchData
+        public DateTime[] DateTimes { get; set; }
+        #endregion
     }
 }
 

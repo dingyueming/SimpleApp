@@ -19,15 +19,18 @@ namespace Simple.Domain
     public class DmDomainService : IDmDomainService
     {
         #region 构造函数
+        private readonly ICarMsgReportRepository carMsgReportRepository;
         private readonly IAuthLimitRepository authLimitRepository;
         private readonly IPersonRepository personRepository;
         private readonly ICarRepository carRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IViewAllTargetRepository viewAllTargetRepository;
         private readonly IMapper mapper;
-        public DmDomainService(IAuthLimitRepository authLimitRepository, IViewAllTargetRepository viewAllTargetRepository,
+        public DmDomainService(ICarMsgReportRepository carMsgReportRepository,
+            IAuthLimitRepository authLimitRepository, IViewAllTargetRepository viewAllTargetRepository,
             IPersonRepository personRepository, ICarRepository carRepository, IUnitRepository unitRepository, IMapper mapper)
         {
+            this.carMsgReportRepository = carMsgReportRepository;
             this.authLimitRepository = authLimitRepository;
             this.viewAllTargetRepository = viewAllTargetRepository;
             this.personRepository = personRepository;
@@ -228,6 +231,35 @@ namespace Simple.Domain
                 }
             }
             return await authLimitRepository.UpdateAuthLimits(entities, userId);
+        }
+
+        #endregion
+
+        #region 车辆报备
+
+        public async Task<bool> AddCarMsgReport(CarMsgReportExEntity exEntity)
+        {
+            var entity = mapper.Map<CarMsgReportEntity>(exEntity);
+
+            return await carMsgReportRepository.InsertAsync(entity);
+        }
+
+        public async Task<bool> DeleteCarMsgReport(List<CarMsgReportExEntity> exEntities)
+        {
+            var entities = mapper.Map<List<CarMsgReportEntity>>(exEntities);
+            return await carMsgReportRepository.DeleteAsync(entities);
+        }
+
+        public async Task<bool> UpdateCarMsgReport(CarMsgReportExEntity exEntity)
+        {
+            var entity = mapper.Map<CarMsgReportEntity>(exEntity);
+            return await carMsgReportRepository.UpdateAsync(entity);
+        }
+
+        public async Task<Pagination<CarMsgReportExEntity>> GetCarMsgReportPage(Pagination<CarMsgReportExEntity> param)
+        {
+            var pagination = await carMsgReportRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
+            return mapper.Map<Pagination<CarMsgReportExEntity>>(pagination);
         }
 
         #endregion
