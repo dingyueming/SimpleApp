@@ -28,11 +28,6 @@ namespace Simple.Application.DM
             return await dmDomainService.DeleteCarMsgReport(exEntities);
         }
 
-        public async Task<CarMsgReportExEntity> GetCarMsgReportExEntity(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Pagination<CarMsgReportExEntity>> GetPage(Pagination<CarMsgReportExEntity> param)
         {
             return await dmDomainService.GetCarMsgReportPage(param);
