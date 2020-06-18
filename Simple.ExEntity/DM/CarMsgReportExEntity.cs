@@ -39,6 +39,14 @@ namespace Simple.ExEntity.DM
         /// 创建时间
         /// </summary>
         public virtual DateTime? CREATETIME { get; set; }
+        /// <summary>
+        /// 车辆
+        /// </summary>
+        public virtual CarExEntity Car { get; set; }
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        public virtual UsersExEntity CreateUser { get; set; }
         #endregion
     }
 }

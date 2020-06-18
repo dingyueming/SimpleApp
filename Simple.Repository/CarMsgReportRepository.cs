@@ -17,7 +17,7 @@ namespace Simple.Repository
         {
             var pagination = new Pagination<CarMsgReportEntity>();
             var totalSql = $"select count(1) from car_msgreport a left join cars b on a.carid=b.carid left join tb_users c on a.creator=c.usersid where 1=1 ";
-            var sql = "select a*,b.*,c.* from car_msgreport a left join cars b on a.carid=b.carid left join tb_users c on a.creator=c.usersid  where 1=1 ";
+            var sql = "select a.*,b.*,c.* from car_msgreport a left join cars b on a.carid=b.carid left join tb_users c on a.creator=c.usersid  where 1=1 ";
             if (!string.IsNullOrEmpty(where))
             {
                 sql += where;

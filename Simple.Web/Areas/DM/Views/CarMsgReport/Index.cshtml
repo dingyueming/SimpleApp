@@ -16,11 +16,15 @@
 <div class="box" id="vmBox">
     <table style="margin-left:5px;">
         <tr>
-            <th>应用名称:</th>
+            <th>车牌号:</th>
             <td>
                 <div class="input-group">
                     <!-- /btn-group -->
-                    <input type="text" class="form-control" v-model="where.appName">
+                    <treeselect :multiple="false"
+                                :options="options"
+                                :disable-branch-nodes="true"
+                                placeholder="请选择设备"
+                                v-model="where.carid" style="width:300px;" />
                 </div>
             </td>
             <td>
@@ -66,30 +70,36 @@
                                             :options="options"
                                             :disable-branch-nodes="true"
                                             placeholder="请选择设备"
-                                            v-model="search.deviceid" style="width:300px;" />
+                                            v-model="row.carid" />
                             </div>
-                            <label class="col-sm-2 control-label" for="password">审批人</label>
+                            <label class="col-sm-2 control-label" for="approver">审批人</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="password" name="password" disabled="disabled" v-model="row.password" type="text" placeholder="审批人" />
+                                <el-input v-model="row.approver" placeholder="审批人"></el-input>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="ip">出动时间</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="ip" name="ip" v-model="row.ip" type="text" placeholder="IP" />
+                                <el-date-picker v-model="row.sendtime"
+                                                type="datetime"
+                                                placeholder="选择日期时间">
+                                </el-date-picker>
                             </div>
                             <label class="col-sm-2 control-label" for="port">返回时间</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="port" name="port" v-model="row.port" type="text" placeholder="端口" />
+                                <el-date-picker v-model="row.backtime"
+                                                type="datetime"
+                                                placeholder="选择日期时间">
+                                </el-date-picker>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="int_type">任务内容</label>
                             <div class="col-sm-10">
                                 <el-input type="textarea"
-                                          :autosize="{ minRows: 2, maxRows: 4}"
+                                          :autosize="{ minRows: 4, maxRows: 4}"
                                           placeholder="请输入内容"
-                                          v-model="textarea2">
+                                          v-model="row.content">
                                 </el-input>
                             </div>
                         </div>
@@ -104,5 +114,5 @@
         </div>
     </div>
 </div>
-<script src="~/Controllers/IM/InterfaceManagerController.js?r=@Guid.NewGuid()"></script>
+<script src="~/Controllers/DM/CarMsgReportController.js?r=@Guid.NewGuid()"></script>
 
