@@ -13,5 +13,6 @@ namespace Simple.IRepository
     {
         Task<Pagination<CarMsgReportEntity>> GetPage(int pageSize, int pageIndex, string orderby, string where);
 
+        Task<List<CarMsgReportEntity>> GetEntities(DateTime[] dateTimes);
     }
 }

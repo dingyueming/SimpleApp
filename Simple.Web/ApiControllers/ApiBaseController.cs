@@ -11,13 +11,9 @@ namespace Simple.Web.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WelcomeController : ControllerBase
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class ApiBaseController : ControllerBase
     {
-        [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public string Get()
-        {
-            return "success";
-        }
+
     }
 }

@@ -261,7 +261,11 @@ namespace Simple.Domain
             var pagination = await carMsgReportRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
             return mapper.Map<Pagination<CarMsgReportExEntity>>(pagination);
         }
-
+        public async Task<List<CarMsgReportExEntity>> GetCarMsgReportExEntities(DateTime[] dateTimes)
+        {
+            var entities = await carMsgReportRepository.GetEntities(dateTimes);
+            return mapper.Map<List<CarMsgReportExEntity>>(entities);
+        }
         #endregion
 
         #region 递归单位tree

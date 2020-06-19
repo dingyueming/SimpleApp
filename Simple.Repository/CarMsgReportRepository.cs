@@ -37,5 +37,16 @@ namespace Simple.Repository
             pagination.Total = await Connection.QuerySingleAsync<int>(totalSql);
             return pagination;
         }
+
+        public async Task<List<CarMsgReportEntity>> GetEntities(DateTime[] dateTimes)
+        {
+            var sql = "select a.*,b.* from car_msgreport a left join cars b on a.carid=b.carid where a.sendtime between :starttime and :endtime";
+            var result = await Connection.QueryAsync<CarMsgReportEntity, CarEntity, CarMsgReportEntity>(sql, (a, b) =>
+             {
+                 a.Car = b;
+                 return a;
+             }, splitOn: "carid", param: new { starttime = dateTimes[0], endtime = dateTimes[1] });
+            return result.ToList();
+        }
     }
 }

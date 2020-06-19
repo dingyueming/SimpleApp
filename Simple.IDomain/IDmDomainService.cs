@@ -54,6 +54,8 @@ namespace Simple.IDomain
         Task<bool> DeleteCarMsgReport(List<CarMsgReportExEntity> exEntities);
         Task<bool> UpdateCarMsgReport(CarMsgReportExEntity exEntity);
         Task<Pagination<CarMsgReportExEntity>> GetCarMsgReportPage(Pagination<CarMsgReportExEntity> param);
+        Task<List<CarMsgReportExEntity>> GetCarMsgReportExEntities(DateTime[] dateTimes);
+
 
         #endregion
 

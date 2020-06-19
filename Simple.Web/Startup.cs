@@ -14,6 +14,9 @@ using Simple.Web.Extension.ServiceExpend;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Simple.Web
 {
@@ -92,6 +95,20 @@ namespace Simple.Web
                     //o.LoginPath = new PathString("/Account/Login");
                     //o.AccessDeniedPath = new PathString("/Error/Forbidden");
                     o.ExpireTimeSpan = DateTimeOffset.UtcNow.AddMinutes(60) - DateTimeOffset.UtcNow;
+                })
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,//是否验证Issuer
+                        ValidateAudience = true,//是否验证Audience
+                        ValidateLifetime = true,//是否验证失效时间
+                        ValidateIssuerSigningKey = true,//是否验证SecurityKey
+                        ValidAudience = "client",//Audience
+                        ValidIssuer = "server",//Issuer，这两项和前面签发jwt的设置一致
+                        ClockSkew = TimeSpan.Zero,//校验时间是否过期时，设置的时钟偏移量
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecurityKey"])),//拿到SecurityKey
+                    };
                 });
 
             #endregion
