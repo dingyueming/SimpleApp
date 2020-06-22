@@ -145,6 +145,12 @@ namespace Simple.Domain
             return mapper.Map<Pagination<CarExEntity>>(pagination);
         }
 
+        public async Task<List<CarExEntity>> GetAllCarExEntities()
+        {
+            var entities = await carRepository.GetAllAsync();
+            return mapper.Map<List<CarExEntity>>(entities);
+        }
+
         #endregion
 
         #region 人员对讲机管理
@@ -261,9 +267,9 @@ namespace Simple.Domain
             var pagination = await carMsgReportRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
             return mapper.Map<Pagination<CarMsgReportExEntity>>(pagination);
         }
-        public async Task<List<CarMsgReportExEntity>> GetCarMsgReportExEntities(DateTime[] dateTimes)
+        public async Task<List<CarMsgReportExEntity>> GetCarMsgReportExEntities(DateTime[] dateTimes, string carNo)
         {
-            var entities = await carMsgReportRepository.GetEntities(dateTimes);
+            var entities = await carMsgReportRepository.GetEntities(dateTimes, carNo);
             return mapper.Map<List<CarMsgReportExEntity>>(entities);
         }
         #endregion

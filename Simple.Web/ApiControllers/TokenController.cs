@@ -58,7 +58,7 @@ namespace Simple.Web.ApiControllers
             }
             catch (Exception e)
             {
-                throw e;
+                return ApiResult<object>.Fail(e.Message);
             }
         }
     }

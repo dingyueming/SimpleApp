@@ -14,6 +14,6 @@ namespace Simple.IApplication.DM
         Task<bool> Delete(List<CarMsgReportExEntity> exEntities);
         Task<bool> Update(CarMsgReportExEntity exEntity);
         Task<Pagination<CarMsgReportExEntity>> GetPage(Pagination<CarMsgReportExEntity> param);
-        Task<List<CarMsgReportExEntity>> GetCarMsgReportExEntities(DateTime[] dateTimes);
+        Task<List<CarMsgReportExEntity>> GetCarMsgReportExEntities(DateTime[] dateTimes,string carNo);
     }
 }

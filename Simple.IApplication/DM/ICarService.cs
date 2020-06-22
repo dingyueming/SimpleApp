@@ -14,5 +14,6 @@ namespace Simple.IApplication.DM
         Task<bool> Delete(List<CarExEntity> exEntities);
         Task<bool> Update(CarExEntity exEntity);
         Task<Pagination<CarExEntity>> GetPage(Pagination<CarExEntity> param);
+        Task<List<CarExEntity>> GetAll();
     }
 }

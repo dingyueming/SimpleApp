@@ -3,6 +3,7 @@ using Simple.IApplication.DM;
 using Simple.IDomain;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Infrastructure.InfrastructureModel.VueTreeSelect;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,6 +36,11 @@ namespace Simple.Application.DM
         public async Task<Pagination<CarExEntity>> GetPage(Pagination<CarExEntity> param)
         {
             return await dmDomainService.GetCarPage(param);
+        }
+
+        public async Task<List<CarExEntity>> GetAll()
+        {
+            return await dmDomainService.GetAllCarExEntities();
         }
     }
 }

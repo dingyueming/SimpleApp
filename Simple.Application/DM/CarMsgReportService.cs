@@ -37,9 +37,9 @@ namespace Simple.Application.DM
         {
             return await dmDomainService.UpdateCarMsgReport(exEntity);
         }
-        public async Task<List<CarMsgReportExEntity>> GetCarMsgReportExEntities(DateTime[] dateTimes)
+        public async Task<List<CarMsgReportExEntity>> GetCarMsgReportExEntities(DateTime[] dateTimes, string carNo)
         {
-            return await dmDomainService.GetCarMsgReportExEntities(dateTimes);
+            return await dmDomainService.GetCarMsgReportExEntities(dateTimes, carNo);
         }
     }
 }

@@ -38,14 +38,14 @@ namespace Simple.Repository
             return pagination;
         }
 
-        public async Task<List<CarMsgReportEntity>> GetEntities(DateTime[] dateTimes)
+        public async Task<List<CarMsgReportEntity>> GetEntities(DateTime[] dateTimes, string carNo)
         {
-            var sql = "select a.*,b.* from car_msgreport a left join cars b on a.carid=b.carid where a.sendtime between :starttime and :endtime";
+            var sql = "select a.*,b.* from car_msgreport a left join cars b on a.carid=b.carid where b.carno like :carNo and a.sendtime between :starttime and :endtime";
             var result = await Connection.QueryAsync<CarMsgReportEntity, CarEntity, CarMsgReportEntity>(sql, (a, b) =>
              {
                  a.Car = b;
                  return a;
-             }, splitOn: "carid", param: new { starttime = dateTimes[0], endtime = dateTimes[1] });
+             }, splitOn: "carid", param: new { starttime = dateTimes[0], endtime = dateTimes[1], carNo = carNo });
             return result.ToList();
         }
     }
