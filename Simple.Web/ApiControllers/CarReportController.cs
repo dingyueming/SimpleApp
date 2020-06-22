@@ -34,6 +34,8 @@ namespace Simple.Web.ApiControllers
                 return ApiResult<object>.Success(carMsgReportExEntities.Select(x => new
                 {
                     x.CARID,
+                    x.Car.LICENSE,
+                    x.Car.CARNO,
                     x.APPROVER,
                     x.SENDTIME,
                     x.BACKTIME,
@@ -42,7 +44,6 @@ namespace Simple.Web.ApiControllers
             }
             catch (Exception e)
             {
-
                 return ApiResult<object>.Fail(e.Message);
             }
         }

@@ -79,7 +79,7 @@
                         vm.newtracks.forEach((x) => {
                             lineArr.push(x.destPoint);
                         });
-                        // 绘制轨迹
+                             // 绘制轨迹
                         var polyline = new AMap.Polyline({
                             map: vm.map,
                             path: lineArr,
@@ -110,7 +110,7 @@
                             icon: imgUrl,
                             offset: new AMap.Pixel(-4, -8),
                             autoRotation: true,
-                            angle: vm.newtracks[0].heading,
+                            //angle: vm.newtracks[0].heading,
                         });
                         //设置中心点
                         vm.map.setZoomAndCenter(14, vm.newtracks[0].destPoint);
@@ -153,7 +153,7 @@
                 }
                 //设置位置、方向以及背景图
                 vm.marker.setPosition(lastTrackData.destPoint);
-                vm.marker.setAngle(lastTrackData.heading);
+                //vm.marker.setAngle(lastTrackData.heading);
                 var imgUrl = "../../plugins/amap/images/" + (lastTrackData.speed > 0 ? "run.png" : "stop.png");
                 if (vm.marker.getIcon() != imgUrl) {
                     vm.marker.setIcon(imgUrl);

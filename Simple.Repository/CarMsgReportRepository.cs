@@ -45,7 +45,7 @@ namespace Simple.Repository
              {
                  a.Car = b;
                  return a;
-             }, splitOn: "carid", param: new { starttime = dateTimes[0], endtime = dateTimes[1], carNo = carNo });
+             }, splitOn: "carid", param: new { starttime = dateTimes[0], endtime = dateTimes[1], carNo = $"%{carNo}%" });
             return result.ToList();
         }
     }
