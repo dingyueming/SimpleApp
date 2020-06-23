@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = ViewData["Title"] ?? "车辆最后定位查询";
+    ViewData["Title"] = ViewData["Title"] ?? "未定位车辆查询";
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Version"] = "20200616";
 }
@@ -25,6 +25,7 @@
                                     start-placeholder="开始时间"
                                     end-placeholder="结束时间">
                     </el-date-picker>
+                    <input type="hidden" v-bind:value="isSearchLocated=false" />
                 </div>
             </td>
             <td>

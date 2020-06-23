@@ -30,5 +30,13 @@ namespace Simple.Web.Areas.SA.Controllers
         {
             return base.Index();
         }
+        /// <summary>
+        /// 最近一周、一个月、三天内未定位的车辆查询页面
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Index2()
+        {
+            return base.Index();
+        }
     }
 }

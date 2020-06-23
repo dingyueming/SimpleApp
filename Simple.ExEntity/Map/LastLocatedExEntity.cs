@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using Simple.ExEntity.DM;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -120,8 +121,11 @@ namespace Simple.ExEntity.Map
 
         public CarExEntity Car { get; set; }
 
+        public UnitExEntity Unit { get; set; }
+
         #region searchData
         public DateTime[] DateTimes { get; set; }
+        public bool IsSearchLocated { get; set; }
         #endregion
     }
 }

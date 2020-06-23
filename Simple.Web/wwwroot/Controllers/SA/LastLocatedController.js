@@ -21,16 +21,18 @@
                         }, isFrozen: false
                     },
                     {
-                        field: 'car.carno', title: '车牌号', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true,
+                        field: 'car.carno', title: '车牌号', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true,
                         formatter: function (rowData, index, pagingIndex) {
-                            return rowData.car.license;
+                            return rowData.car.license + ' ' + rowData.car.carno;
                         }
                     },
-                    { field: 'gnsstime', title: '时间', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'longitude', title: '经度', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'latitude', title: '纬度', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    //{ field: 'position', title: '位置描述', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'speed', title: '速度', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    {
+                        field: 'car.carno', title: '单位', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true,
+                        formatter: function (rowData, index, pagingIndex) {
+                            return rowData.unit.unitname;
+                        }
+                    },
+                    { field: 'gnsstime', title: '最后上线时间', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
                 ],
                 titleRows: [],
             },
@@ -62,16 +64,17 @@
                         picker.$emit('pick', [start, end]);
                     }
                 }]
-            }
+            },
+            isSearchLocated: true
         },
         methods: {
             getTableData() {
-                var search = { searchData: { dateTimes: this.timeValue, license: this.license }, pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: ' a.gnsstime desc' };
+                var search = { searchData: { dateTimes: this.timeValue, license: this.license, isSearchLocated: this.isSearchLocated }, pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: ' a.gnsstime desc' };
                 axios.post('Query', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
                     vm.tableConfig.tableData = pagination.data;
                     vm.total = pagination.total;
-                    console.log(pagination);
+                    //console.log(pagination);
                 }).catch(function (error) {
                     console.log(error);
                 });
