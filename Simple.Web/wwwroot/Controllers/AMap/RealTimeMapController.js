@@ -567,7 +567,7 @@
                                             "<tr><td>所属中队：</td><td>" + value.fire_brigade + "</td></tr>",
                                             "<tr><td>层数：</td><td>" + value.building_storey + "</td></tr>",
                                             "<tr><td>行驶路线：</td><td>" + value.driving_route + "</td></tr>",
-                                            "<tr><td>详细信息：</td><td><a href='../../" + value.name + ".htm' target='_blank'>详细信息</a></td></tr>",
+                                            "<tr><td>详细信息：</td><td><a href='../../" + value.name + ".htm' target='_blank'>" + value.name + "</a></td></tr>",
                                         ];
                                         var openedHtml = "<table style='text-align:left; line-height:22px; width:400px;'>" + tmpArr.join(' ') + "<table>";
                                         // 创建 infoWindow 实例	
