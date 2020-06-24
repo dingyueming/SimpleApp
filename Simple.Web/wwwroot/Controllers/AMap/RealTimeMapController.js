@@ -6,6 +6,8 @@
         data: {
             //地图
             map: {},
+            //marker图层
+            labelsLayer: {},
             //设备列表
             deviceList: [],
             //最后定位数据
@@ -141,15 +143,62 @@
                 axios.all(axiosList).then(function (response) {
                     vm.deviceList = response[0].data;//定位设备
                     vm.lastLocatedData = response[1].data;//最后定位数据
+                    // 创建一个 LabelsLayer 实例来承载 LabelMarker，[LabelsLayer 文档](https://lbs.amap.com/api/jsapi-v2/documentation#labelslayer)
+                    vm.labelsLayer = new AMap.LabelsLayer({
+                        //collision: true,
+                    });
                     vm.lastLocatedData.forEach((value) => {
                         var device = vm.getDevice(value.carid);
                         if (device) {
-                            //var minute = Number((new Date().getTime() - new Date(value.gnsstime).getTime()) / (1000 * 60));
                             device.lastTrackData = value;
                             var destPoint = coordtransform.wgs84togcj02(value.longitude, value.latitude);
-                            //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
                             var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(value);
                             var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
+
+                            var icon = {
+                                // 图标类型，现阶段只支持 image 类型
+                                type: 'image',
+                                // 图片 url
+                                image: iconUrl,
+                                // 图片尺寸
+                                size: [64, 64],
+                                // 图片相对 position 的锚点，默认为 bottom-center
+                                anchor: 'center',
+                            };
+
+                            var text = {
+                                // 要展示的文字内容
+                                content: labelTitle,
+                                // 文字方向，有 icon 时为围绕文字的方向，没有 icon 时，则为相对 position 的位置
+                                direction: 'top',
+                                // 在 direction 基础上的偏移量
+                                //offset: [-20, -5],
+                                // 文字样式
+                                style: {
+                                    // 字体大小
+                                    fontSize: 12,
+                                    // 字体颜色
+                                    fillColor: '#22886f',
+                                    // 描边颜色
+                                    strokeColor: '#fff',
+                                    // 描边宽度
+                                    strokeWidth: 2,
+                                }
+                            };
+
+                            var labelMarker = new AMap.LabelMarker({
+                                name: device.license, // 此属性非绘制文字内容，仅最为标识使用
+                                position: destPoint,
+                                zIndex: 16,
+                                // 将第一步创建的 icon 对象传给 icon 属性
+                                icon: icon,
+                                // 将第二步创建的 text 对象传给 text 属性
+                                text: text,
+                                //标注显示级别范围， 可选值： [2,20]
+                                zooms: [2, 20],
+                                extData: device,
+                            });
+
                             var baseMarker = new AMap.Marker({
                                 //map: vm.map,
                                 position: destPoint,
@@ -163,9 +212,12 @@
                                 label: { content: labelTitle, direction: value.heading, offset: new AMap.Pixel(0, 0) },
                                 extData: device,
                             });
-                            device.marker = baseMarker;
+                            device.marker = labelMarker;
+                            vm.labelsLayer.add(labelMarker);
                             if (iconUrl.indexOf('stop.png') > -1 || iconUrl.indexOf('run.png') > -1) {
-                                vm.map.add(device.marker);
+                                // 将 LabelMarker 实例添加到 LabelsLayer 上
+                                //vm.labelsLayer.add(labelMarker);
+                                //vm.map.add(device.marker);
                                 device.marker.setzIndex(1000); //前置
                             }
                             //监听marker点击
@@ -193,12 +245,14 @@
                             }, device);
                         }
                     });
+                    // 将 LabelsLayer 添加到地图上
+                    vm.map.add(vm.labelsLayer);
                     loading.close();
                 })
             },
             //启动定时器，更新车辆状态,位置
             initTimer() {
-                setInterval(function () {
+                setTimeout(function () {
                     var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
                     for (var i = 0; i < vm.deviceList.length; i++) {
                         var device = vm.deviceList[i];
@@ -319,9 +373,9 @@
                 var device = this.getDevice(mac);
                 if (device) {
                     device.lastTrackData = gpsData;
-                    if (!device.marker.getMap()) {
-                        this.map.add(device.marker);
-                    }
+                    //if (!device.marker.getMap()) {
+                    //    this.map.add(device.marker);
+                    //}
                     //更新table
                     var list = vm.gpsDatas;
                     var isTableData = false;//是否在列表中
