@@ -17,6 +17,8 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.StaticFiles;
+using System.Collections.Generic;
 
 namespace Simple.Web
 {
@@ -158,7 +160,16 @@ namespace Simple.Web
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseAuthentication();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                //FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory()),
+                //设置不限制content-type 该设置可以下载所有类型的文件，但是不建议这么设置，因为不安全
+                //下面设置可以下载apk和nupkg类型的文件
+                ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
+                {
+                      { ".apk", "application/vnd.android.package-archive" }
+                })
+            });
             app.UseCookiePolicy();
 
             app.UseSignalR(route =>
