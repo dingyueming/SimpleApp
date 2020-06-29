@@ -129,7 +129,7 @@
                                 <th>方向</th>
                                 <th>状态</th>
                                 <th>定位模式</th>
-                                <th>累计里程</th>
+                                <th>累计里程(km)</th>
                                 @*<th>位置</th>*@
                                 <th>经度</th>
                                 <th>纬度</th>
@@ -145,7 +145,7 @@
                                 <td>{{newtrack.heading_str}}</td>
                                 <td>{{newtrack.status}}</td>
                                 <td>{{newtrack.locatemode_str}}</td>
-                                <td>{{newtrack.mileage}}</td>
+                                <td>{{newtrack.mileage/1000}}</td>
                                 <td>{{newtrack.longitude}}</td>
                                 <td>{{newtrack.latitude}}</td>
                             </tr>

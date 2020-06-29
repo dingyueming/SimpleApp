@@ -101,6 +101,14 @@
                     center: [104.066642, 30.656279],//中心点坐标
                     zoom: 12
                 });
+                // 创建一个 LabelsLayer 实例来承载 LabelMarker，[LabelsLayer 文档](https://lbs.amap.com/api/jsapi-v2/documentation#labelslayer)
+                this.labelsLayer = new AMap.LabelsLayer({
+                    zooms: [3, 20],
+                    zIndex: 1000,
+                    collision: false
+                });
+                // 将 LabelsLayer 添加到地图上
+                this.map.add(this.labelsLayer);
                 //加载BasicControl，loadUI的路径参数为模块名中 'ui/' 之后的部分
                 AMapUI.loadUI(['control/BasicControl'], function (BasicControl) {
 
@@ -143,10 +151,7 @@
                 axios.all(axiosList).then(function (response) {
                     vm.deviceList = response[0].data;//定位设备
                     vm.lastLocatedData = response[1].data;//最后定位数据
-                    // 创建一个 LabelsLayer 实例来承载 LabelMarker，[LabelsLayer 文档](https://lbs.amap.com/api/jsapi-v2/documentation#labelslayer)
-                    vm.labelsLayer = new AMap.LabelsLayer({
-                        //collision: true,
-                    });
+                    
                     vm.lastLocatedData.forEach((value) => {
                         var device = vm.getDevice(value.carid);
                         if (device) {
@@ -187,7 +192,7 @@
                             };
 
                             var labelMarker = new AMap.LabelMarker({
-                                name: device.license, // 此属性非绘制文字内容，仅最为标识使用
+                                name: device.mac, // 此属性非绘制文字内容，仅最为标识使用
                                 position: destPoint,
                                 zIndex: 16,
                                 // 将第一步创建的 icon 对象传给 icon 属性
@@ -245,51 +250,50 @@
                             }, device);
                         }
                     });
-                    // 将 LabelsLayer 添加到地图上
-                    vm.map.add(vm.labelsLayer);
+                    
                     loading.close();
                 })
             },
             //启动定时器，更新车辆状态,位置
             initTimer() {
-                setTimeout(function () {
-                    var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-                    for (var i = 0; i < vm.deviceList.length; i++) {
-                        var device = vm.deviceList[i];
-                        var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(device.lastTrackData);
-                        //更新设备图标
-                        if (device.marker && device.marker.getIcon() != iconUrl) {
-                            device.marker.setIcon(iconUrl);
-                            device.marker.show();
-                        }
-                        //更新设备位置
-                        if (device.lastTrackData) {
-                            var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                            if (device.marker) {
-                                device.marker.setPosition(destPoint);
-                            }
-                        }
-                        //更新树图标
-                        if (treeObj && treeObj != null) {
-                            var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
-                            if (node && node != null) {
-                                node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
-                                treeObj.updateNode(node);
-                            }
-                        }
-                        //隐藏地图上不在线的车辆
-                        if (iconUrl.indexOf("off") > -1 && device.marker) {
-                            device.marker.hide();
-                        }
-                        //去掉定位表格里的离线数据
-                        //this.gpsData
+                var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+                for (var i = 0; i < this.deviceList.length; i++) {
+                    var device = vm.deviceList[i];
+                    var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(device.lastTrackData);
+                    //更新设备图标
+                    if (device.marker && device.marker.getIcon() != iconUrl) {
+                        device.marker.setIcon(iconUrl);
+                        device.marker.show();
                     }
-                    //计算车辆在线数;
-                    if (treeObj) {
-                        var nodes = treeObj.getNodes();
-                        nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
+                    //更新设备位置
+                    if (device.lastTrackData) {
+                        var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                        if (device.marker) {
+                            device.marker.setPosition(destPoint);
+                        }
                     }
-                }, 2 * 1000);
+                    //更新树图标
+                    if (treeObj && treeObj != null) {
+                        var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
+                        if (node && node != null) {
+                            node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
+                            treeObj.updateNode(node);
+                        }
+                    }
+                    //隐藏地图上不在线的车辆
+                    if (iconUrl.indexOf("off") > -1 && device.marker) {
+                        device.marker.hide();
+                    }
+                    //去掉定位表格里的离线数据
+                    //this.gpsData
+                }
+                //计算车辆在线数;
+                if (treeObj) {
+                    var nodes = treeObj.getNodes();
+                    nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
+                }
+                console.log(new Date());
+                setTimeout(this.initTimer, 5000)
             },
             //计算车辆在线数量
             recusiveUnit(treeObj, node) {
@@ -586,7 +590,7 @@
                         strokeStyle: 'solid',
                     });
                     //设置鼠标为十字
-                    vm.map.setDefaultCursor("crosshair");
+                    //vm.map.setDefaultCursor("crosshair");
                     mouseTool.on('draw', function (event) {
                         // event.obj 为绘制出来的覆盖物对象
                         vm.otherData.rectangleObj = event.obj;
@@ -621,7 +625,7 @@
                                             "<tr><td>所属中队：</td><td>" + value.fire_brigade + "</td></tr>",
                                             "<tr><td>层数：</td><td>" + value.building_storey + "</td></tr>",
                                             "<tr><td>行驶路线：</td><td>" + value.driving_route + "</td></tr>",
-                                            "<tr><td>详细信息：</td><td><a href='../../" + value.name + ".htm' target='_blank'>" + value.name + "</a></td></tr>",
+                                            "<tr><td>详细信息：</td><td><a href='../../keyunit/" + value.name + ".htm' target='_blank'>" + value.name + "</a></td></tr>",
                                         ];
                                         var openedHtml = "<table style='text-align:left; line-height:22px; width:400px;'>" + tmpArr.join(' ') + "<table>";
                                         // 创建 infoWindow 实例	
@@ -639,23 +643,67 @@
                         }
 
                         if (vm.otherData.drawType == 2) {
+                            var icon = {
+                                // 图标类型，现阶段只支持 image 类型
+                                type: 'image',
+                                // 图片 url
+                                image: "../../plugins/amap/images/xhs.png",
+                                // 图片尺寸
+                                size: [64, 64],
+                                // 图片相对 position 的锚点，默认为 bottom-center
+                                anchor: 'center',
+                            };
+
+                            var text = {
+                                // 要展示的文字内容
+                                content: "",
+                                // 文字方向，有 icon 时为围绕文字的方向，没有 icon 时，则为相对 position 的位置
+                                direction: 'top',
+                                // 在 direction 基础上的偏移量
+                                //offset: [-20, -5],
+                                // 文字样式
+                                style: {
+                                    // 字体大小
+                                    fontSize: 12,
+                                    // 字体颜色
+                                    fillColor: '#22886f',
+                                    // 描边颜色
+                                    strokeColor: '#fff',
+                                    // 描边宽度
+                                    strokeWidth: 2,
+                                }
+                            };
                             vm.otherData.xhs.forEach((value) => {
                                 var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
                                 destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
                                 var isContains = bounds.contains(destPoint);
                                 if (isContains) {
-                                    var xhsMarker = new AMap.Marker({
-                                        map: vm.map,
+                                    //var xhsMarker = new AMap.Marker({
+                                    //    map: vm.map,
+                                    //    position: destPoint,
+                                    //    icon: "../../plugins/amap/images/xhs.png",
+                                    //    anchor: 'center',
+                                    //    offset: new AMap.Pixel(0, 0),
+                                    //    //angle: value.heading,
+                                    //    topWhenClick: true,
+                                    //    title: value.symc,
+                                    //    label: { content: value.symc, direction: 90, },
+                                    //    //extData: device,
+                                    //});
+                                    text.content = value.symc;
+                                    var xhsMarker = new AMap.LabelMarker({
+                                        name: value.symc, // 此属性非绘制文字内容，仅最为标识使用
                                         position: destPoint,
-                                        icon: "../../plugins/amap/images/xhs.png",
-                                        anchor: 'center',
-                                        offset: new AMap.Pixel(0, 0),
-                                        //angle: value.heading,
-                                        topWhenClick: true,
-                                        title: value.symc,
-                                        label: { content: value.symc, direction: 90, },
-                                        //extData: device,
+                                        zIndex: 16,
+                                        // 将第一步创建的 icon 对象传给 icon 属性
+                                        icon: icon,
+                                        // 将第二步创建的 text 对象传给 text 属性
+                                        text: text,
+                                        //标注显示级别范围， 可选值： [2,20]
+                                        zooms: [2, 20],
+                                        extData: value,
                                     });
+
                                     vm.otherData.xhsMarkers.push(xhsMarker);
                                     //监听marker点击
                                     xhsMarker.on('click', (e) => {
@@ -683,7 +731,7 @@
                             });
                         }
                         mouseTool.close();
-                        vm.map.setDefaultCursor("default");
+                        //vm.map.setDefaultCursor("default");
                     });
                 });
             },
@@ -765,7 +813,7 @@
             this.initMap();
             this.initDeviceTree();
             this.initData();
-            this.initTimer();
+            //this.initTimer();
             this.initSignalR();
             this.initOtherData();
         }

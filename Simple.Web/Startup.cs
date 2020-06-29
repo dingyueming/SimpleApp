@@ -19,6 +19,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Collections.Generic;
+using Microsoft.Extensions.FileProviders;
 
 namespace Simple.Web
 {
@@ -96,7 +97,7 @@ namespace Simple.Web
                     //需要自定义登陆以及登出页面修改这里
                     //o.LoginPath = new PathString("/Account/Login");
                     //o.AccessDeniedPath = new PathString("/Error/Forbidden");
-                    o.ExpireTimeSpan = DateTimeOffset.UtcNow.AddMinutes(60) - DateTimeOffset.UtcNow;
+                    //o.ExpireTimeSpan = DateTimeOffset.UtcNow.AddHours(2) - DateTimeOffset.UtcNow;
                 })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
@@ -160,6 +161,16 @@ namespace Simple.Web
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseAuthentication();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                //FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory()),
+                //设置不限制content-type 该设置可以下载所有类型的文件，但是不建议这么设置，因为不安全
+                //下面设置可以下载apk和nupkg类型的文件
+                //ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
+                //{
+                //      { ".apk", "application/vnd.android.package-archive" }
+                //})
+            });
             app.UseStaticFiles(new StaticFileOptions
             {
                 //FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory()),
