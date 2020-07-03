@@ -185,7 +185,6 @@
                                 vm.map.add(device.marker);
                                 device.marker.setzIndex(1000); //前置
                             }
-                            vm.map.add(device.marker);
                             //监听marker点击
                             device.marker.on('click', (e) => {
                                 var device = e.target.getExtData();
@@ -770,7 +769,7 @@
             this.initMap();
             this.initDeviceTree();
             this.initData();
-            //this.initTimer();
+            this.initTimer();
             this.initSignalR();
             this.initOtherData();
         }
