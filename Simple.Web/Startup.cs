@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Collections.Generic;
 using Microsoft.Extensions.FileProviders;
+using Simple.Web.Extension.MapApi;
 
 namespace Simple.Web
 {
@@ -95,7 +96,7 @@ namespace Simple.Web
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
                 {
                     //需要自定义登陆以及登出页面修改这里
-                    //o.LoginPath = new PathString("/Account/Login");
+                    o.LoginPath = new PathString("/Account/Login");
                     //o.AccessDeniedPath = new PathString("/Error/Forbidden");
                     //o.ExpireTimeSpan = DateTimeOffset.UtcNow.AddHours(2) - DateTimeOffset.UtcNow;
                 })
@@ -131,13 +132,14 @@ namespace Simple.Web
             //新模块组件注册
             builder.RegisterModule<ApplicationModule>();
             builder.RegisterModule<InfrastructureModule>();
+            builder.RegisterType<RtMapService>();
             //创建容器.
             var autoFacContainer = builder.Build();
             //使用容器创建 autoFacServiceProvider 
             var autofacServicePorovider = new AutofacServiceProvider(autoFacContainer);
             //IServiceProvider
             ServiceLocator.SetServices(autofacServicePorovider);
-
+            
             Task.Run(async () =>
             {
                 var hub = autofacServicePorovider.GetService<MapHub>();

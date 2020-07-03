@@ -38,9 +38,9 @@ namespace Simple.Application.DM
             return await dmDomainService.GetCarPage(param);
         }
 
-        public async Task<List<CarExEntity>> GetAll()
+        public async Task<List<CarExEntity>> GetAll(int userId)
         {
-            return await dmDomainService.GetAllCarExEntities();
+            return await dmDomainService.GetAllCarExEntities(userId);
         }
     }
 }

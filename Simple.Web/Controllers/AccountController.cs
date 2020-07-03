@@ -28,6 +28,10 @@ namespace Simple.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string userName, string password, string returnUrl, bool rememberMe)
         {
+            if (returnUrl == "/")
+            {
+                returnUrl = null;
+            }
             if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
             {
                 var users = await userService.GetAllUsers();

@@ -39,7 +39,10 @@ namespace Simple.Web.ApiControllers
                 }
                 else
                 {
-                    var claims = new[] { new Claim(ClaimTypes.NameIdentifier, loginUser.UsersId.ToString()) };//创建声明
+                    var claims = new[] {
+                        new Claim(ClaimTypes.NameIdentifier, loginUser.UsersId.ToString()),
+                        new Claim(ClaimTypes.Role, loginUser.UnitId.ToString())
+                    };//创建声明
                     var now = DateTime.Now;
                     var ex = now + TimeSpan.FromMinutes(30);//过期时间设置为30分钟
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["SecurityKey"]));//获取密钥

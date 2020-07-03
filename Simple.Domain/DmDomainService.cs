@@ -145,9 +145,9 @@ namespace Simple.Domain
             return mapper.Map<Pagination<CarExEntity>>(pagination);
         }
 
-        public async Task<List<CarExEntity>> GetAllCarExEntities()
+        public async Task<List<CarExEntity>> GetAllCarExEntities(int userId)
         {
-            var entities = await carRepository.GetAllAsync();
+            var entities = await carRepository.GetCarEntitiesByUser(userId);
             return mapper.Map<List<CarExEntity>>(entities);
         }
 

@@ -84,7 +84,6 @@
                 this.getTableData();
             },
             pageSizeChange(pageSize) {
-
                 this.pageIndex = 1;
                 this.pageSize = pageSize;
                 this.getTableData();
@@ -115,7 +114,6 @@
             selectGroupChange(selection) {
             },
             select() {
-                this.pageIndex = 1;
                 this.getTableData();
             },
         },

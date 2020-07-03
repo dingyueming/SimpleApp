@@ -55,7 +55,7 @@ namespace Simple.Domain
                 }
             });
             param.Data = exList.ToList().Skip((param.PageIndex - 1) * param.PageSize).Take(param.PageSize).ToList();
-            param.Total = list.Count();
+            param.Total = exList.Count();
             return param;
         }
     }

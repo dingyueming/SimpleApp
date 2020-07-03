@@ -1,24 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.FileProviders;
-using System;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Simple.ExEntity.Map;
-using System.Collections.Generic;
-using Simple.Web.Models;
-using System.Threading;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using System.IO;
-using System.Text;
 using Simple.Infrastructure.Tools;
-using Microsoft.AspNetCore.SignalR.Internal;
+using Simple.Web.Extension.MapApi;
+using Simple.Web.Models;
 using Simple.Web.Models.CmdInfo;
-using Microsoft.AspNetCore.Identity.UI.Pages.Account.Internal;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Simple.Web.Other
 {
@@ -27,7 +17,7 @@ namespace Simple.Web.Other
     {
         private readonly RedisHelper redisHelper;
         private readonly DigitalQueueHelper digitalQueueHelper;
-
+        private readonly RtMapService rtMapService;
         /// <summary>
         /// 客户端连接id
         /// </summary>
@@ -35,10 +25,11 @@ namespace Simple.Web.Other
 
         public List<CmdByUser> CmdByUsers { get; set; }
 
-        public MapHub(RedisHelper redisHelper, DigitalQueueHelper digitalQueueHelper)
+        public MapHub(RedisHelper redisHelper, DigitalQueueHelper digitalQueueHelper, RtMapService rtMapService)
         {
             this.digitalQueueHelper = digitalQueueHelper;
             this.redisHelper = redisHelper;
+            this.rtMapService = rtMapService;
             ConnIds = new List<string>();
             CmdByUsers = new List<CmdByUser>();
         }
@@ -49,51 +40,85 @@ namespace Simple.Web.Other
         /// <returns></returns>
         public async Task GetData()
         {
-            while (true)
+            try
             {
-                //位置信息
-                var gpsData = redisHelper.GetAndRemoveListValue<DataCenterModel>("TRACK");
-                //短报文
-                var msgData = redisHelper.GetAndRemoveListValue<UpMsg>("UPMSG");
-                //命令反馈
-                var ackData = redisHelper.GetAndRemoveListValue<BaseCommand<CmdResponse>>("CMDACK");
-                if (Clients != null && ConnIds.Count > 0)
+                while (true)
                 {
-                    if (gpsData != null)
+                    //位置信息
+                    var gpsData = redisHelper.GetAndRemoveListValue<DataCenterModel>("TRACK");
+                    //短报文
+                    var msgData = redisHelper.GetAndRemoveListValue<UpMsg>("UPMSG");
+                    //命令反馈
+                    var ackData = redisHelper.GetAndRemoveListValue<BaseCommand<CmdResponse>>("CMDACK");
+                    //路线规划
+                    var directionData = redisHelper.GetAndRemoveListValue<DirectionModel>("DIRECTION");
+                    //有客户端连接时
+                    if (Clients != null && ConnIds.Count > 0)
                     {
-                        var connClients = Clients.Clients(ConnIds);
-                        await connClients.SendAsync("UpdateMapData", gpsData);
-                    }
-                    
-                    if (msgData != null)
-                    {
-                        var connClients = Clients.Clients(ConnIds);
-                        await connClients.SendAsync("UpdateMsgData", msgData);
-                    }
-                    if (ackData != null)
-                    {
-                        var listCmd = CmdByUsers.Where(x => x.USERID == ackData.Head.USERID).ToList();
-                        var needRemoveItme = new CmdByUser();
-                        foreach (var item in listCmd)
+                        if (gpsData != null)
                         {
-                            if (item.Equals(ackData))
+                            var connClients = Clients.Clients(ConnIds);
+                            await connClients.SendAsync("UpdateMapData", gpsData);
+                        }
+
+                        if (msgData != null)
+                        {
+                            var connClients = Clients.Clients(ConnIds);
+                            await connClients.SendAsync("UpdateMsgData", msgData);
+                        }
+
+                        if (ackData != null)
+                        {
+                            var listCmd = CmdByUsers.Where(x => x.USERID == ackData.Head.USERID).ToList();
+                            var needRemoveItme = new CmdByUser();
+                            foreach (var item in listCmd)
                             {
-                                needRemoveItme = item;
+                                if (item.Equals(ackData))
+                                {
+                                    needRemoveItme = item;
+                                }
+                            }
+                            listCmd.Remove(needRemoveItme);
+                            var clientId = ConnIds.FirstOrDefault(x => x == needRemoveItme.ConnId);
+                            if (ackData.Content.Status == 0)
+                            {
+                                var connClients = Clients.Clients(clientId);
+                                await connClients.SendAsync("ShowCommandMsg", ackData.Content.ShowMsg);
+                            }
+                            else
+                            {
+                                //写入日志
                             }
                         }
-                        listCmd.Remove(needRemoveItme);
-                        var clientId = ConnIds.FirstOrDefault(x => x == needRemoveItme.ConnId);
-                        if (ackData.Content.Status == 0)
+
+                        if (directionData != null)
                         {
-                            var connClients = Clients.Clients(clientId);
-                            await connClients.SendAsync("ShowCommandMsg", ackData.Content.ShowMsg);
-                        }
-                        else
-                        {
-                            //写入日志
+                            var path = new List<double[]>();
+                            var polyline = await rtMapService.GetDrivingLine(directionData.Origin, directionData.Destination);
+                            var strPathList = polyline.Split(';').ToList();
+                            foreach (var item in strPathList)
+                            {
+                                var arr = item.Split(',');
+                                if (arr.Length == 2)
+                                {
+                                    var p = new double[] { double.Parse(arr[0]), double.Parse(arr[1]) };
+                                    path.Add(p);
+                                }
+                            }
+                            var connClients = Clients.Clients(ConnIds);
+                            await connClients.SendAsync("DrawDirLine", path, directionData);
                         }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                var connClients = Clients.Clients(ConnIds);
+                if (connClients != null)
+                {
+                    await connClients.SendAsync("MapHubException", e.Message);
+                }
+                await GetData();
             }
         }
 

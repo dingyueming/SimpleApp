@@ -79,7 +79,7 @@ namespace Simple.Domain
             {
                 var treeNode = new TreeNode()
                 {
-                    name = device.CARNO,
+                    name = device.LICENSE,
                     pId = $"unit-{device.UNITID}",
                     id = $"car-{ device.CARID }",
                     iconSkin = "gray_car"

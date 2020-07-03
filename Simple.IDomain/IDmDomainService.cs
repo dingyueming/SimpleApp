@@ -30,7 +30,7 @@ namespace Simple.IDomain
         Task<bool> DeleteCar(List<CarExEntity> exEntities);
         Task<bool> UpdateCar(CarExEntity exEntity);
         Task<Pagination<CarExEntity>> GetCarPage(Pagination<CarExEntity> param);
-        Task<List<CarExEntity>> GetAllCarExEntities();
+        Task<List<CarExEntity>> GetAllCarExEntities(int userId);
 
         #endregion
 

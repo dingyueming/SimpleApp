@@ -76,6 +76,7 @@
                         <!-- 提供地图容器，其中地图容器必须提供id号，用于生成地图 -->
                         <div id="container" :style="{height:(isFullScreen?fullScreenStyle.fullHeight+'px':fullScreenStyle.normalHeight+'px')}"></div>
                         <div class="toolbar">
+                            <input id="tipinput" />
                             <el-popover placement="left-start"
                                         width="auto"
                                         trigger="click">
@@ -90,7 +91,7 @@
                                     <el-col :span="12"><el-button size="mini" icon="el-icon-s-open" v-on:click="drawRectangle(2)">消火栓&nbsp;&nbsp;&nbsp;&nbsp;</el-button></el-col>
                                 </el-row>
                                 <el-row>
-                                    
+
                                 </el-row>
                                 <el-button slot="reference" icon="el-icon-platform-eleme" size="mini"></el-button>
                             </el-popover>
@@ -145,7 +146,7 @@
                                 <td>{{newtrack.heading_str}}</td>
                                 <td>{{newtrack.status}}</td>
                                 <td>{{newtrack.locatemode_str}}</td>
-                                <td>{{newtrack.mileage/1000}}</td>
+                                <td>{{Math.round(newtrack.mileage/1000)}}</td>
                                 <td>{{newtrack.longitude}}</td>
                                 <td>{{newtrack.latitude}}</td>
                             </tr>
