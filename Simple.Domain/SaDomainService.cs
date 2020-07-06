@@ -2,6 +2,7 @@
 using Simple.Entity;
 using Simple.ExEntity.DM;
 using Simple.ExEntity.Map;
+using Simple.ExEntity.SA;
 using Simple.IDomain;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.IRepository;
@@ -15,11 +16,13 @@ namespace Simple.Domain
     public class SaDomainService : ISaDomainService
     {
         private readonly ILastLocatedRepository lastLocatedRepository;
+        private readonly IAlarmRecordRepository alarmRecordRepository;
         private readonly ICarRepository carRepository;
         private readonly IUnitRepository unitRepository;
         private readonly IMapper mapper;
-        public SaDomainService(IUnitRepository unitRepository, ICarRepository carRepository, ILastLocatedRepository lastLocatedRepository, IMapper mapper)
+        public SaDomainService(IAlarmRecordRepository alarmRecordRepository, IUnitRepository unitRepository, ICarRepository carRepository, ILastLocatedRepository lastLocatedRepository, IMapper mapper)
         {
+            this.alarmRecordRepository = alarmRecordRepository;
             this.unitRepository = unitRepository;
             this.carRepository = carRepository;
             this.lastLocatedRepository = lastLocatedRepository;
@@ -54,6 +57,15 @@ namespace Simple.Domain
                     }
                 }
             });
+            param.Data = exList.ToList().Skip((param.PageIndex - 1) * param.PageSize).Take(param.PageSize).ToList();
+            param.Total = exList.Count();
+            return param;
+        }
+
+        public async Task<Pagination<AlarmRecordExEntity>> GetAlarmRecordPage(Pagination<AlarmRecordExEntity> param)
+        {
+            var entities = await alarmRecordRepository.GetEntities(param.SearchData.UnitId, param.SearchData.DateTimes[0], param.SearchData.DateTimes[1], param.SearchData.RECORD_EVENT);
+            var exList = mapper.Map<List<AlarmRecordExEntity>>(entities);
             param.Data = exList.ToList().Skip((param.PageIndex - 1) * param.PageSize).Take(param.PageSize).ToList();
             param.Total = exList.Count();
             return param;

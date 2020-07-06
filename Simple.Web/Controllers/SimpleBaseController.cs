@@ -91,11 +91,11 @@ namespace Simple.Web.Controllers
         {
             get
             {
-                var flag = memoryCache.TryGetValue("cacheMenu", out var menus);
+                var flag = memoryCache.TryGetValue("cacheMenu" + LoginUser.UsersId, out var menus);
                 if (!flag)
                 {
                     menus = menusService.GetMenusByUser(LoginUser.UsersId).Result;
-                    memoryCache.Set("cacheMenu", menus, DateTime.Now.AddMinutes(30) - DateTime.Now);
+                    memoryCache.Set("cacheMenu" + LoginUser.UsersId, menus, DateTime.Now.AddMinutes(30) - DateTime.Now);
                 }
                 return menus as List<MenusExEntity>;
             }
@@ -112,11 +112,11 @@ namespace Simple.Web.Controllers
         /// <returns></returns>
         public async Task<JsonResult> QueryMenusByUser()
         {
-            var flag = memoryCache.TryGetValue("cacheMenu", out var menus);
+            var flag = memoryCache.TryGetValue("cacheMenu" + LoginUser.UsersId, out var menus);
             if (!flag)
             {
                 menus = await menusService.GetMenusByUser(LoginUser.UsersId);
-                memoryCache.Set("cacheMenu", menus, DateTime.Now.AddMinutes(30) - DateTime.Now);
+                memoryCache.Set("cacheMenu" + LoginUser.UsersId, menus, DateTime.Now.AddMinutes(30) - DateTime.Now);
             }
             return Json(menus);
         }

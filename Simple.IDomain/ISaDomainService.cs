@@ -1,5 +1,5 @@
-﻿using Simple.ExEntity.DM;
-using Simple.ExEntity.Map;
+﻿using Simple.ExEntity.Map;
+using Simple.ExEntity.SA;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using System;
 using System.Collections.Generic;
@@ -11,5 +11,7 @@ namespace Simple.IDomain
     public interface ISaDomainService
     {
         Task<Pagination<LastLocatedExEntity>> GetLastLocatedPage(Pagination<LastLocatedExEntity> param, DateTime[] dateTimes);
+
+        Task<Pagination<AlarmRecordExEntity>> GetAlarmRecordPage(Pagination<AlarmRecordExEntity> param);
     }
 }

@@ -83,10 +83,10 @@ namespace Simple.Web.Areas.SM.Controllers
                     Rolesid = rolesId
                 });
             });
-            var flag = memoryCache.TryGetValue("cacheMenu", out var cacheMenus);
+            var flag = memoryCache.TryGetValue("cacheMenu" + LoginUser.UsersId, out var cacheMenus);
             if (flag)
             {
-                memoryCache.Remove("cacheMenu");
+                memoryCache.Remove("cacheMenu" + LoginUser.UsersId);
             }
             return await rolesService.UpdateRolesMenu(list);
         }

@@ -351,7 +351,7 @@
                     if (value.marker) {
                         value.marker.setLabel({
                             offset: new AMap.Pixel(0, 0),
-                            content: "<div style='color:#000000;' >" + value.carno + "</div>", //设置文本标注内容
+                            content: "<div style='color:#000000;' >" + value.license + "</div>", //设置文本标注内容
                             direction: value.lastTrackData.heading //设置文本标注方位
                         });
                     }
@@ -365,7 +365,7 @@
                     //设置title变红
                     device.marker.setLabel({
                         offset: new AMap.Pixel(0, 0),
-                        content: "<div style='color:#FF0000;' >" + device.carno + "</div>", //设置文本标注内容
+                        content: "<div style='color:#FF0000;' >" + device.license + "</div>", //设置文本标注内容
                         direction: device.lastTrackData.heading //设置文本标注方位
                     });
                     device.marker.show();

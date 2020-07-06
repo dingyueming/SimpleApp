@@ -148,7 +148,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">设备分配</h4>
+                    <h4 class="modal-title" id="myModalLabel">车辆分配</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
@@ -159,7 +159,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="remark" class="col-sm-2 control-label">设备列表</label>
+                            <label for="remark" class="col-sm-2 control-label">车辆列表</label>
                             <div class="col-sm-10">
                                 <el-tree :data="nodes" style="overflow-y:scroll; height:400px;" :default-checked-keys="defaultCheckedNodes" node-key="id" ref="tree" v-on:check-change="handleCheckChange" show-checkbox></el-tree>
                             </div>
@@ -183,7 +183,7 @@
         <a href="" v-on:click.stop.prevent="update(rowData,index)">编辑</a>&nbsp;
         <a href="" v-on:click.stop.prevent="deleteRow(rowData,index)">删除</a>
         <a href="" v-on:click.stop.prevent="AssignRole(rowData,index)">分配角色</a>
-        <a href="" v-on:click.stop.prevent="AssignDevice(rowData,index)">分配设备</a>
+        <a href="" v-on:click.stop.prevent="AssignDevice(rowData,index)">分配车辆</a>
         </span>`,
         props: {
             rowData: {
@@ -264,9 +264,9 @@
                             }
                         }
                     },
-                    { field: 'realName', title: '真实姓名', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    //{ field: 'realName', title: '真实姓名', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'telephone', title: '电话', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'address', title: '地址', width: 240, titleAlign: 'center', columnAlign: 'left', isResize: true },
+                    //{ field: 'address', title: '地址', width: 240, titleAlign: 'center', columnAlign: 'left', isResize: true },
                     { field: 'email', title: '邮箱', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'statusStr', title: '数据状态', width: 80, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'createTime', title: '创建时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },

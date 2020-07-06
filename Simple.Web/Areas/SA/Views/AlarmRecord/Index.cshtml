@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "报警查询";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Version"] = "20200713";
+}
+
+@section style{
+    <!--vue-treeselect-->
+    <link rel="stylesheet" href="~/lib/vue-treeselect/dist/vue-treeselect.min.css">
+}
+@section script{
+    <!--vue-treeselect-->
+    <script src="~/lib/vue-treeselect/dist/vue-treeselect.umd.min.js"></script>
+}
+<div class="box" id="vmBox">
+    <table style="margin-left:5px;">
+        <tr>
+
+            <th>中队:</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <treeselect :multiple="false"
+                                :options="options"
+                                :disable-branch-nodes="true"
+                                placeholder="请选择中队"
+                                v-model="search.unitId" style="width:300px;" />
+                </div>
+            </td>
+            <th>时间:</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <el-date-picker v-model="search.timeValue"
+                                    type="datetimerange"
+                                    :picker-options="pickerOptions"
+                                    range-separator="-"
+                                    start-placeholder="开始时间"
+                                    end-placeholder="结束时间">
+                    </el-date-picker>
+                </div>
+            </td>
+            <th>报警事件:</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <select class="form-control" v-model="search.eventType">
+                        <option value="null">全部</option>
+                        <option value="0">报备</option>
+                        <option value="1">出警</option>
+                        <option value="2">出围栏报警</option>
+                        <option value="3">未出动报警</option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
+            </td>
+        </tr>
+    </table>
+    <v-table is-vertical-resize
+             :vertical-resize-offset='60'
+             is-horizontal-resize
+             style="width:100%"
+             :multiple-sort="false"
+             :min-height="350"
+             even-bg-color="#f2f2f2"
+             :title-rows="tableConfig.titleRows"
+             :columns="tableConfig.columns"
+             :table-data="tableConfig.tableData"
+             row-hover-color="#eee"
+             row-click-color="#edf7ff"
+             :select-all="selectALL"
+             :select-change="selectChange"
+             v-on:sort-change="sortChange"
+             :paging-index="(pageIndex-1)*pageSize"></v-table>
+    <div style="margin-top:5px;">
+        <v-pagination v-on:page-change="pageChange" v-on:page-size-change="pageSizeChange" :page-size-option="[15,20,30]" :total="total" :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next', 'sizer', 'jumper']"></v-pagination>
+    </div>
+</div>
+<script src="~/Controllers/SA/AlarmRecordController.js?r=@Guid.NewGuid()"></script>
+
