@@ -170,7 +170,7 @@ namespace Simple.Domain
             var exList = mapper.Map<List<MenusExEntity>>(menuEntities).ToList().OrderByDescending(x => x.OrderIndex).ToList();
             exList.ForEach(x =>
             {
-                x.ChildMenus = exList.Where(o => o.ParentId == x.MenusId).ToList().OrderBy(o => o.OrderIndex).ToList();
+                x.ChildMenus = exList.Where(o => o.ParentId == x.MenusId).ToList().OrderByDescending(o => o.OrderIndex).ToList();
                 var localUrl = env.IsDevelopment() ? "http://localhost:6542" : configuration["localUrl"];
                 x.MenusUrl = localUrl + x.MenusUrl;
             });
