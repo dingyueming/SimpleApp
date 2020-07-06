@@ -423,13 +423,6 @@
                     console.log(error);
                 });
             },
-            queryAlarmArea() {
-                axios.post('@Url.Action("QueryAlarmArea")', {}).then(function (response) {
-                    vm.alarmAreaOptions = response.data;
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            },
             saveCarArea() {
                 if (this.carArea.areaid == null) {
                     alert("请选择报警区域");
@@ -488,7 +481,6 @@
         mounted() {
             this.getTableData();
             this.queryUnitTree();
-            this.queryAlarmArea();
         },
     });
 </script>
