@@ -167,7 +167,7 @@ namespace Simple.Domain
         public async Task<List<MenusExEntity>> GetMenusByUser(int usersId)
         {
             var menuEntities = await menusRepository.GetMenusByUser(usersId);
-            var exList = mapper.Map<List<MenusExEntity>>(menuEntities).ToList();
+            var exList = mapper.Map<List<MenusExEntity>>(menuEntities).ToList().OrderByDescending(x => x.OrderIndex).ToList();
             exList.ForEach(x =>
             {
                 x.ChildMenus = exList.Where(o => o.ParentId == x.MenusId).ToList().OrderBy(o => o.OrderIndex).ToList();
