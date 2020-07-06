@@ -40,7 +40,7 @@
                             } else {
                                 return rowData.recorD_EVENT_STR;
                             }
-                            
+
                         }
                     },
                 ],
@@ -90,7 +90,7 @@
                     var pagination = response.data;
                     vm.tableConfig.tableData = pagination.data;
                     vm.total = pagination.total;
-                    console.log(pagination);
+                    //console.log(pagination);
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -130,6 +130,7 @@
             selectGroupChange(selection) {
             },
             select() {
+                this.pageIndex = 1;
                 this.getTableData();
             },
             initDeviceTree() {

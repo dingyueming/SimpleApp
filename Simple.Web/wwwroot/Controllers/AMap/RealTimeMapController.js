@@ -764,6 +764,26 @@
                 });
                 $('#myModal').modal('hide');
             },
+            clearMarker() {
+                this.otherData.powerMarkers.forEach((x) => {
+                    vm.map.remove(x);
+                });
+                this.otherData.powerMarkers = [];
+
+
+                this.otherData.xhsMarkers.forEach((x) => {
+                    vm.map.remove(x);
+                });
+                this.otherData.xhsMarkers = [];
+
+                if (this.otherData.rectangleObj != null) {
+                    this.map.remove(this.otherData.rectangleObj);
+                };
+
+                this.otherData.unitMarkers.forEach((x) => {
+                    x.hide();
+                });
+            },
         },
         mounted() {
             this.initMap();
