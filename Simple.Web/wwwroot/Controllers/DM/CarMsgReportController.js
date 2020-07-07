@@ -62,7 +62,7 @@
                     {
                         field: 'car', title: '报备车辆', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
                             if (rowData.car != null) {
-                                return rowData.car.carno;
+                                return rowData.car.license + ' ' + rowData.car.carno;
                             }
                             return "";
                         }
@@ -82,7 +82,7 @@
             getTableData() {
                 var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: '' };
                 if (this.where.carid != null) {
-                    search.where += ' and a.carid =' + this.where.carid.replace("car-","");
+                    search.where += ' and a.carid =' + this.where.carid.replace("car-", "");
                 }
                 axios.post('Query', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
@@ -103,7 +103,7 @@
                 this.getTableData();
             },
             sortChange(params) {
-                
+
             },
             selectALL(selection) {
                 this.selectedRows = selection;

@@ -11,7 +11,7 @@
                 multipleSort: false,
                 tableData: [],
                 columns: [
-                    { width: 60, titleAlign: 'center', columnAlign: 'center', type: 'selection' },
+                    //{ width: 60, titleAlign: 'center', columnAlign: 'center', type: 'selection' },
                     {
                         field: 'custome', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center',
                         formatter: function (rowData, index, pagingIndex) {
@@ -134,13 +134,37 @@
                 this.getTableData();
             },
             initDeviceTree() {
-                axios.post('QueryUnitTree')
-                    .then(function (response) {
-                        vm.options = response.data;
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                axios.post('QueryUnitTree').then(function (response) {
+                    vm.options = response.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            exportExcel() {
+                var search = { searchData: { dateTimes: this.search.timeValue, unitId: this.search.unitId, record_event: this.search.eventType }, pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: '' };
+                axios({
+                    method: 'post',
+                    data: Qs.stringify(search),
+                    url: 'ExportExcel',
+                    responseType: 'blob'
+                }).then(function (res) {
+                    const blob = new Blob([res.data])
+                    const fileName = '报警查询导出.xlsx'
+                    if ('download' in document.createElement('a')) { // 非IE下载
+                        const elink = document.createElement('a')
+                        elink.download = fileName
+                        elink.style.display = 'none'
+                        elink.href = URL.createObjectURL(blob)
+                        document.body.appendChild(elink)
+                        elink.click()
+                        URL.revokeObjectURL(elink.href) // 释放URL 对象
+                        document.body.removeChild(elink)
+                    } else { // IE10+下载
+                        navigator.msSaveBlob(blob, fileName)
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
             },
         },
         mounted: function () {

@@ -12,7 +12,7 @@
                 multipleSort: false,
                 tableData: [],
                 columns: [
-                    { width: 60, titleAlign: 'center', columnAlign: 'center', type: 'selection' },
+                    //{ width: 60, titleAlign: 'center', columnAlign: 'center', type: 'selection' },
                     {
                         field: 'custome', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center',
                         formatter: function (rowData, index, pagingIndex) {

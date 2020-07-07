@@ -410,8 +410,7 @@
             },
 
             handleCheckChange(data, checked, indeterminate) {
-                console.log(data, checked, indeterminate);
-
+                //console.log(data, checked, indeterminate);
             },
             queryDevices() {
                 axios.post('@Url.Action("QueryDevices")', {}).then(response=> {
@@ -422,18 +421,18 @@
             },
             saveUsersDevice() {
                 var checkedNodes = this.$refs.tree.getCheckedNodes();
-                if (checkedNodes.length > 0) {
-                    axios.post('@Url.Action("SaveUsersDevice")', { nodes: checkedNodes, userId: this.row.usersId }).then(response => {
-                        var commonResult = response.data;
-                        if (commonResult.isSuccess) {
-                            $('#deviceModal').modal('hide');
-                        } else {
-                            vm.$message.error(commonResult.message);
-                        }
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                }
+
+                axios.post('@Url.Action("SaveUsersDevice")', { nodes: checkedNodes, userId: this.row.usersId }).then(response => {
+                    var commonResult = response.data;
+                    if (commonResult.isSuccess) {
+                        $('#deviceModal').modal('hide');
+                    } else {
+                        vm.$message.error(commonResult.message);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
             },
             queryUnitTree() {
                 axios.post('@Url.Action("QueryUnitTree")', {}).then(function (response) {
