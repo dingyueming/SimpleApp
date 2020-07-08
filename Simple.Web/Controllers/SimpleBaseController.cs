@@ -18,6 +18,8 @@ using Simple.ExEntity.SM;
 using Simple.Web.Extension.ControllerEx;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System.Data;
+using Simple.Infrastructure.Tools;
 
 namespace Simple.Web.Controllers
 {
@@ -29,13 +31,15 @@ namespace Simple.Web.Controllers
         private readonly IUnitService unitService;
         private readonly IConfiguration configuration;
         private readonly IMemoryCache memoryCache;
+        private readonly NpoiHelper npoiHelper;
         public SimpleBaseController()
         {
             var serviceProvider = ServiceLocator.Services;
-            memoryCache = (IMemoryCache)serviceProvider.GetService(typeof(IMemoryCache));
-            menusService = (IMenusService)serviceProvider.GetService(typeof(IMenusService));
-            unitService = (IUnitService)serviceProvider.GetService(typeof(IUnitService));
-            configuration = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
+            memoryCache = serviceProvider.GetService<IMemoryCache>();
+            menusService = serviceProvider.GetService<IMenusService>();
+            unitService = serviceProvider.GetService<IUnitService>();
+            configuration = serviceProvider.GetService<IConfiguration>();
+            npoiHelper = serviceProvider.GetService<NpoiHelper>();
         }
         #endregion
 
@@ -106,6 +110,7 @@ namespace Simple.Web.Controllers
 
         #region 方法
 
+        #region 菜单
         /// <summary>
         /// 查询用户所拥有的菜单
         /// </summary>
@@ -139,7 +144,9 @@ namespace Simple.Web.Controllers
             var trees = await unitService.GetUnitTree();
             return Json(trees);
         }
+        #endregion
 
+        #region 单位
         /// <summary>
         /// 查询单位
         /// </summary>
@@ -165,6 +172,15 @@ namespace Simple.Web.Controllers
             var list = await unitService.GetAllUnitExEntities();
             return LowerJson(list);
         }
+        #endregion
+
+        #region 导出
+        public async Task<byte[]> OutputExcel(DataTable data, string[] columns)
+        {
+            var buffer = await Task.Run(() => { return npoiHelper.OutputExcel(data, columns); });
+            return buffer;
+        }
+        #endregion
 
         #region 记录操作日志
 

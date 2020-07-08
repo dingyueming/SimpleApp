@@ -79,7 +79,7 @@
                         vm.newtracks.forEach((x) => {
                             lineArr.push(x.destPoint);
                         });
-                             // 绘制轨迹
+                        // 绘制轨迹
                         var polyline = new AMap.Polyline({
                             map: vm.map,
                             path: lineArr,
@@ -130,7 +130,7 @@
                 var dev = vm.getDevice(lastTrackData.carid);
                 if (dev) {
                     var netracktbRow = {};
-                    netracktbRow.license = dev.license;
+                    netracktbRow.license = dev.license + '(' + dev.license.carno + ')';
                     netracktbRow.mac = dev.mac;
                     netracktbRow.sim = dev.sim;
                     netracktbRow.gnsstime = lastTrackData.gnsstime;
@@ -144,7 +144,7 @@
                     netracktbRow.position = lastTrackData.position;
                     netracktbRow.longitude = lastTrackData.longitude;
                     netracktbRow.latitude = lastTrackData.latitude;
-                    vm.newtrackstb.push(netracktbRow);
+                    vm.newtrackstb.unshift(netracktbRow);
                 }
                 if (vm.dataIndex < vm.newtracks.length - 1) {
                     vm.dataIndex++;
@@ -199,7 +199,40 @@
                     return false;
                 }
                 return true;
-            }
+            },
+            exportExcel() {
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在导出数据',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                axios({
+                    method: 'post',
+                    data: Qs.stringify(this.search),
+                    url: 'ExportExcel',
+                    responseType: 'blob'
+                }).then(function (res) {
+                    const blob = new Blob([res.data])
+                    const fileName = '轨迹回放数据.xlsx'
+                    if ('download' in document.createElement('a')) { // 非IE下载
+                        const elink = document.createElement('a')
+                        elink.download = fileName
+                        elink.style.display = 'none'
+                        elink.href = URL.createObjectURL(blob)
+                        document.body.appendChild(elink)
+                        elink.click()
+                        URL.revokeObjectURL(elink.href) // 释放URL 对象
+                        document.body.removeChild(elink)
+                    } else { // IE10+下载
+                        navigator.msSaveBlob(blob, fileName)
+                    }
+                    loading.close();
+                }).catch(function (error) {
+                    console.log(error);
+                    loading.close();
+                });
+            },
         },
         mounted() {
             this.initData();

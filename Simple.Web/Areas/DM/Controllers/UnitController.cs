@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -27,25 +28,46 @@ namespace Simple.Web.Areas.DM.Controllers
 
         public async Task<bool> Add(UnitExEntity exEntity)
         {
-            await RecordLog("单位", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
             return await unitService.Add(exEntity);
         }
         public async Task<bool> Update(UnitExEntity exEntity)
         {
-            await RecordLog("单位", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.RECDATE = DateTime.Now;
             exEntity.RECMAN = LoginUser.UsersId;
             return await unitService.Update(exEntity);
         }
         public async Task<bool> Delete(UnitExEntity exEntity)
         {
-            await RecordLog("单位", exEntity, Infrastructure.Enums.OperateTypeEnum.删除);
             return await unitService.Delete(new List<UnitExEntity>() { exEntity });
         }
         public async Task<bool> BatchDelete(List<UnitExEntity> exEntities)
         {
-            await RecordLog("单位", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             return await unitService.Delete(exEntities);
+        }
+        public async Task<FileResult> ExportExcel(Pagination<UnitExEntity> pagination)
+        {
+            pagination.PageSize = 10000;
+            var data = await unitService.GetPage(pagination);
+            var dt = new DataTable();
+            string[] columns = { "单位名称", "上级单位", "地址", "值班电话", "执勤车辆", "执勤人数", "负责人" };
+            columns.ToList().ForEach(x =>
+            {
+                dt.Columns.Add(x);
+            });
+            foreach (var x in data.Data)
+            {
+                DataRow dr = dt.NewRow();
+                dr["单位名称"] = x.UNITNAME;
+                dr["上级单位"] = x.ParentUnit == null ? "" : x.ParentUnit.UNITNAME;
+                dr["地址"] = x.ADDRESS;
+                dr["值班电话"] = x.DUTYPHONE;
+                dr["执勤车辆"] = x.ONDUTYCAR;
+                dr["执勤人数"] = x.ONDUTYCOUNT;
+                dr["负责人"] = x.PRINCIPAL;
+                dt.Rows.Add(dr);
+            }
+            var buffer = await OutputExcel(dt, columns);
+            return File(buffer, "application/ms-excel");
         }
     }
 }

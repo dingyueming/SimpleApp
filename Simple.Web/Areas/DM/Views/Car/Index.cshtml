@@ -42,6 +42,7 @@
             </td>
             <td>
                 <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
+                <button type="button" id="btn_delete_main" class="btn btn-default" style="margin:10px;" v-on:click="exportExcel">导出</button>
                 <button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;" data-toggle="modal" v-on:click="add">新增</button>
                 <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
             </td>
@@ -446,6 +447,49 @@
                 });
                 //重置一下
                 this.carArea = { alarmtype: 2, status: 1, areaid: null };
+            },
+            exportExcel() {
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在导出数据',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                var strWhere = ' and a.license like \'%' + this.searchWhere.name + '%\'';
+                if (this.searchWhere.unitid != null) {
+                    var node = recuTreeSelectNodes(this.searchWhere.unitid, this.options);
+                    var ids = getUnitChildrenId(node);
+                    strWhere += ' and a.unitid  in (' + ids.join(',') + ')';
+                }
+                if ($.trim(this.searchWhere.code) != "") {
+                    strWhere += ' and a.mac like \'%' + this.searchWhere.code + '%\'';
+                }
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: strWhere, orderBy: ' a.carid desc' };
+                axios({
+                    method: 'post',
+                    data: Qs.stringify(search),
+                    url: 'ExportExcel',
+                    responseType: 'blob'
+                }).then(function (res) {
+                    const blob = new Blob([res.data])
+                    const fileName = '车辆信息.xlsx'
+                    if ('download' in document.createElement('a')) { // 非IE下载
+                        const elink = document.createElement('a')
+                        elink.download = fileName
+                        elink.style.display = 'none'
+                        elink.href = URL.createObjectURL(blob)
+                        document.body.appendChild(elink)
+                        elink.click()
+                        URL.revokeObjectURL(elink.href) // 释放URL 对象
+                        document.body.removeChild(elink)
+                    } else { // IE10+下载
+                        navigator.msSaveBlob(blob, fileName)
+                    }
+                    loading.close();
+                }).catch(function (error) {
+                    console.log(error);
+                    loading.close();
+                });
             },
             validataForm() {
                 //表单验证

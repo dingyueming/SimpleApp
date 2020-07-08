@@ -13,6 +13,8 @@ using Simple.IDomain;
 using Simple.Web.Extension.ControllerEx;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Data;
+using System.Linq;
 
 namespace Simple.Web.Areas.SM.Controllers
 {
@@ -38,7 +40,6 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> Add(UsersExEntity exEntity)
         {
-            await RecordLog("用户", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             exEntity.Creator = LoginUser.UsersId;
@@ -48,7 +49,6 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> Update(UsersExEntity exEntity)
         {
-            await RecordLog("用户", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             return await userService.UpdateUser(exEntity);
@@ -56,7 +56,6 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> Delete(UsersExEntity exEntity)
         {
-            await RecordLog("用户", exEntity, Infrastructure.Enums.OperateTypeEnum.删除);
             exEntity.Modifier = LoginUser.UsersId;
             exEntity.ModifyTime = DateTime.Now;
             return await userService.DeleteUser(new List<UsersExEntity>() { exEntity });
@@ -64,7 +63,6 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> BatchDelete(List<UsersExEntity> exEntities)
         {
-            await RecordLog("用户", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             exEntities.ForEach(x => { x.Modifier = LoginUser.UsersId; x.ModifyTime = DateTime.Now; });
             return await userService.DeleteUser(exEntities);
         }
@@ -76,7 +74,6 @@ namespace Simple.Web.Areas.SM.Controllers
         [SimpleAction]
         public async Task<bool> SaveUsersRole(UserRoleExEntity userRoleExEntity)
         {
-            await RecordLog("用户的角色", userRoleExEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             userRoleExEntity.Createtime = DateTime.Now;
             userRoleExEntity.Creator = LoginUser.UsersId;
             return await userService.UpdateUsersRole(userRoleExEntity);
@@ -92,13 +89,38 @@ namespace Simple.Web.Areas.SM.Controllers
             return Json(list);
         }
         [SimpleAction]
-        public async Task<bool> SaveUsersDevice([FromBody]object json)
+        public async Task<bool> SaveUsersDevice([FromBody] object json)
         {
             JObject jObject = JObject.Parse(json.ToString());
             var nodes = JsonConvert.DeserializeObject<List<ElementTreeModel>>(jObject.SelectToken("nodes").ToString());
             var userId = JsonConvert.DeserializeObject<int>(jObject.SelectToken("userId").ToString());
             //await RecordLog("设备分配", nodes, Infrastructure.Enums.OperateTypeEnum.修改);
             return await dmDomainService.UpdateAuthLimits(nodes, userId);
+        }
+        public async Task<FileResult> ExportExcel(Pagination<UsersExEntity> pagination)
+        {
+            pagination.PageSize = 10000;
+            var data = await userService.GetUserPage(pagination);
+            var dt = new DataTable();
+            string[] columns = { "用户名", "单位", "电话", "邮箱", "创建时间", "创建人", "备注" };
+            columns.ToList().ForEach(x =>
+            {
+                dt.Columns.Add(x);
+            });
+            foreach (var x in data.Data)
+            {
+                DataRow dr = dt.NewRow();
+                dr["用户名"] = x.UsersName;
+                dr["单位"] = x.Unit.UNITNAME;
+                dr["电话"] = x.Telephone;
+                dr["邮箱"] = x.Email;
+                dr["创建时间"] = x.CreateTime;
+                dr["创建人"] = x.CreateStr;
+                dr["备注"] = x.Remark;
+                dt.Rows.Add(dr);
+            }
+            var buffer = await OutputExcel(dt, columns);
+            return File(buffer, "application/ms-excel");
         }
     }
 }

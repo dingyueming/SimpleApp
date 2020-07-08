@@ -62,7 +62,7 @@
                     {
                         field: 'car', title: '报备车辆', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
                             if (rowData.car != null) {
-                                return rowData.car.license + ' ' + rowData.car.carno;
+                                return rowData.car.license + '(' + rowData.car.carno + ')';
                             }
                             return "";
                         }
@@ -148,7 +148,6 @@
                     });
             },
             saveData() {
-                debugger;
                 //数据校验
                 if (this.row.carid == null) {
                     this.$message.error('请选择报备车辆');
@@ -180,7 +179,44 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
-            }
+            },
+            exportExcel() {
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在导出数据',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: '' };
+                if (this.where.carid != null) {
+                    search.where += ' and a.carid =' + this.where.carid.replace("car-", "");
+                }
+                axios({
+                    method: 'post',
+                    data: Qs.stringify(search),
+                    url: 'ExportExcel',
+                    responseType: 'blob'
+                }).then(function (res) {
+                    const blob = new Blob([res.data])
+                    const fileName = '车辆报备管理.xlsx'
+                    if ('download' in document.createElement('a')) { // 非IE下载
+                        const elink = document.createElement('a')
+                        elink.download = fileName
+                        elink.style.display = 'none'
+                        elink.href = URL.createObjectURL(blob)
+                        document.body.appendChild(elink)
+                        elink.click()
+                        URL.revokeObjectURL(elink.href) // 释放URL 对象
+                        document.body.removeChild(elink)
+                    } else { // IE10+下载
+                        navigator.msSaveBlob(blob, fileName)
+                    }
+                    loading.close();
+                }).catch(function (error) {
+                    console.log(error);
+                    loading.close();
+                });
+            },
         },
         mounted: function () {
             this.getTableData();

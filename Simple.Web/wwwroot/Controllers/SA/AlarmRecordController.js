@@ -22,7 +22,7 @@
                     {
                         field: 'carno', title: '车牌号', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true,
                         formatter: function (rowData, index, pagingIndex) {
-                            return rowData.car.license + ' ' + rowData.car.carno;
+                            return rowData.car.license + '(' + rowData.car.carno + ')';
                         }
                     },
                     {
@@ -141,6 +141,12 @@
                 });
             },
             exportExcel() {
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在导出数据',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
                 var search = { searchData: { dateTimes: this.search.timeValue, unitId: this.search.unitId, record_event: this.search.eventType }, pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: '' };
                 axios({
                     method: 'post',
@@ -162,8 +168,10 @@
                     } else { // IE10+下载
                         navigator.msSaveBlob(blob, fileName)
                     }
+                    loading.close();
                 }).catch(function (error) {
                     console.log(error);
+                    loading.close();
                 });
             },
         },

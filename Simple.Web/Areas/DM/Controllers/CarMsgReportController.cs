@@ -8,6 +8,8 @@ using Simple.Web.Extension.ControllerEx;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
 using Simple.IApplication.MapShow;
+using System.Data;
+using System.Linq;
 
 namespace Simple.Web.Areas.DM.Controllers
 {
@@ -56,6 +58,29 @@ namespace Simple.Web.Areas.DM.Controllers
         public async Task<bool> BatchDelete(List<CarMsgReportExEntity> exEntities)
         {
             return await carMsgReportService.Delete(exEntities);
+        }
+        public async Task<FileResult> ExportExcel(Pagination<CarMsgReportExEntity> pagination)
+        {
+            pagination.PageSize = 10000;
+            var data = await carMsgReportService.GetPage(pagination);
+            var dt = new DataTable();
+            string[] columns = { "报备车辆", "审批人", "出动时间", "返回时间", "任务内容" };
+            columns.ToList().ForEach(x =>
+            {
+                dt.Columns.Add(x);
+            });
+            foreach (var x in data.Data)
+            {
+                DataRow dr = dt.NewRow();
+                dr["报备车辆"] = $"{x.Car.LICENSE}({x.Car.CARNO})";
+                dr["审批人"] = x.APPROVER;
+                dr["出动时间"] = x.SENDTIME;
+                dr["返回时间"] = x.BACKTIME;
+                dr["任务内容"] = x.CONTENT;
+                dt.Rows.Add(dr);
+            }
+            var buffer = await OutputExcel(dt, columns);
+            return File(buffer, "application/ms-excel");
         }
     }
 }

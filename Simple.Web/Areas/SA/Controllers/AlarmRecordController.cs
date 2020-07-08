@@ -44,11 +44,10 @@ namespace Simple.Web.Areas.SA.Controllers
             dt.Columns.Add("单位");
             dt.Columns.Add("出围栏时间");
             dt.Columns.Add("报警事件");
-            //var list = exportData.ToList();
             foreach (var x in data.Data)
             {
                 DataRow dr = dt.NewRow();
-                dr["车牌号"] = x.Car.LICENSE;
+                dr["车牌号"] = $"{x.Car.LICENSE}({x.Car.CARNO})";
                 dr["单位"] = x.Unit.UNITNAME;
                 dr["出围栏时间"] = x.ALARM_TIME;
                 dr["报警事件"] = x.RECORD_EVENT_STR;

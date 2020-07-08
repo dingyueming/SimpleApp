@@ -8,12 +8,24 @@
   <ItemGroup>
     <Compile Remove="Areas\DM\Data\**" />
     <Compile Remove="Areas\DM\Models\**" />
+    <Compile Remove="Areas\EzMap\Data\**" />
+    <Compile Remove="Areas\SM\Data\**" />
+    <Compile Remove="Areas\SM\Models\**" />
     <Content Remove="Areas\DM\Data\**" />
     <Content Remove="Areas\DM\Models\**" />
+    <Content Remove="Areas\EzMap\Data\**" />
+    <Content Remove="Areas\SM\Data\**" />
+    <Content Remove="Areas\SM\Models\**" />
     <EmbeddedResource Remove="Areas\DM\Data\**" />
     <EmbeddedResource Remove="Areas\DM\Models\**" />
+    <EmbeddedResource Remove="Areas\EzMap\Data\**" />
+    <EmbeddedResource Remove="Areas\SM\Data\**" />
+    <EmbeddedResource Remove="Areas\SM\Models\**" />
     <None Remove="Areas\DM\Data\**" />
     <None Remove="Areas\DM\Models\**" />
+    <None Remove="Areas\EzMap\Data\**" />
+    <None Remove="Areas\SM\Data\**" />
+    <None Remove="Areas\SM\Models\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,11 +64,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\EzMap\Data\" />
     <Folder Include="Areas\IM\Data\" />
     <Folder Include="Areas\IM\Models\" />
-    <Folder Include="Areas\SM\Data\" />
-    <Folder Include="Areas\SM\Models\" />
   </ItemGroup>
 
   <ItemGroup>

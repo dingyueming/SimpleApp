@@ -10,6 +10,7 @@ using Simple.Web.Controllers;
 using System.Security.Cryptography;
 using System.Text;
 using Simple.ExEntity.Map;
+using System.Data;
 
 namespace Simple.Web.Areas.SA.Controllers
 {
@@ -37,6 +38,28 @@ namespace Simple.Web.Areas.SA.Controllers
         public IActionResult Index2()
         {
             return base.Index();
+        }
+
+        public async Task<FileResult> ExportExcel(Pagination<LastLocatedExEntity> pagination)
+        {
+            pagination.PageSize = 10000;
+            var data = await lastLocatedService.GetPage(pagination, pagination.SearchData.DateTimes);
+            var dt = new DataTable();
+            string[] columns = { "车牌号", "单位", "最后上线时间" };
+            columns.ToList().ForEach(x =>
+            {
+                dt.Columns.Add(x);
+            });
+            foreach (var x in data.Data)
+            {
+                DataRow dr = dt.NewRow();
+                dr["车牌号"] = $"{x.Car.LICENSE}({x.Car.CARNO})"; 
+                dr["单位"] = x.Unit.UNITNAME;
+                dr["最后上线时间"] = x.GNSSTIME;
+                dt.Rows.Add(dr);
+            }
+            var buffer = await OutputExcel(dt, columns);
+            return File(buffer, "application/ms-excel");
         }
     }
 }

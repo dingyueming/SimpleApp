@@ -23,7 +23,7 @@
                     {
                         field: 'car.carno', title: '车牌号', width: 120, titleAlign: 'center', columnAlign: 'center', isResize: true,
                         formatter: function (rowData, index, pagingIndex) {
-                            return rowData.car.license + ' ' + rowData.car.carno;
+                            return rowData.car.license + '(' + rowData.car.carno + ')';
                         }
                     },
                     {
@@ -115,6 +115,41 @@
             },
             select() {
                 this.getTableData();
+            },
+            exportExcel() {
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在导出数据',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                var title = this.isSearchLocated ? "车辆最后定位数据" : "未定位车辆数据";
+                var search = { searchData: { dateTimes: this.timeValue, license: this.license, isSearchLocated: this.isSearchLocated }, pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: ' a.gnsstime desc' };
+                axios({
+                    method: 'post',
+                    data: Qs.stringify(search),
+                    url: 'ExportExcel',
+                    responseType: 'blob'
+                }).then(function (res) {
+                    const blob = new Blob([res.data])
+                    const fileName = title + '.xlsx'
+                    if ('download' in document.createElement('a')) { // 非IE下载
+                        const elink = document.createElement('a')
+                        elink.download = fileName
+                        elink.style.display = 'none'
+                        elink.href = URL.createObjectURL(blob)
+                        document.body.appendChild(elink)
+                        elink.click()
+                        URL.revokeObjectURL(elink.href) // 释放URL 对象
+                        document.body.removeChild(elink)
+                    } else { // IE10+下载
+                        navigator.msSaveBlob(blob, fileName)
+                    }
+                    loading.close();
+                }).catch(function (error) {
+                    console.log(error);
+                    loading.close();
+                });
             },
         },
         mounted: function () {

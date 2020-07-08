@@ -7,6 +7,8 @@ using Simple.IApplication.DM;
 using Simple.Web.Extension.ControllerEx;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
+using System.Linq;
+using System.Data;
 
 namespace Simple.Web.Areas.DM.Controllers
 {
@@ -28,13 +30,11 @@ namespace Simple.Web.Areas.DM.Controllers
         [SimpleAction]
         public async Task<bool> Add(CarExEntity exEntity)
         {
-            await RecordLog("车辆", exEntity, Infrastructure.Enums.OperateTypeEnum.增加);
             return await carService.Add(exEntity);
         }
         [SimpleAction]
         public async Task<bool> Update(CarExEntity exEntity)
         {
-            await RecordLog("车辆", exEntity, Infrastructure.Enums.OperateTypeEnum.修改);
             exEntity.RECORDDATE = DateTime.Now;
             exEntity.RECMAN = LoginUser.UsersId;
             return await carService.Update(exEntity);
@@ -42,13 +42,11 @@ namespace Simple.Web.Areas.DM.Controllers
         [SimpleAction]
         public async Task<bool> Delete(CarExEntity exEntity)
         {
-            await RecordLog("车辆", exEntity, Infrastructure.Enums.OperateTypeEnum.删除);
             return await carService.Delete(new List<CarExEntity>() { exEntity });
         }
         [SimpleAction]
         public async Task<bool> BatchDelete(List<CarExEntity> exEntities)
         {
-            await RecordLog("车辆", exEntities, Infrastructure.Enums.OperateTypeEnum.删除);
             return await carService.Delete(exEntities);
         }
         public async Task<JsonResult> QueryAlarmArea()
@@ -60,6 +58,31 @@ namespace Simple.Web.Areas.DM.Controllers
         public async Task SaveCarArea(CarAreaExEntity exEntity)
         {
             await areaAlarmService.AddCarArea(exEntity);
+        }
+        public async Task<FileResult> ExportExcel(Pagination<CarExEntity> pagination)
+        {
+            pagination.PageSize = 10000;
+            var data = await carService.GetPage(pagination);
+            var dt = new DataTable();
+            string[] columns = { "单位", "车牌号", "内部编号", "设备号", "发动机号", "车架号", "SIM卡号" };
+            columns.ToList().ForEach(x =>
+            {
+                dt.Columns.Add(x);
+            });
+            foreach (var x in data.Data)
+            {
+                DataRow dr = dt.NewRow();
+                dr["车牌号"] = x.CARNO;
+                dr["内部编号"] = x.LICENSE;
+                dr["单位"] = x.Unit.UNITNAME;
+                dr["设备号"] = x.MAC;
+                dr["发动机号"] = x.ENGINENO;
+                dr["车架号"] = x.CHASSISNO;
+                dr["SIM卡号"] = x.SIM;
+                dt.Rows.Add(dr);
+            }
+            var buffer = await OutputExcel(dt, columns);
+            return File(buffer, "application/ms-excel");
         }
     }
 }
