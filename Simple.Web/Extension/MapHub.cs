@@ -229,7 +229,7 @@ namespace Simple.Web.Other
                 Content = new SetPoint()
                 {
                     Longitude = longitude,
-                    Laitude = laitude,
+                    Latitude = laitude,
                     Map_Type = 0,
                     Path = path,
                     Name = name

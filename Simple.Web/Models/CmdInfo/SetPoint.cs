@@ -21,7 +21,7 @@ namespace Simple.Web.Models.CmdInfo
         /// <summary>
         /// 纬度
         /// </summary>
-        public double Laitude { get; set; }
+        public double Latitude { get; set; }
         /// <summary>
         /// 路径选择
         /// </summary>

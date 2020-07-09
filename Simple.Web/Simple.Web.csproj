@@ -123,6 +123,6 @@
     </Content>
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" host_1json__JsonSchema="http://json.schemastore.org/jsinspectrc" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://json-stat.org/format/schema/2.0/" host_1json__JsonSchema="http://json.schemastore.org/jsinspectrc" /></VisualStudio></ProjectExtensions>
 
 </Project>

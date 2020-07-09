@@ -18,6 +18,8 @@
             alarmDatas: [],
             //短报文数据
             msgDatas: [],
+            //命令状态数据
+            commandDatas: [],
             //z-tree
             zTree: {
                 treeObj: {},
@@ -68,7 +70,7 @@
                 colmd10: 'col-md-10 ',
                 colmd12: 'col-md-12 ',
                 fullHeight: document.documentElement.clientHeight - 146,
-                normalHeight: 485
+                normalHeight: "height:80%;",
             },
             //其他数据
             otherData: {
@@ -291,6 +293,9 @@
                     .configureLogging(signalR.LogLevel.Information)
                     .build();
                 connection.start().then(() => { }).catch(err => console.error(err.toString()));
+                connection.onclose(async () => {
+                    connection.start().then(() => { }).catch(err => console.error(err.toString()));
+                });
                 connection.on("UpdateMapData", function (data) {
                     if (data != null && data.gpsData != null) {
                         vm.updateGpsData(data.mac, data.gpsData);
@@ -300,6 +305,7 @@
                     }
                 });
                 connection.on("ShowCommandMsg", function (data) {
+                    this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '位置查询', cmdtype: '上行', status: '成功' });
                     vm.$message.success(data);
                 });
                 connection.on("DrawDirLine", function (path, directionData) {
@@ -343,6 +349,7 @@
                 connection.on("MapHubException", function (data) {
                     console.log(data);
                 });
+
                 this.conn = connection;
             },
             dbclickLocationTable(mac) {
@@ -550,6 +557,7 @@
             locationQuery() {
                 var nodes = this.zTree.treeObj.getCheckedNodes();
                 if (nodes.length > 0 && this.conn) {
+                    this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '位置查询', cmdtype: '上行', status: '成功' });
                     nodes.forEach((x) => {
                         var device = this.getDevice(x.id.replace('car-', ''));
                         if (device) {
@@ -700,6 +708,7 @@
                         inputPattern: /^\d+$/,
                         inputErrorMessage: '请输入数字'
                     }).then(({ value }) => {
+                        this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '设置回传间隔', cmdtype: '上行', status: '成功' });
                         nodes.forEach((x) => {
                             var device = this.getDevice(x.id.replace('car-', ''));
                             if (device) {
@@ -724,6 +733,7 @@
                         //inputPattern: /^\d+$/,
                         //inputErrorMessage: '请输入数字'
                     }).then(({ value }) => {
+                        this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '发送消息', cmdtype: '上行', status: '成功' });
                         nodes.forEach((x) => {
                             var device = this.getDevice(x.id.replace('car-', ''));
                             if (device) {
@@ -754,6 +764,7 @@
                     return;
                 }
                 var nodes = this.zTree.treeObj.getCheckedNodes();
+                this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '下发导航点', cmdtype: '上行', status: '成功' });
                 nodes.forEach((x) => {
                     var device = this.getDevice(x.id.replace('car-', ''));
                     if (device) {

@@ -109,13 +109,14 @@
                     <li class="active"><a href="#tab_1" data-toggle="tab">定位信息</a></li>
                     @*<li><a href="#tab_2" data-toggle="tab">报警信息</a></li>*@
                     <li><a href="#tab_3" data-toggle="tab">文字消息</a></li>
+                    <li><a href="#tab_4" data-toggle="tab">命令状态</a></li>
                     <li class="pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             @*<i class="fa fa-minus"></i>*@
                         </button>
                     </li>
                 </ul>
-                <div class="tab-content" style="overflow:auto; height:225px;">
+                <div class="tab-content" style="overflow: auto;height: 225px;">
                     <div class="tab-pane active" id="tab_1">
                         <table class="table table-hover">
                             <tr>
@@ -124,7 +125,7 @@
                                 <th>识别码</th>
                                 <th>SIM卡</th>
                                 <th>定位时间</th>
-                                <th>接收时间</th>
+                                @*<th>接收时间</th>*@
                                 <th>速度</th>
                                 <th>定位</th>
                                 <th>方向</th>
@@ -140,7 +141,7 @@
                                 <td>{{newtrack.mac}}</td>
                                 <td>{{newtrack.sim}}</td>
                                 <td>{{newtrack.gnsstime}}</td>
-                                <td>{{newtrack.receive_time}}</td>
+                                @*<td>{{newtrack.receive_time}}</td>*@
                                 <td>{{newtrack.speed}}</td>
                                 <td>{{newtrack.locate_str}}</td>
                                 <td>{{newtrack.heading_str}}</td>
@@ -190,9 +191,26 @@
                                 @*<th>时间</th>*@
                             </tr>
                             <tr v-for="(msgData,index) in  msgDatas">
-                                <th>{{index}}</th>
-                                <th>{{msgData.msg}}</th>
+                                <td>{{index}}</td>
+                                <td>{{msgData.msg}}</td>
                                 @*<th>时间</th>*@
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <div class="tab-pane" id="tab_4">
+                        <table class="table table-condensed">
+                            <tr>
+                                <th>时间</th>
+                                <th>命令</th>
+                                <th>命令类型</th>
+                                <th>状态</th>
+                            </tr>
+                            <tr v-for="(cmdData,index) in  commandDatas">
+                                <td>{{cmdData.time}}</td>
+                                <td>{{cmdData.cmdname}}</td>
+                                <td>{{cmdData.cmdtype}}</td>
+                                <td>{{cmdData.status}}</td>
                             </tr>
                         </table>
                     </div>

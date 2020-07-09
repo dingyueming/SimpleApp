@@ -18,6 +18,7 @@
                 timeValue: [new Date(new Date(new Date().toLocaleDateString()).getTime()), new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)],
                 deviceid: null,
             },
+            polyline: undefined,
             playSpeed: 1,
             intervalIndex: 0,
             dataIndex: 0,
@@ -112,8 +113,7 @@
                             autoRotation: true,
                             //angle: vm.newtracks[0].heading,
                         });
-                        //设置中心点
-                        vm.map.setZoomAndCenter(14, vm.newtracks[0].destPoint);
+                        vm.polyline = polyline;
                         //打点播放
                         vm.speedChange();
                     })
@@ -130,7 +130,7 @@
                 var dev = vm.getDevice(lastTrackData.carid);
                 if (dev) {
                     var netracktbRow = {};
-                    netracktbRow.license = dev.license + '(' + dev.license.carno + ')';
+                    netracktbRow.license = dev.license + '(' + dev.carno + ')';
                     netracktbRow.mac = dev.mac;
                     netracktbRow.sim = dev.sim;
                     netracktbRow.gnsstime = lastTrackData.gnsstime;
@@ -140,7 +140,7 @@
                     netracktbRow.heading_str = lastTrackData.headinG_STR;
                     netracktbRow.status = lastTrackData.statusShow;
                     netracktbRow.locatemode_str = lastTrackData.locatemodE_STR;
-                    netracktbRow.mileage = lastTrackData.kilometre;
+                    netracktbRow.mileage = Math.round(lastTrackData.kilometre / 1000);
                     netracktbRow.position = lastTrackData.position;
                     netracktbRow.longitude = lastTrackData.longitude;
                     netracktbRow.latitude = lastTrackData.latitude;
@@ -153,7 +153,8 @@
                 }
                 //设置位置、方向以及背景图
                 vm.marker.setPosition(lastTrackData.destPoint);
-                //vm.marker.setAngle(lastTrackData.heading);
+                //设置中心点
+                vm.map.setCenter(lastTrackData.destPoint);
                 var imgUrl = "../../plugins/amap/images/" + (lastTrackData.speed > 0 ? "run.png" : "stop.png");
                 if (vm.marker.getIcon() != imgUrl) {
                     vm.marker.setIcon(imgUrl);
