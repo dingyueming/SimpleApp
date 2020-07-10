@@ -16,9 +16,17 @@ namespace Simple.ExEntity.DM
         /// </summary>
         public virtual int CARID { get; set; }
         /// <summary>
+        /// 车辆ID
+        /// </summary>
+        public virtual int[] CARIDS { get; set; }
+        /// <summary>
         /// 任务内容
         /// </summary>
         public virtual string CONTENT { get; set; }
+        /// <summary>
+        /// 情况说明
+        /// </summary>
+        public virtual string REMARK { get; set; }
         /// <summary>
         /// 出动时间
         /// </summary>
@@ -47,6 +55,10 @@ namespace Simple.ExEntity.DM
         /// 创建人
         /// </summary>
         public virtual UsersExEntity CreateUser { get; set; }
+        /// <summary>
+        /// 车辆
+        /// </summary>
+        public virtual UnitExEntity Unit { get; set; }
         #endregion
     }
 }

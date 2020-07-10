@@ -23,6 +23,10 @@ namespace Simple.Entity
         /// </summary>
         public virtual string CONTENT { get; set; }
         /// <summary>
+        /// 情况说明
+        /// </summary>
+        public virtual string REMARK { get; set; }
+        /// <summary>
         /// 出动时间
         /// </summary>
         public virtual DateTime? SENDTIME { get; set; }
@@ -47,6 +51,11 @@ namespace Simple.Entity
         /// </summary>
         [Computed]
         public CarEntity Car { get; set; }
+        /// <summary>
+        /// 单位
+        /// </summary>
+        [Computed]
+        public UnitEntity Unit { get; set; }
         /// <summary>
         /// 创建用户
         /// </summary>

@@ -17,8 +17,11 @@ namespace Simple.Application.DM
         {
             this.dmDomainService = dmDomainService;
         }
-
         public async Task<bool> Add(CarMsgReportExEntity exEntity)
+        {
+            return await dmDomainService.AddCarMsgReport(exEntity);
+        }
+        public async Task<bool> Add(CarMsgReportExEntity[] exEntity)
         {
             return await dmDomainService.AddCarMsgReport(exEntity);
         }

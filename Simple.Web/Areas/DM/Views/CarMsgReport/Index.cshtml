@@ -16,6 +16,17 @@
 <div class="box" id="vmBox">
     <table style="margin-left:5px;">
         <tr>
+            <th>单位:</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <treeselect :multiple="false"
+                                :options="unitOptions"
+                                :disable-branch-nodes="true"
+                                placeholder="请选择单位"
+                                v-model="where.unitId" style="width:300px;" />
+                </div>
+            </td>
             <th>车牌号:</th>
             <td>
                 <div class="input-group">
@@ -67,11 +78,11 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="license">报备车辆</label>
                             <div class="col-sm-4">
-                                <treeselect :multiple="false"
+                                <treeselect :multiple="true"
                                             :options="options"
                                             :disable-branch-nodes="true"
                                             placeholder="请选择设备"
-                                            v-model="row.carid" />
+                                            v-model="row.carids" />
                             </div>
                             <label class="col-sm-2 control-label" for="approver">审批人</label>
                             <div class="col-sm-4">
@@ -104,7 +115,16 @@
                                 </el-input>
                             </div>
                         </div>
-
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="int_type">情况说明</label>
+                            <div class="col-sm-10">
+                                <el-input type="textarea"
+                                          :autosize="{ minRows: 4, maxRows: 4}"
+                                          placeholder="请输入内容"
+                                          v-model="row.remark">
+                                </el-input>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">

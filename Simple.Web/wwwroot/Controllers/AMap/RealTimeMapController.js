@@ -254,7 +254,7 @@
                         var nodes = treeObj.getNodes();
                         nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
                     }
-                }, 6 * 1000);
+                }, 10 * 1000);
             },
             //计算车辆在线数量
             recusiveUnit(treeObj, node) {

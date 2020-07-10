@@ -40,9 +40,22 @@ namespace Simple.Web.Areas.DM.Controllers
         [SimpleAction]
         public async Task<bool> Add(CarMsgReportExEntity exEntity)
         {
-            exEntity.CREATETIME = DateTime.Now;
-            exEntity.CREATOR = LoginUser.UsersId;
-            return await carMsgReportService.Add(exEntity);
+            var exEntities = new List<CarMsgReportExEntity>();
+            foreach (var item in exEntity.CARIDS)
+            {
+                exEntities.Add(new CarMsgReportExEntity()
+                {
+                    CARID = item,
+                    CREATETIME = DateTime.Now,
+                    CREATOR = LoginUser.UsersId,
+                    APPROVER = exEntity.APPROVER,
+                    BACKTIME = exEntity.BACKTIME,
+                    CONTENT = exEntity.CONTENT,
+                    REMARK = exEntity.REMARK,
+                    SENDTIME = exEntity.SENDTIME
+                });
+            }
+            return await carMsgReportService.Add(exEntities.ToArray());
         }
         [SimpleAction]
         public async Task<bool> Update(CarMsgReportExEntity exEntity)

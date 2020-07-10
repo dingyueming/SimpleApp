@@ -27,14 +27,14 @@
     <!--Vue开发版本-->
     <script src="~/dist/js/vue.js"></script>
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page" style="background-image:url(/plugins/amap/images/bg.jpg); background-size:100% 100%;">
     <div class="login-box" id="app">
         <div class="login-logo">
-            @*<a href="#"><b> 123</b></a>*@
+            <a href="#"><b>&nbsp;</b></a>
         </div>
         <!-- /.login-logo -->
         <div class="login-box-body">
-            @*<p class="login-box-msg">Sign in to start your session</p>*@
+            <p class="login-box-msg">@*Sign in to start your session*@</p>
             <form id="loginForm" class="form-signin" action="@Url.Action("Login")" method="post">
                 <div class="form-group has-feedback">
                     <input type="text" class="form-control" name="username" id="username" placeholder="用户名">
@@ -46,15 +46,15 @@
                 </div>
                 <div class="form-group has-feedback">
                     <div class="verify-wrap" id="verify-wrap"></div>
-                    <input type="hidden" name="verify" id="verify"/>
+                    <input type="hidden" name="verify" id="verify" />
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
                         @*<div class="checkbox icheck">
-                            <label>
-                                <input type="checkbox">记住我
-                            </label>
-                        </div>*@
+                                <label>
+                                    <input type="checkbox">记住我
+                                </label>
+                            </div>*@
                     </div>
                     <!-- /.col -->
                     <div class="col-xs-4">
@@ -93,10 +93,10 @@
                 getSuccessState: function (res) {
                     //当验证完成的时候 会 返回 res 值 true，
                     if (res) {
-                        $("input[name='verify']").val("123").change(); 
+                        $("input[name='verify']").val("123").change();
                         //$('#btn_submit').prop('disabled', false); //启
                     } else {
-                        $('#verify').val(null); 
+                        $('#verify').val(null);
                     }
                 }
             });
@@ -111,7 +111,7 @@
             });
             //表单验证
             $('#loginForm').bootstrapValidator({
-                excluded:[":disabled"],
+                excluded: [":disabled"],
                 message: 'This value is not valid',
                 //feedbackIcons: {
                 //    valid: 'glyphicon glyphicon-ok',
@@ -149,7 +149,7 @@
                         }
                     },
                     verify: {
-                        trigger:"change",
+                        trigger: "change",
                         validators: {
                             notEmpty: {
                                 message: '请进行滑动验证'

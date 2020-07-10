@@ -250,6 +250,13 @@ namespace Simple.Domain
             return await carMsgReportRepository.InsertAsync(entity);
         }
 
+        public async Task<bool> AddCarMsgReport(CarMsgReportExEntity[] exEntity)
+        {
+            var entity = mapper.Map<CarMsgReportEntity[]>(exEntity);
+
+            return await carMsgReportRepository.InsertAsync(entity);
+        }
+
         public async Task<bool> DeleteCarMsgReport(List<CarMsgReportExEntity> exEntities)
         {
             var entities = mapper.Map<List<CarMsgReportEntity>>(exEntities);

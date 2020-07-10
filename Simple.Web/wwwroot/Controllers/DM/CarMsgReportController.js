@@ -20,7 +20,7 @@
         methods: {
             update() {
                 vm.row = JSON.parse(JSON.stringify(this.rowData));
-                vm.row.carid = "car-" + vm.row.carid;
+                vm.row.carids = ["car-" + vm.row.carid];
                 $('#myModal').modal({ backdrop: 'static', keyboard: false });
                 // 参数根据业务场景随意构造
                 let params = { type: 'edit', index: this.index, rowData: this.rowData };
@@ -40,9 +40,11 @@
         components: { 'treeselect': VueTreeselect.Treeselect },
         data: {
             where: {
-                carid: null
+                carid: null,
+                unitId: null
             },
             options: [],
+            unitOptions: [],
             pageMode: 'add',
             total: 0,
             pageIndex: 1,
@@ -60,6 +62,14 @@
                         }, isFrozen: false
                     },
                     {
+                        field: 'unit', title: '单位', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
+                            if (rowData.car != null) {
+                                return rowData.unit.unitname;
+                            }
+                            return "";
+                        }
+                    },
+                    {
                         field: 'car', title: '报备车辆', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true, formatter: function (rowData, index, pagingIndex) {
                             if (rowData.car != null) {
                                 return rowData.car.license + '(' + rowData.car.carno + ')';
@@ -71,18 +81,23 @@
                     { field: 'sendtime', title: '出动时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'backtime', title: '返回时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'content', title: '任务内容', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'remark', title: '情况说明', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'custome-adv', title: '操作', width: 100, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
                 ],
                 titleRows: [],
             },
-            row: {},
+            row: { carids: [] },
             selectedRows: [],
         },
         methods: {
             getTableData() {
+                debugger;
                 var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: '' };
                 if (this.where.carid != null) {
                     search.where += ' and a.carid =' + this.where.carid.replace("car-", "");
+                }
+                if (this.where.unitId != null) {
+                    search.where += ' and u.unitid =' + this.where.unitId;
                 }
                 axios.post('Query', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
@@ -146,10 +161,16 @@
                     .catch(function (error) {
                         console.log(error);
                     });
+                axios.post('QueryUnitTree')
+                    .then(function (response) {
+                        vm.unitOptions = response.data;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
             },
             saveData() {
                 //数据校验
-                if (this.row.carid == null) {
+                if (this.row.carids.length == 0) {
                     this.$message.error('请选择报备车辆');
                     return;
                 }
@@ -167,7 +188,12 @@
                 } else {
                     url = 'update';
                 }
-                this.row.carid = this.row.carid.replace("car-", "");
+                var newIds = [];
+                this.row.carids.forEach((value) => {
+                    newIds.push(value.replace("car-", ""));
+                });
+                this.row.carids = newIds;
+                //this.row.carid = this.row.carid.replace("car-", "");
                 axios.post(url, Qs.stringify({ exEntity: this.row })).then(function (response) {
                     var commonResult = response.data;
                     if (commonResult.isSuccess) {
