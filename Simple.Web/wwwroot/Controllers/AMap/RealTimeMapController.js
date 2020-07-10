@@ -70,7 +70,7 @@
                 colmd10: 'col-md-10 ',
                 colmd12: 'col-md-12 ',
                 fullHeight: document.documentElement.clientHeight - 146,
-                normalHeight: "height:80%;",
+                normalHeight: 633
             },
             //其他数据
             otherData: {
