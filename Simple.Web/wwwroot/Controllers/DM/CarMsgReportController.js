@@ -118,7 +118,6 @@
         },
         methods: {
             getTableData() {
-                debugger;
                 var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: '' };
                 if (this.where.carid != null) {
                     search.where += ' and a.carid =' + this.where.carid.replace("car-", "");
