@@ -33,7 +33,7 @@ namespace Simple.Repository
                  a.CreateUser = c;
                  a.Unit = u;
                  return a;
-             }, splitOn: "carid,unitId,usersid");
+             }, splitOn: "carid,usersid,unitid");
             pagination.Data = list.AsList().Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             pagination.Total = await Connection.QuerySingleAsync<int>(totalSql);
             return pagination;
@@ -41,7 +41,7 @@ namespace Simple.Repository
 
         public async Task<List<CarMsgReportEntity>> GetEntities(DateTime[] dateTimes, string carNo)
         {
-            var sql = "select a.*,b.* from car_msgreport a left join cars b on a.carid=b.carid where b.carno like :carNo and a.sendtime between :starttime and :endtime";
+            var sql = "select a.*,b.* from car_msgreport a left join cars b on a.carid=b.carid where (b.carno like :carNo or b.license like :carNo) and a.sendtime between :starttime and :endtime";
             var result = await Connection.QueryAsync<CarMsgReportEntity, CarEntity, CarMsgReportEntity>(sql, (a, b) =>
              {
                  a.Car = b;

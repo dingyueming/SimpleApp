@@ -39,6 +39,7 @@ namespace Simple.Web.ApiControllers
                     x.APPROVER,
                     x.SENDTIME,
                     x.BACKTIME,
+                    x.REMARK,
                     x.CONTENT
                 }));
             }
@@ -53,9 +54,23 @@ namespace Simple.Web.ApiControllers
             try
             {
                 var authResult = await AuthenticationHttpContextExtensions.AuthenticateAsync(HttpContext, "Bearer");
-                value.CREATOR = int.Parse(authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
-                value.CREATETIME = DateTime.Now;
-                var isSuccess = await carMsgReportService.Add(value);
+                var creator = int.Parse(authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
+                var exEntities = new List<CarMsgReportExEntity>();
+                foreach (var item in value.CARIDS)
+                {
+                    exEntities.Add(new CarMsgReportExEntity()
+                    {
+                        CARID = item,
+                        CREATETIME = DateTime.Now,
+                        CREATOR = creator,
+                        APPROVER = value.APPROVER,
+                        BACKTIME = value.BACKTIME,
+                        CONTENT = value.CONTENT,
+                        REMARK = value.REMARK,
+                        SENDTIME = value.SENDTIME
+                    });
+                }
+                var isSuccess = await carMsgReportService.Add(exEntities.ToArray());
                 if (isSuccess)
                 {
                     return ApiResult<object>.Success();

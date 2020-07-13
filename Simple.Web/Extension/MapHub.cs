@@ -69,7 +69,8 @@ namespace Simple.Web.Other
 
                         if (ackData != null)
                         {
-                            var listCmd = CmdByUsers.Where(x => x.USERID == ackData.Head.USERID).ToList();
+                            var connectionId = Context.User.FindFirst("ConnetionId").Value;
+                            var listCmd = CmdByUsers.Where(x => x.USERID == ackData.Head.USERID && x.ConnId == connectionId).ToList();
                             var needRemoveItme = new CmdByUser();
                             foreach (var item in listCmd)
                             {
@@ -141,6 +142,8 @@ namespace Simple.Web.Other
                     CMD_SEQ = digitalQueueHelper.NextNumber()
                 }
             };
+            var connectionId = Context.User.FindFirst(ClaimTypes.PrimarySid).Value;
+            CmdByUsers.Add(new CmdByUser() { USERID = userId, ConnId = connectionId });
             await Task.Run(() =>
             {
                 redisHelper.SetListValue("CMD", outPutModel);
@@ -248,6 +251,11 @@ namespace Simple.Web.Other
         public override async Task OnConnectedAsync()
         {
             ConnIds.Add(Context.ConnectionId);
+            Context.User.AddIdentity(new ClaimsIdentity(new List<Claim>()
+                {
+                    new Claim(ClaimTypes.PrimarySid,Context.ConnectionId),
+                }));
+
             await base.OnConnectedAsync();
         }
 

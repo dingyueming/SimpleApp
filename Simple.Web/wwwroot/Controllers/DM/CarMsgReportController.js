@@ -41,7 +41,8 @@
         data: {
             where: {
                 carid: null,
-                unitId: null
+                unitId: null,
+                timeValue: [new Date(new Date(new Date().toLocaleDateString()).getTime()), new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)]
             },
             options: [],
             unitOptions: [],
@@ -77,7 +78,7 @@
                             return "";
                         }
                     },
-                    { field: 'approver', title: '审批人', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'approver', title: '审批人', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'sendtime', title: '出动时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'backtime', title: '返回时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'content', title: '任务内容', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
@@ -124,6 +125,9 @@
                 }
                 if (this.where.unitId != null) {
                     search.where += ' and u.unitid =' + this.where.unitId;
+                }
+                if (this.where.timeValue != null) {
+                    search.where += ' and a.sendtime between to_date(\'' + this.where.timeValue[0].Format("yyyy-MM-dd hh:mm:ss") + '\',\'yyyy-MM-dd HH24:mi:ss\') and to_date(\'' + this.where.timeValue[1].Format("yyyy-MM-dd hh:mm:ss") + '\',\'yyyy-MM-dd HH24:mi:ss\')';
                 }
                 axios.post('Query', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
@@ -242,6 +246,12 @@
                 var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: '', orderBy: '' };
                 if (this.where.carid != null) {
                     search.where += ' and a.carid =' + this.where.carid.replace("car-", "");
+                }
+                if (this.where.unitId != null) {
+                    search.where += ' and u.unitid =' + this.where.unitId;
+                }
+                if (this.where.timeValue != null) {
+                    search.where += ' and a.sendtime between to_date(\'' + this.where.timeValue[0].Format("yyyy-MM-dd hh:mm:ss") + '\',\'yyyy-MM-dd HH24:mi:ss\') and to_date(\'' + this.where.timeValue[1].Format("yyyy-MM-dd hh:mm:ss") + '\',\'yyyy-MM-dd HH24:mi:ss\')';
                 }
                 axios({
                     method: 'post',
