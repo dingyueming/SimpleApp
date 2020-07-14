@@ -84,7 +84,7 @@ namespace Simple.Web.Other
 
                                 //推送给客户端
                                 var connClients = Clients.Clients(clientId);
-                                await connClients.SendAsync("ShowCommandMsg", ackData.Content);
+                                await connClients.SendAsync("ShowCommandMsg", ackData);
                             }
                         }
 

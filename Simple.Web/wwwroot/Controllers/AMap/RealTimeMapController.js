@@ -320,8 +320,10 @@
                     }
                 });
                 connection.on("ShowCommandMsg", function (data) {
-                    vm.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: data.cmdStr, status: data.showMsg });
+                    var device = vm.getDevice(data.mac);
+                    vm.commandDatas.push({ unitname: device.unit.unitname, license: device.license, time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: data.content.cmdStr, status: data.content.showMsg });
                     vm.$message.success(data.showMsg);
+                    
                 });
                 connection.on("DrawDirLine", function (path, directionData) {
                     var existPoline = undefined;
@@ -750,7 +752,7 @@
                         nodes.forEach((x) => {
                             var device = this.getDevice(x.id.replace('car-', ''));
                             if (device) {
-                                vm.msgDatas.push({ unitname: device.unit.unitname, mac: device.mac, license: device.license, sender: "终端", receiver: "平台", msg: value, time: new Date().Format("yyyy-MM-dd hh:mm:ss") });
+                                vm.msgDatas.push({ unitname: device.unit.unitname, mac: device.mac, license: device.license, sender: "平台", receiver: "终端", msg: value, time: new Date().Format("yyyy-MM-dd hh:mm:ss") });
                                 this.conn.invoke("Xfdbwen", device.mac, device.mtype, device.ctype, value).catch(function (err) {
                                     return console.error(err.toString());
                                 });
