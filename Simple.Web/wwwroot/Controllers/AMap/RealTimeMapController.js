@@ -323,7 +323,7 @@
                     var device = vm.getDevice(data.mac);
                     vm.commandDatas.push({ unitname: device.unit.unitname, license: device.license, time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: data.content.cmdStr, status: data.content.showMsg });
                     vm.$message.success(data.showMsg);
-                    
+
                 });
                 connection.on("DrawDirLine", function (path, directionData) {
                     var existPoline = undefined;
@@ -373,9 +373,10 @@
                 //给所有的marker的Title变成白色字体
                 vm.deviceList.forEach(function (value) {
                     if (value.marker) {
+                        var labelTitle = value.license + ' ' + (value.tecH_PARAMETERS_BRIEF == null ? "" : value.tecH_PARAMETERS_BRIEF);
                         value.marker.setLabel({
                             offset: new AMap.Pixel(0, 0),
-                            content: "<div style='color:#000000;' >" + value.license + "</div>", //设置文本标注内容
+                            content: "<div style='color:#000000;' >" + labelTitle+ "</div>", //设置文本标注内容
                             direction: value.lastTrackData.heading //设置文本标注方位
                         });
                     }
@@ -386,10 +387,11 @@
                     var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
                     //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
                     vm.map.setZoomAndCenter(16, destPoint);
+                    var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
                     //设置title变红
                     device.marker.setLabel({
                         offset: new AMap.Pixel(0, 0),
-                        content: "<div style='color:#FF0000;' >" + device.license + "</div>", //设置文本标注内容
+                        content: "<div style='color:#FF0000;' >" + labelTitle + "</div>", //设置文本标注内容
                         direction: device.lastTrackData.heading //设置文本标注方位
                     });
                     device.marker.show();
