@@ -283,6 +283,17 @@
         mounted: function () {
             this.getTableData();
             this.initDeviceTree();
+        },
+        watch: {
+            'row.carids': {
+                handler(newVal, oldVal) {
+                    if (newVal) {
+                        this.row.remark = '出动车辆' + newVal.length + '台，指战员XX人，带队干部XX';
+                    }
+                },
+                deep: true,
+                immediate: true
+            }
         }
     });
 })();

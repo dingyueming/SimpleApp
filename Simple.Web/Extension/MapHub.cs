@@ -69,26 +69,22 @@ namespace Simple.Web.Other
 
                         if (ackData != null)
                         {
-                            var connectionId = Context.User.FindFirst("ConnetionId").Value;
-                            var listCmd = CmdByUsers.Where(x => x.USERID == ackData.Head.USERID && x.ConnId == connectionId).ToList();
-                            var needRemoveItme = new CmdByUser();
+                            var connectionId = Context.User.FindFirst(ClaimTypes.PrimarySid).Value;
+                            var listCmd = CmdByUsers.Where(x => x.USERID == ackData.Head.USERID && x.ConnId == connectionId && x.COMMAND_ID == ackData.Content.Cmd).ToList();
+                            //移除命令
                             foreach (var item in listCmd)
                             {
-                                if (item.Equals(ackData))
-                                {
-                                    needRemoveItme = item;
-                                }
+                                CmdByUsers.Remove(item);
                             }
-                            listCmd.Remove(needRemoveItme);
-                            var clientId = ConnIds.FirstOrDefault(x => x == needRemoveItme.ConnId);
-                            if (ackData.Content.Status == 0)
+                            var userCmd = listCmd.FirstOrDefault(x => x.Equals(ackData));
+
+                            if (userCmd != null)
                             {
+                                var clientId = ConnIds.FirstOrDefault(x => x == userCmd.ConnId);
+
+                                //推送给客户端
                                 var connClients = Clients.Clients(clientId);
-                                await connClients.SendAsync("ShowCommandMsg", ackData.Content.ShowMsg);
-                            }
-                            else
-                            {
-                                //写入日志
+                                await connClients.SendAsync("ShowCommandMsg", ackData.Content);
                             }
                         }
 
@@ -143,7 +139,7 @@ namespace Simple.Web.Other
                 }
             };
             var connectionId = Context.User.FindFirst(ClaimTypes.PrimarySid).Value;
-            CmdByUsers.Add(new CmdByUser() { USERID = userId, ConnId = connectionId });
+            CmdByUsers.Add(new CmdByUser() { USERID = userId, ConnId = connectionId, CMD_SEQ = outPutModel.Head.CMD_SEQ, COMMAND_ID = outPutModel.Head.COMMAND_ID, });
             await Task.Run(() =>
             {
                 redisHelper.SetListValue("CMD", outPutModel);
@@ -175,6 +171,8 @@ namespace Simple.Web.Other
                     Type = 2
                 }
             };
+            var connectionId = Context.User.FindFirst(ClaimTypes.PrimarySid).Value;
+            CmdByUsers.Add(new CmdByUser() { USERID = userId, ConnId = connectionId, CMD_SEQ = outPutModel.Head.CMD_SEQ, COMMAND_ID = outPutModel.Head.COMMAND_ID, });
             await Task.Run(() =>
             {
                 redisHelper.SetListValue("CMD", outPutModel);
@@ -205,6 +203,8 @@ namespace Simple.Web.Other
                     Type = 1
                 }
             };
+            var connectionId = Context.User.FindFirst(ClaimTypes.PrimarySid).Value;
+            CmdByUsers.Add(new CmdByUser() { USERID = userId, ConnId = connectionId, CMD_SEQ = outPutModel.Head.CMD_SEQ, COMMAND_ID = outPutModel.Head.COMMAND_ID, });
             await Task.Run(() =>
             {
                 redisHelper.SetListValue("CMD", outPutModel);
@@ -238,6 +238,8 @@ namespace Simple.Web.Other
                     Name = name
                 }
             };
+            var connectionId = Context.User.FindFirst(ClaimTypes.PrimarySid).Value;
+            CmdByUsers.Add(new CmdByUser() { USERID = userId, ConnId = connectionId, CMD_SEQ = outPutModel.Head.CMD_SEQ, COMMAND_ID = outPutModel.Head.COMMAND_ID, });
             await Task.Run(() =>
             {
                 redisHelper.SetListValue("CMD", outPutModel);

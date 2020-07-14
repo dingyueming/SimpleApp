@@ -126,7 +126,7 @@ namespace Simple.Entity
         /// 厂牌型号  以下不用
         /// </summary>
         public virtual string BRAND_MODEL { get; set; }
-       
+
         #endregion
         /// <summary>
         /// 所属单位
@@ -138,5 +138,7 @@ namespace Simple.Entity
         /// </summary>
         [Computed]
         public List<AreaEntity> Areas { get; set; } = new List<AreaEntity>();
+        [Computed]
+        public string UsageStr { get; set; }
     }
 }

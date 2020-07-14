@@ -190,10 +190,19 @@
                             //监听marker点击
                             device.marker.on('click', (e) => {
                                 var device = e.target.getExtData();
+                                console.log(device);
+                                var jscs = "", cllb = "";
+                                if (device.tecH_PARAMETERS != null) {
+                                    jscs = device.tecH_PARAMETERS;
+                                }
+                                if (device.usageStr != null) {
+                                    cllb = device.usageStr;
+                                }
                                 var tmpArr = [
-                                    "<tr><td>车辆编号：</td><td>" + device.license + "</td></tr>",
+                                    "<tr><td style='width:120px;'>车辆编号：</td><td  style='width:180px;'>" + device.license + "</td></tr>",
                                     "<tr><td>车牌号：</td><td>" + device.carno + "</td></tr>",
-                                    //"<tr><td>单位：</td><td>" + device.unitname + "</td></tr>",
+                                    "<tr><td>车辆类别：</td><td>" + cllb + "</td></tr>",
+                                    "<tr><td>技术参数：</td><td>" + jscs + "</td></tr>",
                                     "<tr><td>识别码：</td><td>" + device.mac + "</td></tr>",
                                     "<tr><td>时间：</td><td>" + device.lastTrackData.gnsstime + "</td></tr>",
                                     "<tr><td>速度：</td><td>" + device.lastTrackData.speed + "</td></tr>",
@@ -304,9 +313,14 @@
                         vm.updateAlarmTable(data.mac, data.alarmData);
                     }
                 });
+                connection.on("UpdateMsgData", function (data) {
+                    if (data != null) {
+                        vm.msgDatas.push({ msg: data.content.msg, time: new Date().Format("yyyy-MM-dd hh:mm:ss") });
+                    }
+                });
                 connection.on("ShowCommandMsg", function (data) {
-                    this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '位置查询', cmdtype: '上行', status: '成功' });
-                    vm.$message.success(data);
+                    vm.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: data.cmdStr, status: data.showMsg });
+                    vm.$message.success(data.showMsg);
                 });
                 connection.on("DrawDirLine", function (path, directionData) {
                     var existPoline = undefined;
@@ -557,7 +571,6 @@
             locationQuery() {
                 var nodes = this.zTree.treeObj.getCheckedNodes();
                 if (nodes.length > 0 && this.conn) {
-                    this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '位置查询', cmdtype: '上行', status: '成功' });
                     nodes.forEach((x) => {
                         var device = this.getDevice(x.id.replace('car-', ''));
                         if (device) {
@@ -708,7 +721,7 @@
                         inputPattern: /^\d+$/,
                         inputErrorMessage: '请输入数字'
                     }).then(({ value }) => {
-                        this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '设置回传间隔', cmdtype: '上行', status: '成功' });
+                        //this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '设置回传间隔', status: '成功' });
                         nodes.forEach((x) => {
                             var device = this.getDevice(x.id.replace('car-', ''));
                             if (device) {
@@ -733,7 +746,6 @@
                         //inputPattern: /^\d+$/,
                         //inputErrorMessage: '请输入数字'
                     }).then(({ value }) => {
-                        this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '发送消息', cmdtype: '上行', status: '成功' });
                         nodes.forEach((x) => {
                             var device = this.getDevice(x.id.replace('car-', ''));
                             if (device) {
@@ -764,7 +776,6 @@
                     return;
                 }
                 var nodes = this.zTree.treeObj.getCheckedNodes();
-                this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '下发导航点', cmdtype: '上行', status: '成功' });
                 nodes.forEach((x) => {
                     var device = this.getDevice(x.id.replace('car-', ''));
                     if (device) {

@@ -90,6 +90,7 @@ namespace Simple.Web.Areas.DM.Controllers
                 dr["出动时间"] = x.SENDTIME;
                 dr["返回时间"] = x.BACKTIME;
                 dr["任务内容"] = x.CONTENT;
+                dr["情况说明"] = x.REMARK;
                 dt.Rows.Add(dr);
             }
             var buffer = await OutputExcel(dt, columns);

@@ -123,6 +123,7 @@ namespace Simple.ExEntity.Map
         /// 厂牌型号  以下不用
         /// </summary>
         public virtual string BRAND_MODEL { get; set; }
+        public string UsageStr { get; set; }
 
     }
 }
