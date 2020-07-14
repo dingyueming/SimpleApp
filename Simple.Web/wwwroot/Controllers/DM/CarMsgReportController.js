@@ -159,7 +159,7 @@
             selectGroupChange(selection) {
             },
             add() {
-                this.row = { id: 0, carid: null };
+                this.row = { id: 0, carid: null, remark: "" };
                 $('#myModal').modal({ backdrop: 'static' });
             },
             select() {
@@ -287,12 +287,11 @@
         watch: {
             'row.carids': {
                 handler(newVal, oldVal) {
-                    if (newVal) {
+                    if (newVal && newVal.length > 0 && this.row.remark == "") {
                         this.row.remark = '出动车辆' + newVal.length + '台，指战员XX人，带队干部XX';
                     }
                 },
                 deep: true,
-                immediate: true
             }
         }
     });

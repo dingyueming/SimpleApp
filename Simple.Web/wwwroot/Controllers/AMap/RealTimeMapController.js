@@ -315,7 +315,8 @@
                 });
                 connection.on("UpdateMsgData", function (data) {
                     if (data != null) {
-                        vm.msgDatas.push({ msg: data.content.msg, time: new Date().Format("yyyy-MM-dd hh:mm:ss") });
+                        var device = vm.getDevice(data.mac);
+                        vm.msgDatas.push({ unitname: device.unit.unitname, mac: data.mac, license: device.license, sender: "终端", receiver: "平台", msg: data.content.msg, time: new Date().Format("yyyy-MM-dd hh:mm:ss") });
                     }
                 });
                 connection.on("ShowCommandMsg", function (data) {
@@ -749,6 +750,7 @@
                         nodes.forEach((x) => {
                             var device = this.getDevice(x.id.replace('car-', ''));
                             if (device) {
+                                vm.msgDatas.push({ unitname: device.unit.unitname, mac: device.mac, license: device.license, sender: "终端", receiver: "平台", msg: value, time: new Date().Format("yyyy-MM-dd hh:mm:ss") });
                                 this.conn.invoke("Xfdbwen", device.mac, device.mtype, device.ctype, value).catch(function (err) {
                                     return console.error(err.toString());
                                 });

@@ -15,8 +15,12 @@ namespace Simple.Repository
     {
         public async Task<List<CarEntity>> GetCarEntitiesByUser(int userId)
         {
-            var sql = "SELECT C.*,(select sub_desc from dict_carusage_sub where sub_id=c.USAGE_SUB) as usagestr FROM CARS C JOIN AUTH_LIMITS A ON C.CARID=A.CARID WHERE A.USERID=:USERID";
-            var users = await base.Connection.QueryAsync<CarEntity>(sql, new { USERID = userId });
+            var sql = "SELECT C.*,(select sub_desc from dict_carusage_sub where sub_id=c.USAGE_SUB) as usagestr ,u.* FROM CARS C JOIN AUTH_LIMITS A ON C.CARID=A.CARID LEFT JOIN UNIT U ON C.UNITID=U.UNITID WHERE A.USERID=:USERID";
+            var users = await base.Connection.QueryAsync<CarEntity, UnitEntity, CarEntity>(sql, (a, b) =>
+            {
+                a.Unit = b;
+                return a;
+            }, splitOn: "unitid", param: new { USERID = userId });
             return users.AsList();
         }
 

@@ -186,14 +186,24 @@
                     <div class="tab-pane" id="tab_3">
                         <table class="table table-condensed">
                             <tr>
-                                <th>序号</th>
-                                <th>内容</th>
-                                <th>时间</th>
+                                @*<th>序号</th>*@
+                                <th>单位</th>
+                                <th>车牌号</th>
+                                <th>识别码</th>
+                                <th>发送者</th>
+                                <th>接收者</th>
+                                <th>消息时间</th>
+                                <th>消息内容</th>
                             </tr>
                             <tr v-for="(msgData,index) in  msgDatas">
-                                <td>{{index}}</td>
-                                <td>{{msgData.msg}}</td>
+                                @*<td>{{index}}</td>*@
+                                <td>{{msgData.unitname}}</td>
+                                <td>{{msgData.license}}</td>
+                                <td>{{msgData.mac}}</td>
+                                <td>{{msgData.sender}}</td>
+                                <td>{{msgData.receiver}}</td>
                                 <td>{{msgData.time}}</td>
+                                <td>{{msgData.msg}}</td>
                             </tr>
                         </table>
                     </div>

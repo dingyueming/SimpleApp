@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using Simple.ExEntity.DM;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -124,6 +125,7 @@ namespace Simple.ExEntity.Map
         /// </summary>
         public virtual string BRAND_MODEL { get; set; }
         public string UsageStr { get; set; }
+        public UnitExEntity Unit { get; set; }
 
     }
 }
