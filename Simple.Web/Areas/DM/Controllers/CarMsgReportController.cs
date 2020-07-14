@@ -77,7 +77,7 @@ namespace Simple.Web.Areas.DM.Controllers
             pagination.PageSize = 10000;
             var data = await carMsgReportService.GetPage(pagination);
             var dt = new DataTable();
-            string[] columns = { "报备车辆", "审批人", "出动时间", "返回时间", "任务内容" };
+            string[] columns = { "报备车辆", "审批人", "出动时间", "返回时间", "任务内容", "情况说明" };
             columns.ToList().ForEach(x =>
             {
                 dt.Columns.Add(x);
