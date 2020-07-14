@@ -168,7 +168,7 @@ namespace Simple.Web.Other
                 {
                     Number = 1,
                     Para = minutes,
-                    Type = 2
+                    Type = 1
                 }
             };
             var connectionId = Context.User.FindFirst(ClaimTypes.PrimarySid).Value;
