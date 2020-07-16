@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using NPOI.SS.Formula.Functions;
+using Simple.ExEntity.Map;
 using Simple.Infrastructure.Tools;
 using Simple.Web.Extension.MapApi;
 using Simple.Web.Models;
@@ -8,11 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Simple.Web.Other
 {
-    [Authorize]
+    //[Authorize]
     public class MapHub : Hub
     {
         private readonly RedisHelper redisHelper;
@@ -91,8 +94,23 @@ namespace Simple.Web.Other
                         if (directionData != null)
                         {
                             var path = new List<double[]>();
-                            var polyline = await rtMapService.GetDrivingLine(directionData.Origin, directionData.Destination);
-                            var strPathList = polyline.Split(';').ToList();
+                            StringBuilder polyline = new StringBuilder();
+                            var model = await rtMapService.GetDrivingLine(directionData.Origin, directionData.Destination);
+                            if (model.Route != null)
+                            {
+                                var firstPath = model.Route.Paths[0];
+                                if (firstPath.Steps != null)
+                                {
+                                    foreach (var step in firstPath.Steps)
+                                    {
+                                        polyline.Append(step.Polyline);
+                                        polyline.Append(";");
+                                    }
+                                }
+                                directionData.Distance = firstPath.Distance / 1000;
+                                directionData.Duration = firstPath.Duration / 60;
+                            }
+                            var strPathList = polyline.ToString().Split(';').ToList();
                             foreach (var item in strPathList)
                             {
                                 var arr = item.Split(',');
@@ -245,6 +263,26 @@ namespace Simple.Web.Other
                 redisHelper.SetListValue("CMD", outPutModel);
             });
         }
+
+        /// <summary>
+        /// 添加实战演练
+        /// </summary>
+        /// <returns></returns>
+        public async Task Tjszyl(string mac, double olongitude, double olaitude, double dlongitude, double dlaitude, string name)
+        {
+            var outPutModel = new DirectionModel()
+            {
+                Origin = $"{olongitude},{olaitude}",
+                Id = Guid.NewGuid().ToString(),
+                Destination = $"{dlongitude},{dlaitude}",
+                Name = name
+            };
+            await Task.Run(() =>
+           {
+               redisHelper.SetListValue("DIRECTION", outPutModel);
+           });
+        }
+
 
         /// <summary>
         /// 新用户连接时

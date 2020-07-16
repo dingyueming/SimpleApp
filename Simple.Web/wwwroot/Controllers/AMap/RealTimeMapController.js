@@ -92,6 +92,14 @@
                 path: 0,
                 name: null,
             },
+            //实战演练
+            szyl: {
+                map: undefined,
+                longitude: null,
+                laitude: null,
+                name: null,
+            },
+            currentMarker: undefined,
             //导航路线
             directionLine: []
         },
@@ -125,17 +133,6 @@
                         placeSearch.setCity(e.poi.adcode);
                         placeSearch.search(e.poi.name);  //关键字查询查询
                     }
-                });
-                //实例化导航点地图
-                this.dhd.map = new AMap.Map('dhdmap', {
-                    center: [104.066642, 30.656279],//中心点坐标
-                    zoom: 12
-                });
-                this.dhd.map.on('click', (e) => {
-                    this.dhd.longitude = e.lnglat.getLng();
-                    this.dhd.laitude = e.lnglat.getLat();
-                    //var text = '您在 [ ' + e.lnglat.getLng() + ',' + e.lnglat.getLat() + ' ] 的位置单击了地图！';
-                    //console.log(text);
                 });
             },
             //实例化设备树
@@ -190,7 +187,7 @@
                             //监听marker点击
                             device.marker.on('click', (e) => {
                                 var device = e.target.getExtData();
-                                console.log(device);
+                                //console.log(device);
                                 var jscs = "", cllb = "";
                                 if (device.tecH_PARAMETERS != null) {
                                     jscs = device.tecH_PARAMETERS;
@@ -322,13 +319,19 @@
                 connection.on("ShowCommandMsg", function (data) {
                     var device = vm.getDevice(data.mac);
                     vm.commandDatas.push({ unitname: device.unit.unitname, license: device.license, time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: data.content.cmdStr, status: data.content.showMsg });
-                    vm.$message.success(data.showMsg);
+                    vm.$message.success(data.content.showMsg);
 
                 });
                 connection.on("DrawDirLine", function (path, directionData) {
+                    //终点
+                    var markerOption = {
+                        icon: "http://webapi.amap.com/images/0.png",
+                        position: path[path.length - 1],
+                        offset: [-10, -35]
+                    };
+                    vm.map.add(new AMap.Marker(markerOption));
                     var existPoline = undefined;
                     for (var i = 0; i < vm.directionLine.length; i++) {
-                        console.log(vm.directionLine[i].id == directionData.id);
                         //存在此导航路线
                         if (vm.directionLine[i].id == directionData.id) {
                             existPoline = vm.directionLine[i].polyline;
@@ -376,7 +379,7 @@
                         var labelTitle = value.license + ' ' + (value.tecH_PARAMETERS_BRIEF == null ? "" : value.tecH_PARAMETERS_BRIEF);
                         value.marker.setLabel({
                             offset: new AMap.Pixel(0, 0),
-                            content: "<div style='color:#000000;' >" + labelTitle+ "</div>", //设置文本标注内容
+                            content: "<div style='color:#000000;' >" + labelTitle + "</div>", //设置文本标注内容
                             direction: value.lastTrackData.heading //设置文本标注方位
                         });
                     }
@@ -720,13 +723,17 @@
             setReturnInterval() {
                 var nodes = this.zTree.treeObj.getCheckedNodes();
                 if (nodes.length > 0 && this.conn) {
-                    this.$prompt('请输入间隔时间（S）', '设置回传间隔', {
+                    this.$prompt('请输入间隔时间（秒）', '设置回传间隔', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         inputPattern: /^\d+$/,
-                        inputErrorMessage: '请输入数字'
+                        inputErrorMessage: '请输入数字',
+                        inputValidator: function (value) {
+                            if (value < 10) {
+                                return "请输入不小于10的整数";
+                            }
+                        }
                     }).then(({ value }) => {
-                        //this.commandDatas.push({ time: new Date().Format("yyyy-MM-dd hh:mm:ss"), cmdname: '设置回传间隔', status: '成功' });
                         nodes.forEach((x) => {
                             var device = this.getDevice(x.id.replace('car-', ''));
                             if (device) {
@@ -745,7 +752,7 @@
             xfdbwen() {
                 var nodes = this.zTree.treeObj.getCheckedNodes();
                 if (nodes.length > 0 && this.conn) {
-                    this.$prompt('请输入发送内容（S）', '发送短报文', {
+                    this.$prompt('请输入内容', '发送文字消息', {
                         confirmButtonText: '发送',
                         cancelButtonText: '取消',
                         //inputPattern: /^\d+$/,
@@ -768,6 +775,17 @@
                 }
             },
             xfdhd() {
+                //实例化导航点地图
+                this.dhd.map = new AMap.Map('dhdmap', {
+                    center: [104.066642, 30.656279],//中心点坐标
+                    zoom: 12
+                });
+                this.dhd.map.on('click', (e) => {
+                    this.dhd.longitude = e.lnglat.getLng();
+                    this.dhd.laitude = e.lnglat.getLat();
+                    //var text = '您在 [ ' + e.lnglat.getLng() + ',' + e.lnglat.getLat() + ' ] 的位置单击了地图！';
+                    //console.log(text);
+                });
                 //$('#myModal').modal({ backdrop: 'static' });
                 var nodes = this.zTree.treeObj.getCheckedNodes();
                 if (nodes.length > 0 && this.conn) {
@@ -791,6 +809,59 @@
                     }
                 });
                 $('#myModal').modal('hide');
+            },
+            szszyl() {
+                //实例化导航点地图
+                this.szyl.map = new AMap.Map('szylmap', {
+                    center: [104.066642, 30.656279],//中心点坐标
+                    zoom: 12
+                });
+
+                this.szyl.map.on('click', function (e) {
+                    if (vm.currentMarker)
+                        vm.szyl.map.remove(vm.currentMarker);
+
+                    var lngX = e.lnglat.getLng();
+                    var latY = e.lnglat.getLat();
+                    var markerOption = {
+                        map: vm.szyl.map,
+                        icon: "http://webapi.amap.com/images/0.png",
+                        position: new AMap.LngLat(lngX, latY),
+                        offset: [-10, -35]
+                    };
+                    vm.currentMarker = new AMap.Marker(markerOption);
+                    vm.szyl.longitude = e.lnglat.getLng();
+                    vm.szyl.laitude = e.lnglat.getLat();
+                });
+
+                var nodes = this.zTree.treeObj.getCheckedNodes();
+                if (nodes.length > 0 && this.conn) {
+                    $('#szylModal').modal({ backdrop: 'static' });
+                } else {
+                    vm.$message.warning('请选择车辆');
+                }
+            },
+            tjszyl() {
+                if (this.szyl.longitude == null || this.szyl.laitude == null || this.szyl.name == null) {
+                    vm.$message.warning('请完整填写信息');
+                    return;
+                }
+                var nodes = this.zTree.treeObj.getCheckedNodes();
+                nodes.forEach((x) => {
+                    if (x.id.indexOf("car") > -1) {
+                        var device = this.getDevice(x.id.replace('car-', ''));
+                        if (!device.marker) {
+                            vm.$message.warning('车辆' + device.license + ':无法导航');
+                            return;
+                        }
+                        if (device && device.marker) {
+                            this.conn.invoke("Tjszyl", device.mac, device.marker.getPosition().lng, device.marker.getPosition().lat, this.szyl.longitude, this.szyl.laitude, this.szyl.name).catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                        }
+                    }
+                });
+                $('#szylModal').modal('hide');
             },
             clearMarker() {
                 this.otherData.powerMarkers.forEach((x) => {

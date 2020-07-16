@@ -15,5 +15,17 @@ namespace Simple.Web.Models
         public string Origin { get; set; }
 
         public string Destination { get; set; }
+        /// <summary>
+        /// 目的地名称
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// 距离(M)
+        /// </summary>
+        public int Distance { get; set; }
+        /// <summary>
+        /// 预计行驶时间（S）
+        /// </summary>
+        public int Duration { get; set; }
     }
 }

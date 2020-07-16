@@ -27,6 +27,14 @@ namespace Simple.Web.Models
 
     public class Path
     {
+        /// <summary>
+        /// 距离(M)
+        /// </summary>
+        public int Distance { get; set; }
+        /// <summary>
+        /// 预计行驶时间（S）
+        /// </summary>
+        public int Duration { get; set; }
         public Step[] Steps { get; set; }
     }
 

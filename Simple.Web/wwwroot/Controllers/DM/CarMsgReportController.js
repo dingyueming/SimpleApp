@@ -82,7 +82,7 @@
                     { field: 'sendtime', title: '出动时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'backtime', title: '返回时间', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'content', title: '任务内容', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    { field: 'remark', title: '情况说明', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'remark', title: '出动情况', width: 200, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'custome-adv', title: '操作', width: 100, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
                 ],
                 titleRows: [],

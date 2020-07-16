@@ -17,7 +17,7 @@ namespace Simple.Web.Extension.MapApi
         {
             this.configuration = configuration;
         }
-        public async Task<string> GetDrivingLine(string origin, string destination)
+        public async Task<DrivingResModel> GetDrivingLine(string origin, string destination)
         {
             StringBuilder str = new StringBuilder();
             try
@@ -28,30 +28,13 @@ namespace Simple.Web.Extension.MapApi
                 client.Encoding = Encoding.UTF8;
                 IRestResponse reval = await client.ExecuteAsync(request);
                 var model = JsonConvert.DeserializeObject<DrivingResModel>(reval.Content);
-
-                if (model.Route != null)
-                {
-                    var paths = model.Route.Paths;
-                    foreach (var path in paths)
-                    {
-                        var steps = path.Steps;
-                        if (steps != null)
-                        {
-                            foreach (var step in steps)
-                            {
-                                str.Append(step.Polyline);
-                                str.Append(";");
-                            }
-                        }
-                    }
-                }
+                return model;
+                
             }
             catch (System.Exception)
             {
-                return "";
+                return null;
             }
-
-            return str.ToString();
         }
     }
 }
