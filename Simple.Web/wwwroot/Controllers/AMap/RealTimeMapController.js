@@ -101,7 +101,8 @@
             },
             currentMarker: undefined,
             //导航路线
-            directionLine: []
+            directionLine: [],
+            directionMarker: [],
         },
         methods: {
             //实例化地图
@@ -323,47 +324,90 @@
 
                 });
                 connection.on("DrawDirLine", function (path, directionData) {
-                    //终点
+                    //判断是否存在此导航点
+                    var existDire = false;
+                    var existMarker, existPolyline;
+                    vm.directionMarker.forEach((value) => {
+                        if (value.extData == directionData.id) {
+                            existDire = true;
+                            existMarker = value;
+                        }
+                    });
+                    vm.directionLine.forEach((value) => {
+                        if (value.extData == directionData.id) {
+                            existPolyline = value;
+                        }
+                    });
+
+                    //绘制终点
                     var markerOption = {
                         icon: "http://webapi.amap.com/images/0.png",
                         position: path[path.length - 1],
-                        offset: [-10, -35]
+                        offset: [-10, -35],
+                        label: { content: directionData.name, direction: 'top', offset: new AMap.Pixel(0, 0) },
+                        extData: directionData.id
                     };
-                    vm.map.add(new AMap.Marker(markerOption));
-                    var existPoline = undefined;
-                    for (var i = 0; i < vm.directionLine.length; i++) {
-                        //存在此导航路线
-                        if (vm.directionLine[i].id == directionData.id) {
-                            existPoline = vm.directionLine[i].polyline;
-                            continue;
+                    var direMarker = new AMap.Marker(markerOption);
+                    direMarker.setMap(vm.map);
+                    AMapUI.load(['ui/misc/PathSimplifier'], function (PathSimplifier) {
+
+                        if (!PathSimplifier.supportCanvas) {
+                            alert('当前环境不支持 Canvas！');
+                            return;
                         }
-                    }
-                    var polyline = new AMap.Polyline({
-                        path: path,
-                        isOutline: true,
-                        outlineColor: '#ffeeff',
-                        borderWeight: 3,
-                        strokeColor: "#3366FF",
-                        strokeOpacity: 1,
-                        strokeWeight: 6,
-                        // 折线样式还支持 'dashed'
-                        strokeStyle: "solid",
-                        // strokeStyle是dashed时有效
-                        strokeDasharray: [10, 5],
-                        lineJoin: 'round',
-                        lineCap: 'round',
-                        zIndex: 50,
-                        showDir: true
+                        var pathSimplifierIns;
+                        //如果存在此线路
+                        if (existDire) {
+                            pathSimplifierIns = existPolyline;
+                        } else {
+                            //创建组件实例
+                            pathSimplifierIns = new PathSimplifier({
+                                zIndex: 100,
+                                map: vm.map, //所属的地图实例
+                                getPath: function (pathData, pathIndex) {
+                                    //返回轨迹数据中的节点坐标信息，[AMap.LngLat, AMap.LngLat...] 或者 [[lng|number,lat|number],...]
+                                    return pathData.path;
+                                },
+                                getHoverTitle: function (pathData, pathIndex, pointIndex) {
+                                    //返回鼠标悬停时显示的信息
+                                    if (pointIndex >= 0) {
+                                        //鼠标悬停在某个轨迹节点上
+                                        //return pathData.name + '，点:' + pointIndex + '/' + pathData.path.length;
+                                        return "距离目的地：" + pathData.distance + "千米,预计用时" + pathData.duration + "分钟";
+                                    }
+                                    //鼠标悬停在节点之间的连线上
+                                    //return pathData.name + '，点数量' + pathData.path.length;
+                                    return "距离目的地：" + pathData.distance + "千米,预计用时" + pathData.duration + "分钟";
+                                },
+                                renderOptions: {
+                                    //轨迹线的样式
+                                    pathLineStyle: {
+                                        strokeStyle: 'green',
+                                        lineWidth: 6,
+                                        dirArrowStyle: true
+                                    }
+                                }
+                            });
+                            pathSimplifierIns.extData = directionData.id;
+                            vm.directionLine.push(pathSimplifierIns)
+                        }
+
+                        //设置数据
+                        pathSimplifierIns.setData([{
+                            name: '路线0',
+                            path: path,
+                            distance: directionData.distance,
+                            duration: directionData.duration,
+                        }]);
+
                     });
-                    polyline.setMap(vm.map);
-                    // 缩放地图到合适的视野级别
-                    vm.map.setFitView([polyline]);
-                    if (existPoline) {
-                        //存在的路线要移除
-                        vm.map.remove(existPoline);
+
+                    //如果存在此导航
+                    if (existDire) {
+                        //移除现有的marker
+                        vm.map.remove(existMarker);
                     } else {
-                        //不存在的路线添加到导航线路数组中
-                        vm.directionLine.push({ id: directionData.id, polyline: polyline })
+                        vm.directionMarker.push(direMarker)
                     }
                 });
                 connection.on("MapHubException", function (data) {
@@ -862,6 +906,17 @@
                     }
                 });
                 $('#szylModal').modal('hide');
+            },
+            jsszyl() {
+                //实战演练
+                this.directionMarker.forEach((x) => {
+                    x.setMap(null);
+                });
+                this.directionMarker = [];
+                this.directionLine.forEach((x) => {
+                    x.setData(null);
+                });
+                this.directionLine = [];
             },
             clearMarker() {
                 this.otherData.powerMarkers.forEach((x) => {
