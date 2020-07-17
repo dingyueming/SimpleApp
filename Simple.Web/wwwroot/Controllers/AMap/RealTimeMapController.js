@@ -168,7 +168,7 @@
                             var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(value);
                             var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
                             var baseMarker = new AMap.Marker({
-                                //map: vm.map,
+                                map: vm.map,
                                 position: destPoint,
                                 icon: iconUrl,
                                 anchor: 'center',
@@ -181,8 +181,8 @@
                                 extData: device,
                             });
                             device.marker = baseMarker;
+                            //vm.map.add(device.marker);
                             if (iconUrl.indexOf('stop.png') > -1 || iconUrl.indexOf('run.png') > -1) {
-                                vm.map.add(device.marker);
                                 device.marker.setzIndex(1000); //前置
                             }
                             //监听marker点击
@@ -222,46 +222,45 @@
                     loading.close();
                 })
             },
-            //启动定时器，更新车辆状态,位置
-            initTimer() {
-                setInterval(function () {
-                    var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-                    for (var i = 0; i < vm.deviceList.length; i++) {
-                        var device = vm.deviceList[i];
-                        var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(device.lastTrackData);
-                        //更新设备图标
-                        if (device.marker && device.marker.getIcon() != iconUrl) {
-                            device.marker.setIcon(iconUrl);
-                            device.marker.show();
-                        }
-                        //更新设备位置
-                        if (device.lastTrackData) {
-                            var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                            if (device.marker) {
-                                device.marker.setPosition(destPoint);
-                            }
-                        }
-                        //更新树图标
-                        if (treeObj && treeObj != null) {
-                            var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
-                            if (node && node != null) {
-                                node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
-                                treeObj.updateNode(node);
-                            }
-                        }
-                        //隐藏地图上不在线的车辆
-                        if (iconUrl.indexOf("off") > -1 && device.marker) {
-                            device.marker.hide();
-                        }
-                        //去掉定位表格里的离线数据
-                        //this.gpsData
+            //更新车辆状态,位置
+            UpdatePage() {
+                console.log(new Date().toLocaleTimeString());
+                var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+                for (var i = 0; i < vm.deviceList.length; i++) {
+                    var device = vm.deviceList[i];
+                    var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(device.lastTrackData);
+                    //更新设备图标
+                    if (device.marker && device.marker.getIcon() != iconUrl) {
+                        device.marker.setIcon(iconUrl);
+                        //device.marker.show();
                     }
-                    //计算车辆在线数;
-                    if (treeObj) {
-                        var nodes = treeObj.getNodes();
-                        nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
+                    //更新设备位置
+                    if (device.lastTrackData) {
+                        var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                        if (device.marker) {
+                            device.marker.setPosition(destPoint);
+                        }
                     }
-                }, 10 * 1000);
+                    //更新树图标
+                    if (treeObj && treeObj != null) {
+                        var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
+                        if (node && node != null) {
+                            node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
+                            treeObj.updateNode(node);
+                        }
+                    }
+                    //隐藏地图上不在线的车辆
+                    if (iconUrl.indexOf("off") > -1 && device.marker) {
+                        //device.marker.hide();
+                    }
+                    //去掉定位表格里的离线数据
+                    //this.gpsData
+                }
+                //计算车辆在线数;
+                if (treeObj) {
+                    var nodes = treeObj.getNodes();
+                    nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
+                }
             },
             //计算车辆在线数量
             recusiveUnit(treeObj, node) {
@@ -450,9 +449,11 @@
                 var device = this.getDevice(mac);
                 if (device) {
                     device.lastTrackData = gpsData;
-                    if (!device.marker.getMap()) {
-                        this.map.add(device.marker);
-                    }
+                    //if (!device.marker.getMap()) {
+                    //    this.map.add(device.marker);
+                    //}
+                    //更新地图上的位置和图标
+
                     //更新table
                     var list = vm.gpsDatas;
                     var isTableData = false;//是否在列表中
@@ -943,7 +944,7 @@
             this.initMap();
             this.initDeviceTree();
             this.initData();
-            this.initTimer();
+            setInterval(this.UpdatePage, 180 * 1000);
             this.initSignalR();
             this.initOtherData();
         }
