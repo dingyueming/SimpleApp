@@ -449,11 +449,12 @@
                 var device = this.getDevice(mac);
                 if (device) {
                     device.lastTrackData = gpsData;
-                    //if (!device.marker.getMap()) {
-                    //    this.map.add(device.marker);
-                    //}
+                    if (!device.marker.getMap()) {
+                        //this.map.add(device.marker);
+                        device.marker.setMap(this.map)
+                    }
                     //更新地图上的位置和图标
-
+                    this.UpdatePage();
                     //更新table
                     var list = vm.gpsDatas;
                     var isTableData = false;//是否在列表中
