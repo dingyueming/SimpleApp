@@ -6,8 +6,12 @@
         data: {
             //地图
             map: {},
+            //marker图层
+            labelsLayer: {},
             //设备列表
             deviceList: [],
+            //实时更新的设备
+            realTimeDevice: undefined,
             //最后定位数据
             lastLocatedData: [],
             //signalR链接
@@ -114,6 +118,17 @@
                     resizeEnable: true
                 });
                 this.map = amap;
+                // 创建一个 LabelsLayer 实例来承载 LabelMarker，[LabelsLayer 文档](https://lbs.amap.com/api/jsapi-v2/documentation#labelslayer)
+                this.labelsLayer = new AMap.LabelsLayer({
+                    zooms: [3, 20],
+                    //zIndex: 1000,
+                    // 关闭标注避让，默认为开启，v1.4.15 新增属性
+                    collision: false,
+                    // 开启标注淡入动画，默认为开启，v1.4.15 新增属性
+                    animation: true,
+                });
+                // 将 LabelsLayer 添加到地图上
+                this.map.add(this.labelsLayer);
                 //加载BasicControl，loadUI的路径参数为模块名中 'ui/' 之后的部分
                 AMapUI.loadUI(['control/BasicControl'], function (BasicControl) {
 
@@ -163,12 +178,58 @@
                         if (device) {
                             //var minute = Number((new Date().getTime() - new Date(value.gnsstime).getTime()) / (1000 * 60));
                             device.lastTrackData = value;
-                            var destPoint = coordtransform.wgs84togcj02(value.longitude, value.latitude);
-                            //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
+                            //var destPoint = coordtransform.wgs84togcj02(value.longitude, value.latitude);
+                            var destPoint = new AMap.LngLat(value.longitudeamap, value.latitudeamap);
                             var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(value);
                             var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
-                            var baseMarker = new AMap.Marker({
+
+                            var icon = {
+                                // 图标类型，现阶段只支持 image 类型
+                                type: 'image',
+                                // 图片 url
+                                image: iconUrl,
+                                // 图片尺寸
+                                size: [64, 64],
+                                // 图片相对 position 的锚点，默认为 bottom-center
+                                anchor: 'center',
+                            };
+
+                            var text = {
+                                // 要展示的文字内容
+                                content: labelTitle,
+                                // 文字方向，有 icon 时为围绕文字的方向，没有 icon 时，则为相对 position 的位置
+                                direction: 'top',
+                                // 在 direction 基础上的偏移量
+                                //offset: [-20, -5],
+                                // 文字样式
+                                style: {
+                                    // 字体大小
+                                    fontSize: 12,
+                                    // 字体颜色
+                                    fillColor: '#000000',
+                                    // 描边颜色
+                                    strokeColor: '#fff',
+                                    // 描边宽度
+                                    strokeWidth: 2,
+                                }
+                            };
+
+                            var labelMarker = new AMap.LabelMarker({
+                                name: device.mac, // 此属性非绘制文字内容，仅最为标识使用
+                                position: destPoint,
                                 map: vm.map,
+                                zIndex: 16,
+                                // 将第一步创建的 icon 对象传给 icon 属性
+                                icon: icon,
+                                // 将第二步创建的 text 对象传给 text 属性
+                                text: text,
+                                //标注显示级别范围， 可选值： [2,20]
+                                zooms: [2, 20],
+                                extData: device,
+                            });
+
+                            var baseMarker = new AMap.Marker({
+                                //map: vm.map,
                                 position: destPoint,
                                 icon: iconUrl,
                                 anchor: 'center',
@@ -180,8 +241,8 @@
                                 label: { content: labelTitle, direction: value.heading, offset: new AMap.Pixel(0, 0) },
                                 extData: device,
                             });
-                            device.marker = baseMarker;
-                            //vm.map.add(device.marker);
+                            vm.labelsLayer.add(labelMarker);
+                            device.marker = labelMarker;
                             if (iconUrl.indexOf('stop.png') > -1 || iconUrl.indexOf('run.png') > -1) {
                                 device.marker.setzIndex(1000); //前置
                             }
@@ -215,19 +276,20 @@
                                     offset: new AMap.Pixel(10, -10)
                                 });
                                 // 打开信息窗体
-                                infoWindow.open(vm.map, device.marker.getPosition());
+                                infoWindow.open(vm.map, e.target.getPosition());
                             }, device);
                         }
                     });
                     loading.close();
+                    vm.UpdatePage();
                 })
             },
             //更新车辆状态,位置
             UpdatePage() {
-                console.log(new Date().toLocaleTimeString());
                 var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-                for (var i = 0; i < vm.deviceList.length; i++) {
-                    var device = vm.deviceList[i];
+                var realTimeDevice = this.realTimeDevice;
+                if (realTimeDevice) {
+                    var device = realTimeDevice;
                     var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(device.lastTrackData);
                     //更新设备图标
                     if (device.marker && device.marker.getIcon() != iconUrl) {
@@ -236,7 +298,8 @@
                     }
                     //更新设备位置
                     if (device.lastTrackData) {
-                        var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                        //var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                        var destPoint = new AMap.LngLat(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
                         if (device.marker) {
                             device.marker.setPosition(destPoint);
                         }
@@ -249,17 +312,41 @@
                             treeObj.updateNode(node);
                         }
                     }
-                    //隐藏地图上不在线的车辆
-                    if (iconUrl.indexOf("off") > -1 && device.marker) {
-                        //device.marker.hide();
+                } else {
+                    for (var i = 0; i < vm.deviceList.length; i++) {
+                        var device = vm.deviceList[i];
+                        var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(device.lastTrackData);
+                        //更新设备图标
+                        if (device.marker && device.marker.getIcon() != iconUrl) {
+                            device.marker.setIcon(iconUrl);
+                            //device.marker.show();
+                        }
+                        //更新设备位置
+                        if (device.lastTrackData) {
+                            //var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                            var destPoint = new AMap.LngLat(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
+                            if (device.marker) {
+                                device.marker.setPosition(destPoint);
+                            }
+                        }
+                        //更新树图标
+                        if (treeObj && treeObj != null) {
+                            var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
+                            if (node && node != null) {
+                                node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
+                                treeObj.updateNode(node);
+                            }
+                        }
+                        //隐藏地图上不在线的车辆
+                        //if (iconUrl.indexOf("off") > -1 && device.marker) {
+                        //    device.marker.hide();
+                        //}
                     }
-                    //去掉定位表格里的离线数据
-                    //this.gpsData
-                }
-                //计算车辆在线数;
-                if (treeObj) {
-                    var nodes = treeObj.getNodes();
-                    nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
+                    //计算车辆在线数;
+                    if (treeObj) {
+                        var nodes = treeObj.getNodes();
+                        nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
+                    }
                 }
             },
             //计算车辆在线数量
@@ -420,27 +507,56 @@
                 vm.deviceList.forEach(function (value) {
                     if (value.marker) {
                         var labelTitle = value.license + ' ' + (value.tecH_PARAMETERS_BRIEF == null ? "" : value.tecH_PARAMETERS_BRIEF);
-                        value.marker.setLabel({
-                            offset: new AMap.Pixel(0, 0),
-                            content: "<div style='color:#000000;' >" + labelTitle + "</div>", //设置文本标注内容
-                            direction: value.lastTrackData.heading //设置文本标注方位
+                        value.marker.setText({
+                            // 要展示的文字内容
+                            content: labelTitle,
+                            // 文字方向，有 icon 时为围绕文字的方向，没有 icon 时，则为相对 position 的位置
+                            direction: 'top',
+                            // 在 direction 基础上的偏移量
+                            //offset: [-20, -5],
+                            // 文字样式
+                            style: {
+                                // 字体大小
+                                fontSize: 12,
+                                // 字体颜色
+                                fillColor: '#000000',
+                                // 描边颜色
+                                strokeColor: '#fff',
+                                // 描边宽度
+                                strokeWidth: 2,
+                            }
                         });
                     }
                 });
                 var device = vm.getDevice(mac);
                 if (device && device.lastTrackData) {
                     //设置中心点
-                    var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                    //destPoint = new AMap.LngLat(destPoint[0], destPoint[1]);
-                    vm.map.setZoomAndCenter(16, destPoint);
+                    //var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
+                    destPoint = new AMap.LngLat(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
+                    vm.map.setZoomAndCenter(20, destPoint);
+                    device.marker.setTop(true);
                     var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
-                    //设置title变红
-                    device.marker.setLabel({
-                        offset: new AMap.Pixel(0, 0),
-                        content: "<div style='color:#FF0000;' >" + labelTitle + "</div>", //设置文本标注内容
-                        direction: device.lastTrackData.heading //设置文本标注方位
+                    //设置title变红FF0000
+                    device.marker.setText({
+                        // 要展示的文字内容
+                        content: labelTitle,
+                        // 文字方向，有 icon 时为围绕文字的方向，没有 icon 时，则为相对 position 的位置
+                        direction: 'top',
+                        // 在 direction 基础上的偏移量
+                        //offset: [-20, -5],
+                        // 文字样式
+                        style: {
+                            // 字体大小
+                            fontSize: 12,
+                            // 字体颜色
+                            fillColor: '#FF0000',
+                            // 描边颜色
+                            strokeColor: '#fff',
+                            // 描边宽度
+                            strokeWidth: 2,
+                        }
                     });
-                    device.marker.show();
+                    //device.marker.show();
                     device.marker.setTop(true);
                 }
             },
@@ -449,11 +565,11 @@
                 var device = this.getDevice(mac);
                 if (device) {
                     device.lastTrackData = gpsData;
-                    if (!device.marker.getMap()) {
-                        //this.map.add(device.marker);
-                        device.marker.setMap(this.map)
-                    }
+                    //if (device.marker) {
+                    //    device.marker.setMap(this.map)
+                    //}
                     //更新地图上的位置和图标
+                    this.realTimeDevice = device;
                     this.UpdatePage();
                     //更新table
                     var list = vm.gpsDatas;
@@ -945,7 +1061,10 @@
             this.initMap();
             this.initDeviceTree();
             this.initData();
-            setInterval(this.UpdatePage, 180 * 1000);
+            setInterval(() => {
+                this.realTimeDevice = undefined;
+                this.UpdatePage();
+            }, 180 * 1000);
             this.initSignalR();
             this.initOtherData();
         }
