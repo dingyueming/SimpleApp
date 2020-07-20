@@ -12,6 +12,8 @@
             deviceList: [],
             //实时更新的设备
             realTimeDevice: undefined,
+            //跟踪车辆
+            followDevice: undefined,
             //最后定位数据
             lastLocatedData: [],
             //signalR链接
@@ -53,18 +55,6 @@
                                 vm.dbclickLocationTable(treeNode.id.replace('car-', ''));
                             }
                         },
-                        //beforeCheck: function (treeId, treeNode) {
-                        //    //设置父节点不能被选择
-                        //    if (treeNode.children) {
-                        //        return false;
-                        //    }
-                        //    //vm.zTree.selectNode = undefined;
-                        //    //vm.zTree.treeObj.checkAllNodes(false);
-                        //    return true;
-                        //},
-                        //onCheck: function (e, treeId, treeNode) {
-                        //    //vm.zTree.selectNode = treeNode;
-                        //}
                     }
                 }
             },
@@ -178,8 +168,7 @@
                         if (device) {
                             //var minute = Number((new Date().getTime() - new Date(value.gnsstime).getTime()) / (1000 * 60));
                             device.lastTrackData = value;
-                            //var destPoint = coordtransform.wgs84togcj02(value.longitude, value.latitude);
-                            var destPoint = new AMap.LngLat(value.longitudeamap, value.latitudeamap);
+                            var destPoint = coordtransform.wgs84togcj02(value.longitude, value.latitude);
                             var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(value);
                             var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
 
@@ -211,6 +200,8 @@
                                     strokeColor: '#fff',
                                     // 描边宽度
                                     strokeWidth: 2,
+                                    //背景颜色
+                                    backgroundColor: '#CCCCCC',
                                 }
                             };
 
@@ -296,10 +287,14 @@
                         device.marker.setIcon(iconUrl);
                         //device.marker.show();
                     }
+                    if (vm.followDevice && vm.followDevice.mac == realTimeDevice.mac) {
+                        //设置中心点
+                        var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                        vm.map.setZoomAndCenter(20, destPoint);
+                    }
                     //更新设备位置
                     if (device.lastTrackData) {
-                        //var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                        var destPoint = new AMap.LngLat(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
+                        var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
                         if (device.marker) {
                             device.marker.setPosition(destPoint);
                         }
@@ -308,8 +303,15 @@
                     if (treeObj && treeObj != null) {
                         var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
                         if (node && node != null) {
-                            node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
-                            treeObj.updateNode(node);
+                            if (node.iconSkin != getCarTreeStateSkin(device.lastTrackData)) {
+                                node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
+                                treeObj.updateNode(node);
+                                //计算车辆在线数;
+                                if (treeObj) {
+                                    var nodes = treeObj.getNodes();
+                                    nodes.forEach(function (value) { vm.recusiveUnit(treeObj, value); })
+                                }
+                            }
                         }
                     }
                 } else {
@@ -323,8 +325,7 @@
                         }
                         //更新设备位置
                         if (device.lastTrackData) {
-                            //var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                            var destPoint = new AMap.LngLat(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
+                            var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
                             if (device.marker) {
                                 device.marker.setPosition(destPoint);
                             }
@@ -333,8 +334,10 @@
                         if (treeObj && treeObj != null) {
                             var node = treeObj.getNodeByParam("id", "car-" + device.carid, null);
                             if (node && node != null) {
-                                node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
-                                treeObj.updateNode(node);
+                                if (node.iconSkin != getCarTreeStateSkin(device.lastTrackData)) {
+                                    node.iconSkin = getCarTreeStateSkin(device.lastTrackData);
+                                    treeObj.updateNode(node);
+                                }
                             }
                         }
                         //隐藏地图上不在线的车辆
@@ -524,15 +527,17 @@
                                 strokeColor: '#fff',
                                 // 描边宽度
                                 strokeWidth: 2,
+                                //背景颜色
+                                backgroundColor: '#CCCCCC',
                             }
                         });
                     }
                 });
                 var device = vm.getDevice(mac);
                 if (device && device.lastTrackData) {
+                    vm.followDevice = device;
                     //设置中心点
-                    //var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
-                    var destPoint = new AMap.LngLat(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
+                    var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
                     vm.map.setZoomAndCenter(20, destPoint);
                     device.marker.setTop(true);
                     var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
@@ -554,6 +559,8 @@
                             strokeColor: '#fff',
                             // 描边宽度
                             strokeWidth: 2,
+                            //背景颜色
+                            backgroundColor: '#CCCCCC',
                         }
                     });
                     //device.marker.show();
