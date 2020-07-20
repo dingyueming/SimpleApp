@@ -28,11 +28,11 @@ namespace Simple.ExEntity.Map
         /// <summary>
         /// 经度
         /// </summary>
-        public double LONGITUDEAMAP => LONGITUDE + (OFFSETX * 0.000001);
+        public double LONGITUDEAMAP => LONGITUDE + (OFFSETX * 0.0000001);
         /// <summary>
         /// 纬度
         /// </summary>
-        public double LATITUDEAMAP => LATITUDE + (OFFSETY * 0.000001);
+        public double LATITUDEAMAP => LATITUDE + (OFFSETY * 0.0000001);
         /// <summary>
         /// 方向
         /// </summary>

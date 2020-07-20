@@ -42,11 +42,11 @@ namespace Simple.Web.Models
         /// <summary>
         /// 经度
         /// </summary>
-        public double Longitudeamap => Longitude + (OffsetX * 0.000001);
+        public double Longitudeamap => Longitude + (OffsetX * 0.0000001);
         /// <summary>
         /// 纬度
         /// </summary>
-        public double Latitudeamap => Latitude + (OffsetY * 0.000001);
+        public double Latitudeamap => Latitude + (OffsetY * 0.0000001);
         /// <summary>
         /// 方向 正北0 正东 90
         /// </summary>

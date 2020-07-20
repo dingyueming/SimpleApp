@@ -532,7 +532,7 @@
                 if (device && device.lastTrackData) {
                     //设置中心点
                     //var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
-                    destPoint = new AMap.LngLat(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
+                    var destPoint = new AMap.LngLat(device.lastTrackData.longitudeamap, device.lastTrackData.latitudeamap);
                     vm.map.setZoomAndCenter(20, destPoint);
                     device.marker.setTop(true);
                     var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
