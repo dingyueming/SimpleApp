@@ -103,8 +103,9 @@
             initMap() {
                 //实例化地图
                 var amap = new AMap.Map('container', {
-                    center: [104.066642, 30.656279],//中心点坐标
+                    //center: [104.066642, 30.656279],//中心点坐标
                     zoom: 12,
+                    animateEnable: false,
                     resizeEnable: true
                 });
                 this.map = amap;
@@ -181,7 +182,19 @@
                                 size: [64, 64],
                                 // 图片相对 position 的锚点，默认为 bottom-center
                                 anchor: 'center',
+                                //offset: [-32, -32],
                             };
+
+                            //默认灰色
+                            var bgColor = '#CCCCCC';
+                            //行驶中
+                            if (iconUrl.indexOf("run") > -1) {
+                                bgColor = '#00FF00';
+                            }
+                            //停车
+                            if (iconUrl.indexOf("run") > -1) {
+                                bgColor = '#FFFF00';
+                            }
 
                             var text = {
                                 // 要展示的文字内容
@@ -201,7 +214,7 @@
                                     // 描边宽度
                                     strokeWidth: 2,
                                     //背景颜色
-                                    backgroundColor: '#CCCCCC',
+                                    backgroundColor: bgColor,
                                 }
                             };
 
@@ -219,19 +232,7 @@
                                 extData: device,
                             });
 
-                            var baseMarker = new AMap.Marker({
-                                //map: vm.map,
-                                position: destPoint,
-                                icon: iconUrl,
-                                anchor: 'center',
-                                offset: new AMap.Pixel(0, 0),
-                                //angle: value.heading,
-                                topWhenClick: true,
-                                title: device.license + ' ' + device.carno,
-                                clickable: true,
-                                label: { content: labelTitle, direction: value.heading, offset: new AMap.Pixel(0, 0) },
-                                extData: device,
-                            });
+
                             vm.labelsLayer.add(labelMarker);
                             device.marker = labelMarker;
                             if (iconUrl.indexOf('stop.png') > -1 || iconUrl.indexOf('run.png') > -1) {
@@ -279,18 +280,33 @@
             UpdatePage() {
                 var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
                 var realTimeDevice = this.realTimeDevice;
-                if (realTimeDevice) {
+                if (realTimeDevice && realTimeDevice.marker) {
                     var device = realTimeDevice;
+                    //车辆跟踪
+                    if (vm.followDevice && vm.followDevice.mac == realTimeDevice.mac) {
+                        var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
+                        vm.map.setCenter(destPoint);
+                    }
                     var iconUrl = "../../plugins/amap/images/" + getCarStateIcon(device.lastTrackData);
                     //更新设备图标
-                    if (device.marker && device.marker.getIcon() != iconUrl) {
-                        device.marker.setIcon(iconUrl);
-                        //device.marker.show();
+                    var iconOption = device.marker && device.marker.getIcon();
+                    if (iconOption.image != iconUrl) {
+                        iconOption.image = iconUrl;
+                        device.marker.setIcon(iconOption);
                     }
-                    if (vm.followDevice && vm.followDevice.mac == realTimeDevice.mac) {
-                        //设置中心点
-                        var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                        vm.map.setZoomAndCenter(20, destPoint);
+                    //改变车辆状态
+                    if (iconUrl.indexOf("run") > -1) {
+                        var textOption = device.marker.getText();
+                        if (textOption.style.backgroundColor != '00FF00') {
+                            textOption.style.backgroundColor = '00FF00';
+                            device.marker.setText(textOption);
+                        }
+                    } else if (iconUrl.indexOf("stop") > -1) {
+                        var textOption = device.marker.getText();
+                        if (textOption.style.backgroundColor != 'FFFF00') {
+                            textOption.style.backgroundColor = 'FFFF00';
+                            device.marker.setText(textOption);
+                        }
                     }
                     //更新设备位置
                     if (device.lastTrackData) {
@@ -340,10 +356,7 @@
                                 }
                             }
                         }
-                        //隐藏地图上不在线的车辆
-                        //if (iconUrl.indexOf("off") > -1 && device.marker) {
-                        //    device.marker.hide();
-                        //}
+
                     }
                     //计算车辆在线数;
                     if (treeObj) {
@@ -506,31 +519,12 @@
                 this.conn = connection;
             },
             dbclickLocationTable(mac) {
-                //给所有的marker的Title变成白色字体
+                //给所有的marker的字体还原
                 vm.deviceList.forEach(function (value) {
                     if (value.marker) {
-                        var labelTitle = value.license + ' ' + (value.tecH_PARAMETERS_BRIEF == null ? "" : value.tecH_PARAMETERS_BRIEF);
-                        value.marker.setText({
-                            // 要展示的文字内容
-                            content: labelTitle,
-                            // 文字方向，有 icon 时为围绕文字的方向，没有 icon 时，则为相对 position 的位置
-                            direction: 'top',
-                            // 在 direction 基础上的偏移量
-                            //offset: [-20, -5],
-                            // 文字样式
-                            style: {
-                                // 字体大小
-                                fontSize: 12,
-                                // 字体颜色
-                                fillColor: '#000000',
-                                // 描边颜色
-                                strokeColor: '#fff',
-                                // 描边宽度
-                                strokeWidth: 2,
-                                //背景颜色
-                                backgroundColor: '#CCCCCC',
-                            }
-                        });
+                        var textOption = value.marker.getText();
+                        textOption.style.fillColor = '#000000';
+                        value.marker.setText(textOption);
                     }
                 });
                 var device = vm.getDevice(mac);
@@ -538,33 +532,11 @@
                     vm.followDevice = device;
                     //设置中心点
                     var destPoint = coordtransform.wgs84togcj02(device.lastTrackData.longitude, device.lastTrackData.latitude);
-                    vm.map.setZoomAndCenter(20, destPoint);
+                    vm.map.setCenter(destPoint);
                     device.marker.setTop(true);
-                    var labelTitle = device.license + ' ' + (device.tecH_PARAMETERS_BRIEF == null ? "" : device.tecH_PARAMETERS_BRIEF);
-                    //设置title变红FF0000
-                    device.marker.setText({
-                        // 要展示的文字内容
-                        content: labelTitle,
-                        // 文字方向，有 icon 时为围绕文字的方向，没有 icon 时，则为相对 position 的位置
-                        direction: 'top',
-                        // 在 direction 基础上的偏移量
-                        //offset: [-20, -5],
-                        // 文字样式
-                        style: {
-                            // 字体大小
-                            fontSize: 12,
-                            // 字体颜色
-                            fillColor: '#FF0000',
-                            // 描边颜色
-                            strokeColor: '#fff',
-                            // 描边宽度
-                            strokeWidth: 2,
-                            //背景颜色
-                            backgroundColor: '#CCCCCC',
-                        }
-                    });
-                    //device.marker.show();
-                    device.marker.setTop(true);
+                    var textOption = device.marker.getText();
+                    textOption.style.fillColor = '#FF0000';
+                    device.marker.setText(textOption);
                 }
             },
             //更新实时定位数据
