@@ -103,7 +103,7 @@
             initMap() {
                 //实例化地图
                 var amap = new AMap.Map('container', {
-                    //center: [104.066642, 30.656279],//中心点坐标
+                    center: [104.066642, 30.656279],//中心点坐标
                     zoom: 12,
                     animateEnable: false,
                     resizeEnable: true
@@ -182,7 +182,6 @@
                                 size: [64, 64],
                                 // 图片相对 position 的锚点，默认为 bottom-center
                                 anchor: 'center',
-                                //offset: [-32, -32],
                             };
 
                             //默认灰色
@@ -297,14 +296,14 @@
                     //改变车辆状态
                     if (iconUrl.indexOf("run") > -1) {
                         var textOption = device.marker.getText();
-                        if (textOption.style.backgroundColor != '00FF00') {
-                            textOption.style.backgroundColor = '00FF00';
+                        if (textOption.style.backgroundColor != '#00FF00') {
+                            textOption.style.backgroundColor = '#00FF00';
                             device.marker.setText(textOption);
                         }
                     } else if (iconUrl.indexOf("stop") > -1) {
                         var textOption = device.marker.getText();
-                        if (textOption.style.backgroundColor != 'FFFF00') {
-                            textOption.style.backgroundColor = 'FFFF00';
+                        if (textOption.style.backgroundColor != '#FFFF00') {
+                            textOption.style.backgroundColor = '#FFFF00';
                             device.marker.setText(textOption);
                         }
                     }
