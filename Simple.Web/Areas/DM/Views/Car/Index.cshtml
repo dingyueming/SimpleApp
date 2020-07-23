@@ -80,9 +80,9 @@
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="myForm">
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="license">内部编号</label>
+                            <label class="col-sm-2 control-label" for="license">显示名称</label>
                             <div class="col-sm-4">
-                                <input class="form-control" v-model="row.license" id="license" name="license" type="text" placeholder="内部编号" />
+                                <input class="form-control" v-model="row.license" id="license" name="license" type="text" placeholder="显示名称" />
                             </div>
                             <label class="col-sm-2 control-label" for="mac">识别码</label>
                             <div class="col-sm-4">
@@ -90,13 +90,72 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-sm-2 control-label" for="carno">车牌号</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="carno" name="carno" v-model="row.carno" type="text" placeholder="车牌号" />
+                            </div>
                             <label class="col-sm-2 control-label" for="sim">SIM卡号</label>
                             <div class="col-sm-4">
                                 <input class="form-control" id="sim" name="sim" v-model="row.sim" type="text" placeholder="SIM卡号" />
                             </div>
-                            <label class="col-sm-2 control-label" for="engineno">发动机号</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="status" class="col-sm-2 control-label">所属单位</label>
+                            <div class="col-sm-10">
+                                <treeselect v-model="row.unitid" name="unitid" :multiple="false" v-on:select="treeSelect" :options="options" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="ip">服务器IP</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="engineno" name="engineno" v-model="row.engineno" type="text" placeholder="发动机号" />
+                                <select class="form-control">
+                                    <option>218.6.242.32</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label" for="carno">终端类型</label>
+                            <div class="col-sm-4">
+                                <select class="form-control">
+                                    <option>朝宇慧科V5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="ip">车辆类别</label>
+                            <div class="col-sm-4">
+                                <select v-model="row.usage" v-on:change="selectUsage" class="form-control">
+                                    <option :value="item.id" v-for="(item,index) in usage">
+                                        {{item.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label" for="usagesub">车辆子类别</label>
+                            <div class="col-sm-4">
+                                <select v-model="row.usagE_SUB" class="form-control">
+                                    <option v-for="(item,index) in usagesub" :value="item.id">{{item.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="tecH_PARAMETERS">技术参数</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="tecH_PARAMETERS" name="tecH_PARAMETERS" v-model="row.tecH_PARAMETERS" type="text" placeholder="技术参数" />
+                            </div>
+                            <label class="col-sm-2 control-label" for="tecH_PARAMETERS_BRIEF">参数简要</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="tecH_PARAMETERS_BRIEF" name="tecH_PARAMETERS_BRIEF" v-model="row.tecH_PARAMETERS_BRIEF" type="text" placeholder="参数简要" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="tecH_PARAMETERS">车辆颜色</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" v-model="row.color">
+                                    <option value="null">无</option>
+                                    <option value="1">红</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label" for="branD_MODEL">厂牌型号</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="branD_MODEL" name="branD_MODEL" v-model="row.branD_MODEL" type="text" placeholder="厂牌型号" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -104,15 +163,9 @@
                             <div class="col-sm-4">
                                 <input class="form-control" id="chassisno" name="chassisno" v-model="row.chassisno" type="text" placeholder="车架号" />
                             </div>
-                            <label class="col-sm-2 control-label" for="carno">车牌号</label>
+                            <label class="col-sm-2 control-label" for="engineno">发动机号</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="carno" name="carno" v-model="row.carno" type="text" placeholder="车牌号" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="status" class="col-sm-2 control-label">所属单位</label>
-                            <div class="col-sm-10">
-                                <treeselect v-model="row.unitid" name="unitid" :multiple="false" v-on:select="treeSelect" :options="options" />
+                                <input class="form-control" id="engineno" name="engineno" v-model="row.engineno" type="text" placeholder="发动机号" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -213,7 +266,9 @@
             update() {
                 vm.validataForm();
                 vm.row = this.rowData;
+                console.log(vm.row);
                 vm.pageMode = "edit";
+                vm.selectUsage();
                 $('#myModal').modal();
                 // 参数根据业务场景随意构造
                 let params = { type: 'edit', index: this.index, rowData: this.rowData };
@@ -263,19 +318,8 @@
                     { field: 'mac', title: '设备号', width: 100, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'engineno', title: '发动机号', width: 180, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'chassisno', title: '车架号', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
-                    //{
-                    //    field: 'area', title: '报警区域', width: 150, titleAlign: 'center', columnAlign: 'left', isResize: true, formatter: function (rowData, index, pagingIndex) {
-                    //        var html = "";
-                    //        var text = "";
-                    //        if (rowData.areas.length > 0) {
-                    //            for (var i = 0; i < rowData.areas.length; i++) {
-                    //                html += '<span style="color:red;font-weight: normal;">' + rowData.areas[i].areaname + ',</span>';
-                    //                text += rowData.areas[i].areaname+",";
-                    //            }
-                    //        }
-                    //        return "<div title='" + text + "'>" + html + "</div>";
-                    //    }
-                    //},
+                    { field: 'tecH_PARAMETERS', title: '技术参数', width: 180, titleAlign: 'center', columnAlign: 'center', isResize: true },
+                    { field: 'tecH_PARAMETERS_BRIEF', title: '参数简要', width: 150, titleAlign: 'center', columnAlign: 'center', isResize: true },
                     { field: 'custome-adv', title: '操作', width: 200, titleAlign: 'center', columnAlign: 'center', componentName: 'table-operation', isResize: true },
                 ],
                 titleRows: [
@@ -291,9 +335,35 @@
                 code: ''
             },
             alarmAreaOptions: [],
-            carArea: { alarmtype: 2, status: 1,areaid: null },
+            carArea: { alarmtype: 2, status: 1, areaid: null },
+            usage: [
+                {
+                    id: 1, name: '灭火消防车', sub: [{ id: 1, name: '水罐消防车' }, { id: 2, name: '泡沫消防车' }, { id: 3, name: '压缩空气泡沫消防车' },
+                    { id: 4, name: '泡沫干粉联用消防车' }, { id: 5, name: '干粉消防车' }]
+                },
+                {   id: 2, name: '举高消防车', sub: [{ id: 6, name: '云梯消防车' }, { id: 7, name: '登高平台消防车' }, { id: 8, name: '举高喷射消防车' }] },
+                {
+                    id: 3, name: '专勤消防车', sub: [{ id: 9, name: '抢险救援消防车' }, { id: 10, name: '照明消防车' }, { id: 11, name: '排烟消防车' }, { id: 12, name: '化学事故抢险救援' },
+                        { id: 13, name: '防化洗消消防车' }, { id: 14, name: '核生化侦检消防车' }, { id: 15, name: '通信指挥消防车' }]
+                },
+                {
+                    id: 4, name: '战勤保障车', sub: [{ id: 16, name: '供气消防车' }, { id: 17, name: '器材消防车' }, { id: 18, name: '供液消防车' }, { id: 19, name: '供水消防车' },
+                        { id: 20, name: '自装卸式消防车' }, { id: 21, name: '装备抢修车' }, { id: 22, name: '饮食保障车' }, { id: 23, name: '加油车' },
+                        { id: 24, name: '运兵车' }, { id: 25, name: '宿营车' }, { id: 26, name: '卫勤保障车' }, { id: 27, name: '发电车' },
+                        { id: 28, name: '淋浴车' }, { id: 29, name: '工程机械车辆' }]
+                },
+                { id: 5, name: '公务车', sub: [] },],
+            usagesub:[],
+
         },
         methods: {
+            selectUsage() {
+                for (var i = 0; i < this.usage.length; i++) {
+                    if (this.usage[i].id == this.row.usage) {
+                        this.usagesub = this.usage[i].sub;
+                    }
+                }
+            },
             normalizer(node) {
                 return {
                     id: node.AREAID,
@@ -501,27 +571,27 @@
                         validating: 'glyphicon glyphicon-refresh'
                     },
                     fields: {
-                        license: {
-                            validators: {
-                                notEmpty: {
-                                    message: '车牌号不能位空'
-                                }
-                            }
-                        },
-                        mac: {
-                            validators: {
-                                notEmpty: {
-                                    message: '识别码不能位空'
-                                }
-                            }
-                        },
-                        unitid: {
-                            validators: {
-                                notEmpty: {
-                                    message: '单位不能位空'
-                                }
-                            }
-                        }
+                        //license: {
+                        //    validators: {
+                        //        notEmpty: {
+                        //            message: '车牌号不能位空'
+                        //        }
+                        //    }
+                        //},
+                        //mac: {
+                        //    validators: {
+                        //        notEmpty: {
+                        //            message: '识别码不能位空'
+                        //        }
+                        //    }
+                        //},
+                        //unitid: {
+                        //    validators: {
+                        //        notEmpty: {
+                        //            message: '单位不能位空'
+                        //        }
+                        //    }
+                        //}
                     }
                 });
             }
