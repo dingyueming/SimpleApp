@@ -1113,13 +1113,25 @@
                                     anchor: 'center',
                                     offset: new AMap.Pixel(0, -10),
                                 };
-                                searchMarkers.push(new AMap.Marker(markerOption));
+                                var marker = new AMap.Marker(markerOption)
+                                marker.on('click', (e) => {
+                                    if (vm.currentMarker) {
+                                        vm.szyl.map.remove(vm.currentMarker);
+                                    }
+                                    vm.szyl.longitude = e.lnglat.getLng();
+                                    vm.szyl.laitude = e.lnglat.getLat();
+                                    //searchMarkers.forEach((value) => {
+                                    //    value.setIcon("../../plugins/amap/images/red.png");
+                                    //});
+                                    //e.target.setIcon("../../plugins/amap/images/end.png");
+                                });
+                                searchMarkers.push(marker);
                             }
                             vm.szyl.map.setFitView(searchMarkers);
                         }
                     }
                 });
-                
+
             },
             tjszyl() {
                 if (this.szyl.longitude == null || this.szyl.laitude == null || this.szyl.name == null) {
