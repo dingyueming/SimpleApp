@@ -101,6 +101,10 @@
             mouseTool: undefined,
             //搜索的marker
             searchMarker: undefined,
+            //搜索的重点单位
+            importantUnit: null,
+            //弹出框目的地搜索
+            autoComplete: undefined,
         },
         methods: {
             //实例化地图
@@ -446,14 +450,12 @@
                             existPolyline = value;
                         }
                     });
-
-                    //绘制终点
                     var markerOption = {
-                        icon: "http://webapi.amap.com/images/0.png",
+                        map: vm.szyl.map,
                         position: path[path.length - 1],
-                        offset: [-10, -35],
-                        label: { content: directionData.name, direction: 'top', offset: new AMap.Pixel(0, 0) },
-                        extData: directionData.id
+                        anchor: 'center',
+                        icon: "../../plugins/amap/images/end.png",
+                        offset: new AMap.Pixel(0, -10),
                     };
                     var direMarker = new AMap.Marker(markerOption);
                     direMarker.setMap(vm.map);
@@ -1061,37 +1063,63 @@
                 $('#myModal').modal('hide');
             },
             szszyl() {
-                //实例化导航点地图
-                this.szyl.map = new AMap.Map('szylmap', {
-                    center: [104.066642, 30.656279],//中心点坐标
-                    zoom: 12,
-                    defaultCursor: 'point'
-                });
-
-                this.szyl.map.on('click', function (e) {
-                    if (vm.currentMarker)
-                        vm.szyl.map.remove(vm.currentMarker);
-
-                    var lngX = e.lnglat.getLng();
-                    var latY = e.lnglat.getLat();
-                    var markerOption = {
-                        map: vm.szyl.map,
-                        position: new AMap.LngLat(lngX, latY),
-                        icon: "../../plugins/amap/images/end.png",
-                        anchor: 'center',
-                        offset: new AMap.Pixel(0, -10),
-                    };
-                    vm.currentMarker = new AMap.Marker(markerOption);
-                    vm.szyl.longitude = e.lnglat.getLng();
-                    vm.szyl.laitude = e.lnglat.getLat();
-                });
-
                 var nodes = this.zTree.treeObj.getCheckedNodes();
                 if (nodes.length > 0 && this.conn) {
                     $('#szylModal').modal({ backdrop: 'static' });
+                    //实例化实战演练地图
+                    this.szyl.map = new AMap.Map('szylmap', {
+                        center: [104.066642, 30.656279],//中心点坐标
+                        zoom: 12,
+                        defaultCursor: 'point'
+                    });
+                    //搜索
+                    this.autoComplete = new AMap.Autocomplete({
+                        input: "destinationszyl"
+                    });
+                    this.szyl.map.on('click', function (e) {
+                        if (vm.currentMarker)
+                            vm.szyl.map.remove(vm.currentMarker);
+
+                        var lngX = e.lnglat.getLng();
+                        var latY = e.lnglat.getLat();
+                        var markerOption = {
+                            map: vm.szyl.map,
+                            position: new AMap.LngLat(lngX, latY),
+                            icon: "../../plugins/amap/images/end.png",
+                            anchor: 'center',
+                            offset: new AMap.Pixel(0, -10),
+                        };
+                        vm.currentMarker = new AMap.Marker(markerOption);
+                        vm.szyl.longitude = e.lnglat.getLng();
+                        vm.szyl.laitude = e.lnglat.getLat();
+                    });
+
                 } else {
                     vm.$message.warning('请选择车辆');
                 }
+            },
+            destinationSearch(name) {
+                vm.szyl.map.clear();
+                var searchMarkers = [];
+                this.autoComplete.search(name, function (status, result) {
+                    if (status == 'complete') {
+                        if (result.info == 'OK') {
+                            for (var i = 0; i < result.tips.length; i++) {
+                                var tip = result.tips[i];
+                                var markerOption = {
+                                    map: vm.szyl.map,
+                                    position: tip.location,
+                                    icon: "../../plugins/amap/images/red.png",
+                                    anchor: 'center',
+                                    offset: new AMap.Pixel(0, -10),
+                                };
+                                searchMarkers.push(new AMap.Marker(markerOption));
+                            }
+                            vm.szyl.map.setFitView(searchMarkers);
+                        }
+                    }
+                });
+                
             },
             tjszyl() {
                 if (this.szyl.longitude == null || this.szyl.laitude == null || this.szyl.name == null) {
@@ -1147,6 +1175,84 @@
                     vm.labelsLayer.remove(x);
                 });
             },
+            importantUnitChange() {
+                if (this.importantUnit != null) {
+                    this.otherData.powers.forEach((value) => {
+                        if (value.name == this.importantUnit) {
+                            var destPoint = coordtransform.wgs84togcj02(value.gis_x, value.gis_y);
+                            var icon = {
+                                // 图标类型，现阶段只支持 image 类型
+                                type: 'image',
+                                // 图片 url
+                                image: '../../plugins/amap/images/zqll.png',
+                                // 图片尺寸
+                                size: [16, 16],
+                                // 图片相对 position 的锚点，默认为 bottom-center
+                                anchor: 'center',
+                            };
+                            var text = {
+                                // 要展示的文字内容
+                                content: value.name,
+                                // 文字方向，有 icon 时为围绕文字的方向，没有 icon 时，则为相对 position 的位置
+                                direction: 'top',
+                                // 在 direction 基础上的偏移量
+                                //offset: [-20, -5],
+                                // 文字样式
+                                style: {
+                                    // 字体大小
+                                    fontSize: 12,
+                                    // 字体颜色
+                                    fillColor: '#000000',
+                                    // 描边颜色
+                                    strokeColor: '#fff',
+                                    // 描边宽度
+                                    strokeWidth: 2,
+                                    //背景颜色
+                                    backgroundColor: '#00ffff',
+                                }
+                            };
+                            var powerMarker = new AMap.LabelMarker({
+                                name: value.name, // 此属性非绘制文字内容，仅最为标识使用
+                                position: destPoint,
+                                map: vm.map,
+                                zIndex: 16,
+                                // 将第一步创建的 icon 对象传给 icon 属性
+                                icon: icon,
+                                // 将第二步创建的 text 对象传给 text 属性
+                                text: text,
+                                //标注显示级别范围， 可选值： [2,20]
+                                zooms: [2, 20],
+                                //extData: device,
+                            });
+                            vm.labelsLayer.add(powerMarker);
+                            vm.map.setFitView(powerMarker);
+                            vm.otherData.powerMarkers.push(powerMarker);
+                            //监听marker点击
+                            powerMarker.on('click', (e) => {
+                                var tmpArr = [
+                                    "<tr><td style='width:100px;'>单位名称：</td><td>" + value.name + "</td></tr>",
+                                    "<tr><td>单位地址：</td><td>" + value.address + "</td></tr>",
+                                    "<tr><td>单位类型：</td><td>" + value.unit_type + "</td></tr>",
+                                    "<tr><td>所属中队：</td><td>" + value.fire_brigade + "</td></tr>",
+                                    "<tr><td>层数：</td><td>" + value.building_storey + "</td></tr>",
+                                    "<tr><td>行驶路线：</td><td>" + value.driving_route + "</td></tr>",
+                                    "<tr><td>详细信息：</td><td><a href='../../keyunit/" + value.name + ".htm' target='_blank'>" + value.name + "</a></td></tr>",
+                                ];
+                                var openedHtml = "<table style='text-align:left; line-height:22px; width:400px;'>" + tmpArr.join(' ') + "<table>";
+                                // 创建 infoWindow 实例	
+                                var infoWindow = new AMap.InfoWindow({
+                                    content: openedHtml,
+                                    anchor: 'bottom-left',
+                                    autoMove: false,
+                                    offset: new AMap.Pixel(10, -10)
+                                });
+                                // 打开信息窗体
+                                infoWindow.open(vm.map, powerMarker.getPosition());
+                            });
+                        }
+                    });
+                }
+            }
         },
         mounted() {
             this.initMap();

@@ -91,15 +91,22 @@
                                 <el-row>
                                     <el-col :span="12">@*<el-button size="mini" icon="el-icon-location" v-on:click="locationQuery">位置查询</el-button>*@</el-col>
                                     <el-col :span="12"><el-button size="mini" icon="el-icon-s-shop" v-on:click="switchUnit">执勤力量</el-button></el-col>
-                                </el-row>
-                                <el-row>
                                     <el-col :span="12"><el-button size="mini" icon="el-icon-s-flag" v-on:click="drawRectangle(1)">重点单位</el-button></el-col>
                                 </el-row>
                                 <el-row>
-                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-open" v-on:click="drawRectangle(2)">消火栓&nbsp;&nbsp;&nbsp;&nbsp;</el-button></el-col>
+                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-open" v-on:click="drawRectangle(2)">消&nbsp;&nbsp;火&nbsp;&nbsp;栓&nbsp;</el-button></el-col>
+                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-open" v-on:click="clearMarker">清除标记</el-button></el-col>
                                 </el-row>
                                 <el-row>
-                                    <el-col :span="12"><el-button size="mini" icon="el-icon-s-open" v-on:click="clearMarker">清除标记</el-button></el-col>
+                                    <el-col :span="12" style="width:100%;">
+                                        <el-select v-on:change="importantUnitChange" style="width:100%;" size="mini" v-model="importantUnit" filterable placeholder="请选择重点单位">
+                                            <el-option v-for="item in otherData.powers"
+                                                       :key="item.name"
+                                                       :label="item.name"
+                                                       :value="item.name">
+                                            </el-option>
+                                        </el-select>
+                                    </el-col>
                                 </el-row>
                                 <el-button slot="reference" icon="el-icon-platform-eleme" size="mini"></el-button>
                             </el-popover>
@@ -289,6 +296,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
     </div>
+
     <div class="modal fade" id="szylModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -301,29 +309,22 @@
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="myForm1">
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="jwd">经度</label>
+                            <label class="col-sm-2 control-label" for="mddname">目的地名称</label>
                             <div class="col-sm-4">
-                                <input class="form-control" v-model="szyl.longitude" type="text" placeholder="经度" />
+                                <input class="form-control" id="destinationszyl" v-model="szyl.name" type="text" placeholder="目的地名称" />
                             </div>
-                            <label class="col-sm-2 control-label" for="jwd">纬度</label>
-                            <div class="col-sm-4">
-                                <input class="form-control"  v-model="szyl.laitude" type="text" placeholder="经度" />
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-default" v-on:click="destinationSearch(szyl.name)">搜索</button>
                             </div>
                         </div>
                         <div class="form-group">
-                            @*<label class="col-sm-2 control-label" for="path">路径选择</label>
-                                <div class="col-sm-4">
-                                    <select class="form-control">
-                                        <option value="0">任意</option>
-                                        <option value="1">导航地图自定(推荐）</option>
-                                        <option value="2">最短路径</option>
-                                        <option value="3">最少收费(经济）</option>
-                                        <option value="4">高速优先（最快）</option>
-                                    </select>
-                                </div>*@
-                            <label class="col-sm-2 control-label" for="mddname">目的地名称</label>
+                            <label class="col-sm-2 control-label" for="jwd">经纬度</label>
                             <div class="col-sm-4">
-                                <input class="form-control"  v-model="szyl.name" type="text" placeholder="目的地名称" />
+                                <input class="form-control" v-model="szyl.longitude" type="text" placeholder="经度" />
+                            </div>
+                            @*<label class="col-sm-2 control-label" for="jwd">纬度</label>*@
+                            <div class="col-sm-4">
+                                <input class="form-control" v-model="szyl.laitude" type="text" placeholder="经度" />
                             </div>
                         </div>
                         <div class="form-group">
