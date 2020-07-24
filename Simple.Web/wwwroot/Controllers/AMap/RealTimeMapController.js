@@ -1099,7 +1099,7 @@
                 }
             },
             destinationSearch(name) {
-                vm.szyl.map.clear();
+                vm.szyl.map.clearMap();
                 var searchMarkers = [];
                 this.autoComplete.search(name, function (status, result) {
                     if (status == 'complete') {
