@@ -298,12 +298,15 @@ namespace Simple.Domain
                 nodes.ForEach((x) =>
                 {
                     var nodeChildren = GetUnitTreeSelectModels(allNodes, x);
-                    list.Add(new VueTreeSelectModel() { id = x.UNITID.ToString(), label = x.UNITNAME, Tag = x.URL, children = nodeChildren?.ToArray() });
+                    if (nodeChildren.Any())
+                    {
+                        list.Add(new VueTreeSelectModel() { id = x.UNITID.ToString(), label = x.UNITNAME, Tag = x.URL, children = nodeChildren?.ToArray() });
+                    }
+                    else
+                    {
+                        list.Add(new VueTreeSelectModel() { id = x.UNITID.ToString(), label = x.UNITNAME, Tag = x.URL });
+                    }
                 });
-            }
-            else
-            {
-                list.Add(new VueTreeSelectModel() { id = node.UNITID.ToString(), label = node.UNITNAME, Tag = node.URL });
             }
 
             return list;
