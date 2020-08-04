@@ -46,8 +46,8 @@ namespace Simple.Repository
 
         public async Task<List<UnitEntity>> GetAllByUnitId(int unitId)
         {
-            var sql = "SELECT * FROM UNIT START WITH UNITID = :unitId CONNECT BY PRIOR UNITID = PID ";
-            var entities = await Connection.QueryAsync<UnitEntity>(sql, new { unitId });
+            var sql = $"SELECT * FROM UNIT START WITH UNITID = {unitId} CONNECT BY PRIOR UNITID = PID ";
+            var entities = await Connection.QueryAsync<UnitEntity>(sql);
             return entities.ToList();
         }
     }
