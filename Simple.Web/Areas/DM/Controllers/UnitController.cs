@@ -9,6 +9,7 @@ using Simple.ExEntity.DM;
 using Simple.IApplication.DM;
 using Simple.Infrastructure.InfrastructureModel.Paionation;
 using Simple.Web.Controllers;
+using Simple.Web.Extension.ControllerEx;
 
 namespace Simple.Web.Areas.DM.Controllers
 {
@@ -25,21 +26,24 @@ namespace Simple.Web.Areas.DM.Controllers
             var data = await unitService.GetPage(pagination);
             return Json(data);
         }
-
+        [SimpleAction]
         public async Task<bool> Add(UnitExEntity exEntity)
         {
             return await unitService.Add(exEntity);
         }
+        [SimpleAction]
         public async Task<bool> Update(UnitExEntity exEntity)
         {
             exEntity.RECDATE = DateTime.Now;
             exEntity.RECMAN = LoginUser.UsersId;
             return await unitService.Update(exEntity);
         }
+        [SimpleAction]
         public async Task<bool> Delete(UnitExEntity exEntity)
         {
             return await unitService.Delete(new List<UnitExEntity>() { exEntity });
         }
+        [SimpleAction]
         public async Task<bool> BatchDelete(List<UnitExEntity> exEntities)
         {
             return await unitService.Delete(exEntities);
