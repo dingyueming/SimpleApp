@@ -11,5 +11,6 @@ namespace Simple.IRepository
     public interface IUnitRepository : IBaseRepository<UnitEntity>
     {
         Task<Pagination<UnitEntity>> GetPage(int pageSize, int pageIndex, string where, string orderby);
+        Task<List<UnitEntity>> GetAllByUnitId(int unitId);
     }
 }

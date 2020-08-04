@@ -134,6 +134,7 @@ namespace Simple.ExEntity.Map
         #region searchData
         public DateTime[] DateTimes { get; set; }
         public bool IsSearchLocated { get; set; }
+        public int UserId { get; set; }
         #endregion
     }
 }

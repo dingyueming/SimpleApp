@@ -36,9 +36,9 @@ namespace Simple.Application.DM
             return await dmDomainService.GetUnitPage(param);
         }
 
-        public async Task<VueTreeSelectModel[]> GetUnitTree()
+        public async Task<VueTreeSelectModel[]> GetUnitTree(int unitId)
         {
-            return await dmDomainService.GetUnitTree();
+            return await dmDomainService.GetUnitTree(unitId);
         }
 
         public async Task<ElementTreeModel[]> GetUnitAndDeviceTree()

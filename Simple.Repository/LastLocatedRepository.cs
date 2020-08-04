@@ -18,6 +18,13 @@ namespace Simple.Repository
             return entities.AsList();
         }
 
+        public async Task<List<LastLocatedEntity>> GetLastLocatedByUser(int userId)
+        {
+            var sql = "SELECT V.mac,N.* FROM NEWTRACK_LASTLOCATED N JOIN CARS V ON V.carid=N.CARID JOIN AUTH_LIMITS A ON N.CARID= A.CARID WHERE 1=1 AND A.USERID=:USERID";
+            var entities = await Connection.QueryAsync<LastLocatedEntity>(sql, new { USERID = userId });
+            return entities.AsList();
+        }
+
         public async Task<LastLocatedEntity> GetEntityByMac(string mac)
         {
             var sql = "select t.*,c.mac,c.license from newtrack_lastlocated t join  view_all_target c on t.carid=c.carid where c.mac=:mac";

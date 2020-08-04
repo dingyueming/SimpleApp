@@ -64,10 +64,10 @@ namespace Simple.Domain
             var pagination = await unitRepository.GetPage(param.PageSize, param.PageIndex, param.Where, param.OrderBy);
             return mapper.Map<Pagination<UnitExEntity>>(pagination);
         }
-        public async Task<VueTreeSelectModel[]> GetUnitTree()
+        public async Task<VueTreeSelectModel[]> GetUnitTree(int unitId)
         {
-            var allUnits = await unitRepository.GetAllAsync();
-            var treeSelectModels = GetUnitTreeSelectModels(allUnits.ToList(), null);
+            var allUnits = await unitRepository.GetAllByUnitId(unitId);
+            var treeSelectModels = GetUnitTreeSelectModels(allUnits, allUnits.First(x => x.UNITID == unitId)).OrderBy(x => x.label).ToArray();
             return treeSelectModels.ToArray();
         }
         public async Task<ElementTreeModel[]> GetUnitAndDeviceTree()
@@ -286,28 +286,24 @@ namespace Simple.Domain
         public static List<VueTreeSelectModel> GetUnitTreeSelectModels(List<UnitEntity> allNodes, UnitEntity node)
         {
             var list = new List<VueTreeSelectModel>();
+
             if (node == null)
             {
-                var unit = allNodes.FirstOrDefault(x => x.PID == -1);
-                var nodeChildren = GetUnitTreeSelectModels(allNodes, unit);
-                var firstNode = new VueTreeSelectModel() { id = unit.UNITID.ToString(), label = unit.UNITNAME, Tag = unit.URL, children = nodeChildren?.ToArray() };
-                list.Add(firstNode);
+                return null;
+            }
+
+            var nodes = allNodes.Where(x => x.PID == node.UNITID).ToList();
+            if (nodes.Count > 0)
+            {
+                nodes.ForEach((x) =>
+                {
+                    var nodeChildren = GetUnitTreeSelectModels(allNodes, x);
+                    list.Add(new VueTreeSelectModel() { id = x.UNITID.ToString(), label = x.UNITNAME, Tag = x.URL, children = nodeChildren?.ToArray() });
+                });
             }
             else
             {
-                var nodes = allNodes.Where(x => x.PID == node.UNITID).ToList();
-                if (nodes.Count > 0)
-                {
-                    nodes.ForEach((x) =>
-                    {
-                        var nodeChildren = GetUnitTreeSelectModels(allNodes, x);
-                        list.Add(new VueTreeSelectModel() { id = x.UNITID.ToString(), label = x.UNITNAME, Tag = x.URL, children = nodeChildren?.ToArray() });
-                    });
-                }
-                else
-                {
-                    return null;
-                }
+                list.Add(new VueTreeSelectModel() { id = node.UNITID.ToString(), label = node.UNITNAME, Tag = node.URL });
             }
 
             return list;

@@ -31,7 +31,7 @@ namespace Simple.Domain
 
         public async Task<Pagination<LastLocatedExEntity>> GetLastLocatedPage(Pagination<LastLocatedExEntity> param, DateTime[] dateTimes)
         {
-            var list = await lastLocatedRepository.GetAllAsync();
+            var list = await lastLocatedRepository.GetLastLocatedByUser(param.SearchData.UserId);
             var unitEntities = await unitRepository.GetAllAsync();
             var unitExEntities = mapper.Map<List<UnitExEntity>>(unitEntities);
             var exList = mapper.Map<List<LastLocatedExEntity>>(list);

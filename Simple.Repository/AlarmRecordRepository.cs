@@ -19,7 +19,7 @@ namespace Simple.Repository
 
             if (unitId.HasValue)
             {
-                sql += " AND C.UNITID=:unitId ";
+                sql += " AND C.UNITID IN (SELECT UNITID FROM UNIT START WITH UNITID = :unitId CONNECT BY PRIOR UNITID = PID) ";
             }
             if (alarmType.HasValue)
             {

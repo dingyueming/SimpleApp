@@ -82,7 +82,7 @@ namespace Simple.Web.Controllers
                     //user.Email = authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
                     user.UsersId = int.Parse(authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
                     user.UsersName = authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
-                    //user.RealName = authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName).Value;
+                    user.UnitId = int.Parse(authResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimaryGroupSid).Value);
                 }
                 return user;
             }
@@ -141,7 +141,7 @@ namespace Simple.Web.Controllers
         /// <returns></returns>
         public async Task<JsonResult> QueryUnitTree()
         {
-            var trees = await unitService.GetUnitTree();
+            var trees = await unitService.GetUnitTree(LoginUser.UnitId);
             return Json(trees);
         }
         #endregion

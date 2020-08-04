@@ -28,6 +28,10 @@ namespace Simple.Web.Areas.SA.Controllers
         }
         public async Task<JsonResult> Query(Pagination<AlarmRecordExEntity> pagination)
         {
+            if (!pagination.SearchData.UnitId.HasValue)
+            {
+                pagination.SearchData.UnitId = LoginUser.UnitId;
+            }
             var data = await alarmRecordService.GetPage(pagination);
             return Json(data);
         }

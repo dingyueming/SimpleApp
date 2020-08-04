@@ -25,6 +25,10 @@ namespace Simple.Web.Areas.DM.Controllers
         }
         public async Task<JsonResult> Query(Pagination<CarExEntity> pagination)
         {
+            if (pagination.Where.IndexOf("and a.unitid") == -1)
+            {
+                pagination.Where += $" and a.unitid in (SELECT UNITID FROM UNIT START WITH UNITID ={LoginUser.UnitId}  CONNECT BY PRIOR UNITID = PID)";
+            }
             var data = await carService.GetPage(pagination);
             return Json(data);
         }

@@ -13,7 +13,7 @@ namespace Simple.IApplication.DM
         Task<bool> Delete(List<UnitExEntity> exEntities);
         Task<bool> Update(UnitExEntity exEntity);
         Task<Pagination<UnitExEntity>> GetPage(Pagination<UnitExEntity> param);
-        Task<VueTreeSelectModel[]> GetUnitTree();
+        Task<VueTreeSelectModel[]> GetUnitTree(int unitId);
         Task<ElementTreeModel[]> GetUnitAndDeviceTree();
         Task<List<UnitExEntity>> GetAllUnitExEntities();
     }

@@ -24,6 +24,7 @@ namespace Simple.Web.Areas.SA.Controllers
         }
         public async Task<JsonResult> Query(Pagination<LastLocatedExEntity> pagination)
         {
+            pagination.SearchData.UserId = LoginUser.UsersId;
             var data = await lastLocatedService.GetPage(pagination, pagination.SearchData.DateTimes);
             return Json(data);
         }
@@ -53,7 +54,7 @@ namespace Simple.Web.Areas.SA.Controllers
             foreach (var x in data.Data)
             {
                 DataRow dr = dt.NewRow();
-                dr["车牌号"] = $"{x.Car.LICENSE}({x.Car.CARNO})"; 
+                dr["车牌号"] = $"{x.Car.LICENSE}({x.Car.CARNO})";
                 dr["单位"] = x.Unit.UNITNAME;
                 dr["最后上线时间"] = x.GNSSTIME;
                 dt.Rows.Add(dr);

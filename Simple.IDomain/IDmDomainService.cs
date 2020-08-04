@@ -17,7 +17,7 @@ namespace Simple.IDomain
         Task<bool> DeleteUnit(List<UnitExEntity> exEntities);
         Task<bool> UpdateUnit(UnitExEntity exEntity);
         Task<Pagination<UnitExEntity>> GetUnitPage(Pagination<UnitExEntity> param);
-        Task<VueTreeSelectModel[]> GetUnitTree();
+        Task<VueTreeSelectModel[]> GetUnitTree(int unitId);
         Task<ElementTreeModel[]> GetUnitAndDeviceTree();
         Task<List<UnitExEntity>> GetAllUnitExEntities();
 
