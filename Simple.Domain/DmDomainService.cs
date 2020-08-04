@@ -67,8 +67,16 @@ namespace Simple.Domain
         public async Task<VueTreeSelectModel[]> GetUnitTree(int unitId)
         {
             var allUnits = await unitRepository.GetAllByUnitId(unitId);
-            var treeSelectModels = GetUnitTreeSelectModels(allUnits, allUnits.First(x => x.UNITID == unitId)).OrderBy(x => x.label).ToArray();
-            return treeSelectModels.ToArray();
+            var parentUnit = allUnits.First(x => x.UNITID == unitId);
+            var treeSelectModels = GetUnitTreeSelectModels(allUnits, parentUnit).OrderBy(x => x.label).ToArray();
+            var tree = new List<VueTreeSelectModel>();
+            var treeNode = new VueTreeSelectModel() { id = parentUnit.UNITID.ToString(), label = parentUnit.UNITNAME };
+            if (treeSelectModels.Length > 0)
+            {
+                treeNode.children = treeSelectModels;
+            }
+            tree.Add(treeNode);
+            return tree.ToArray();
         }
         public async Task<ElementTreeModel[]> GetUnitAndDeviceTree()
         {
