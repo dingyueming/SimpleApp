@@ -15,10 +15,12 @@ namespace Simple.Repository
         public async Task<Pagination<UsersEntity>> GetUserPage(int pageSize, int pageIndex, string where, string orderby)
         {
             var pagination = new Pagination<UsersEntity>();
-            string totalSql = $"select count(1) from tb_users where 1=1";
+            string totalSql = $"select count(1) from tb_users a where 1=1";
             var sql = "select a.*,b.*,c.*,d.* from tb_users a left join tb_users b on a.creator=b.usersid left join tb_usersrole ur on a.usersid=ur.usersid left join tb_roles c on ur.rolesid=c.rolesid left join unit d on a.unitid=d.unitid  where 1=1 ";
             if (!string.IsNullOrEmpty(where))
             {
+                where = $"  AND A.UNITID IN (SELECT UNITID FROM UNIT START WITH UNITID = { int.Parse(where)} CONNECT BY PRIOR UNITID = PID) ";
+
                 sql += where;
                 totalSql += where;
             }

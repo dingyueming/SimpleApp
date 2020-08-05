@@ -13,9 +13,23 @@
     <script src="~/lib/vue-treeselect/dist/vue-treeselect.umd.min.js"></script>
 }
 <div class="box" id="vmBox">
-    <button type="button" id="btn_delete_main" class="btn btn-default" style="margin:10px;" v-on:click="exportExcel">导出</button>
-    <button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;" data-toggle="modal" v-on:click="add">新增</button>
-    <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
+    <table style="margin-left:5px;">
+        <tr>
+            <th>单位：</th>
+            <td>
+                <div class="input-group">
+                    <!-- /btn-group -->
+                    <treeselect v-model="searchWhere.unitid" style="width:300px;" :multiple="false" name="searchUnitid" id="searchUnitid" :options="options" />
+                </div>
+            </td>
+            <td>
+                <button type="button" id="btn_delete_main" class="btn btn-primary" style="margin:10px;" v-on:click="select">查询</button>
+                <button type="button" id="btn_delete_main" class="btn btn-default" style="margin:10px;" v-on:click="exportExcel">导出</button>
+                <button type="button" id="btn_add_main" class="btn btn-success" style="margin:10px;" data-toggle="modal" v-on:click="add">新增</button>
+                <button type="button" id="btn_delete_main" class="btn btn-warning" style="margin:10px;" v-on:click="deleteSelect">删除</button>
+            </td>
+        </tr>
+    </table>
     <v-table is-vertical-resize
              :vertical-resize-offset='60'
              is-horizontal-resize
@@ -285,10 +299,13 @@
             nodes: [],
             defaultCheckedNodes: [],
             options: [],
+            searchWhere: {
+                unitid: null,
+            },
         },
         methods: {
             getTableData() {
-                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize ,orderBy:' a.usersId desc'};
+                var search = { pageIndex: this.pageIndex, pageSize: this.pageSize, where: this.searchWhere.unitid, orderBy: ' a.usersId desc' };
                 axios.post('@Url.Action("QueryUsers")', Qs.stringify(search)).then(function (response) {
                     var pagination = response.data;
                     vm.tableConfig.tableData = pagination.data;
@@ -441,6 +458,9 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
+            },
+            select() {
+                this.getTableData();
             },
             exportExcel() {
                 const loading = this.$loading({
